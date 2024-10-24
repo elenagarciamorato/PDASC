@@ -1,7 +1,7 @@
 import numpy as np
 from pyflann import *
 import logging
-from pickle import dump, load
+import os
 
 
 def FLANN_nn_index(dataset, ncentroids, distance_type, algorithm):
@@ -71,4 +71,7 @@ def FLANN_nn_search(dataset, seq_buscada, k, distance_type, algorithm):
     # Return knn and their distances with the query points
     #logging.info(str(k) + "-Nearest Neighbors found using FLANN + " + distance_type + " distance + " + algorithm + " algorithm.")
 
-    return np.array(lista_indices), np.array(lista_coords), np.array(lista_dists)
+    # The number of distance computations required to obtain the knn are unknown
+    n_distances = np.NaN
+
+    return np.array(lista_indices), np.array(lista_coords), np.array(lista_dists), n_distances

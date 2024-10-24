@@ -6,20 +6,14 @@ import csv
 import logging
 import data.load_train_test_set as load_train_test_set
 import re
-
-import six
-from six.moves import configparser
-
-if six.PY2:
-  ConfigParser = configparser.SafeConfigParser
-else:
-  ConfigParser = configparser.ConfigParser
+import configparser
 
 
 # Store query points and its neighbors on a csv file
-# arguments: file name, train_test hdf5 file, neighbors file
-# save_csv("./benchmarks/municipios_5_euclidean_FLANN", "./data/municipios_train_test_set.hdf5", "./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_FLANN.hdf5")
 def save_csv(filename, train_test_file, neighbors_file):
+    # arguments: file name, train_test hdf5 file, neighbors file
+    # save_csv("./benchmarks/municipios_5_euclidean_FLANN", "./data/municipios_train_test_set.hdf5", "./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_FLANN.hdf5")
+
     with open(str(filename) + ".csv", 'w') as file:
         writer = csv.writer(file)
         header = ['index', 'query_point', 'neighbors']
@@ -59,7 +53,7 @@ def save_neighbors(indices, coords, dists, file_name):
 # Load neighbors (indices, coords and dist) from a hdf5 file
 def load_neighbors(file_name):
 
-    # Load indices, coords and dists as 3 independent matrix from the choosen file
+    # If the filepath provided does not exist, return None
     if not os.path.exists(file_name):
 
         print("File " + file_name + " does not exist")
@@ -67,13 +61,56 @@ def load_neighbors(file_name):
 
         return None, None, None
 
+    # If the file exists
     else:
+
+        # Load the indices, coords and dists from the chosen file as 3 independent arrays
         with h5py.File(file_name, 'r') as hdf5_file:
 
-            print("Loading neighbors from " + file_name)
-            logging.info("Loading neighbors from " + file_name)
+            print(f"Loading neighbors from {file_name}")
+            logging.info(f"Loading neighbors from {file_name}")
 
             return np.array(hdf5_file['indices']), np.array(hdf5_file['coords']), np.array(hdf5_file['dists'])
+
+# Store neighbors (indices, coords and dist) and performance (n_distances & search time) into a hdf5 file
+def save_neighbors_and_performance(indices, coords, dists, n_distances, search_time, file_name):
+
+    # Store the 3 different matrix on a hdf5 file
+    with h5py.File(file_name, 'w') as f:
+        f.flush()
+        dset1 = f.create_dataset('indices', data=indices)
+        dset2 = f.create_dataset('coords', data=coords)
+        dset3 = f.create_dataset('dists', data=dists)
+
+        dset4 = f.create_dataset('n_distances', data=n_distances)
+
+        dset5 = f.create_dataset('search_time', data=search_time)
+
+        print(f"Neighbors, distances computed and search time stored at {file_name}")
+        logging.info(f"Neighbors distances computed and search time stored at {file_name}")
+        f.close()
+
+
+# Load neighbors (indices, coords and dist) and performance (n_distances & search time) from a hdf5 file
+def load_neighbors_performance(file_name):
+
+    # If the filepath provided does not exist, return None
+    if not os.path.exists(file_name):
+
+        print(f"File {file_name} does not exist")
+        logging.info(f"File {file_name} does not exist\n")
+
+        return None, None, None, None, None
+
+    # If the file exists
+    else:
+        # Load the indices, coords & dist for each neighbour, as well as the number of distance computation and search time required
+        with h5py.File(file_name, 'r') as hdf5_file:
+
+            print(f"Loading neighbors, computed distances and search time from {file_name}")
+            logging.info(f"Loading neighbors, computed distances and search time from {file_name}")
+
+            return np.array(hdf5_file['indices']), np.array(hdf5_file['coords']), np.array(hdf5_file['dists']), np.array(hdf5_file['n_distances']), np.array(hdf5_file['search_time'])
 
 
 # Print train set, test set and neighbors on a file
@@ -96,7 +133,7 @@ def print_knn(train_set, test_set, neighbors, dataset_name, d, method, knn, file
     ax.scatter(test_set[0], test_set[1], marker='o', s=1, color='#ff7f0e', alpha=0.5)
 
     plt.savefig(file_name)
-    print("Train set, test set and neighbors printed at " + file_name)
+    print(f"Train set, test set and neighbors printed at {file_name}")
 
     return plt.show()
 
@@ -114,7 +151,7 @@ def read_config_file(config_file):
         #raise FileNotFoundError
 
     # If it does, launch the experiment
-    print("--- Reading " + config_file + " ---")
+    print(f"--- Reading {config_file} ---")
 
     # Open the configuration file
     config = configparser.ConfigParser()

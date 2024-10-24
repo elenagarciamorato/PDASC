@@ -1,19 +1,11 @@
-2024-07-12 10:45:56,978 - root - ------------------------------------------------------------------------
-2024-07-12 10:45:56,978 - root -                           plotting Searching
-2024-07-12 10:45:56,978 - root - ------------------------------------------------------------------------
+2024-10-23 23:52:49,777 - root - ------------------------------------------------------------------------
+2024-10-23 23:52:49,777 - root -                           plotting Searching
+2024-10-23 23:52:49,777 - root - ------------------------------------------------------------------------
 
-2024-07-12 10:45:56,978 - root - 
-2024-07-12 10:45:56,978 - root - ---- Searching the 5 nearest neighbors within GDASC over municipios dataset using euclidean distance. ----
-2024-07-12 10:45:56,978 - root - 
-2024-07-12 10:45:56,978 - root - ---- GDASC Parameters - tam_grupo=60 - n_centroids=30 - radius=40 - algorithm=kmedoids - implementation=fastkmedoids ----
-2024-07-12 10:45:56,987 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+2024-10-23 23:52:49,777 - root - 
+2024-10-23 23:52:49,777 - root - ---- Searching the 5 nearest neighbors within GDASC over municipios dataset using euclidean distance. ----
+2024-10-23 23:52:49,777 - root - 
+2024-10-23 23:52:49,777 - root - ---- GDASC Parameters - tam_grupo=60 - n_centroids=30 - radius=40 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-10-23 23:52:49,777 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
 
-2024-07-12 10:45:57,013 - GDASC.gdasc_ - tree time=0.023131916999999724 seconds
-2024-07-12 10:46:00,985 - root - Search time = 3.971117917 seconds
-
-2024-07-12 10:46:00,985 - root - Average time spent in searching a single point = 0.03971117917
-2024-07-12 10:46:00,985 - root - Speed (points/s) = 25.1818258964079
-
-2024-07-12 10:46:00,986 - root - Neighbors stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
-2024-07-12 10:46:00,986 - root - ------------------------------------------------------------------------
-
+2024-10-23 23:52:49,971 - GDASC.gdasc_ - tree time=0.1928452919999999 seconds

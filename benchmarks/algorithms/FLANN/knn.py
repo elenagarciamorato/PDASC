@@ -41,19 +41,24 @@ def FLANN(config_file):
 
     # Using FLANN and the index built, search for the knn nearest neighbors
     start_time_s = timer()
-    indices, coords, dists = FLANN_nn_search(train_set, test_set, k, distance, algorithm)
+    indices, coords, dists, n_distances = FLANN_nn_search(train_set, test_set, k, distance, algorithm)
     end_time_s = timer()
-    logging.info('Search time = %s seconds\n', end_time_s - start_time_s)
-    logging.info('Average time spent in searching a single point = %s', (end_time_s - start_time_s)/test_set.shape[0])
-    logging.info('Speed (points/s) = %s\n', test_set.shape[0]/(end_time_s - start_time_s))
+
+    search_time = end_time_s - start_time_s
+
+    logging.info('Search time = %s seconds\n', search_time)
+    logging.info('Average time spent in searching a single point = %s', search_time/test_set.shape[0])
+    logging.info('Speed (points/s) = %s\n', test_set.shape[0]/search_time)
 
     # Store indices, coords and dist into a tridimensional matrix of size vector.size() x 3 x knn
     # knn = zip(indices, coords, dists)
 
     # Regarding the knn, method, dataset_name and distance choosen, set the file name to store the neighbors
     file_name = "./benchmarks/NearestNeighbors/" + dataset + "/knn_" + dataset + "_" + str(k) + "_" + distance + "_" + method + ".hdf5"
+
     # Store indices, coords and dist into a hdf5 file
-    save_neighbors(indices, coords, dists, file_name)
+    save_neighbors_and_performance(indices, coords, dists, n_distances, search_time, file_name)
+
 
     # Print
     # print_knn(train_set, test_set, coords, dataset_name, d, "FLANN", k)
