@@ -41,7 +41,7 @@ def GDASC(config_file):
     n_capas, grupos_capa, puntos_capa, labels_capa = gdasc.create_tree(cant_ptos, tam_grupo, n_centroides, distance, vector_training, dimensionalidad, algorithm, implementation)
 
     # Implementación nueva
-    #n_capas, grupos_capa, puntos_capa, labels_capa = gdasc.create_simplified_tree(cant_ptos, tam_grupo, n_centroides, distance, vector_training, dimensionalidad, algorithm, implementation)
+    #n_capas, grupos_capa, puntos_capa, labels_capa = gdasc.create_tree_newstructure(cant_ptos, tam_grupo, n_centroides, distance, vector_training, dimensionalidad, algorithm, implementation)
 
 
     # Print the number of elements in the arrays composing labels_capa whose value is not 999999999
@@ -81,7 +81,9 @@ def GDASC(config_file):
 
         start_time_iter = timer()
 
-        vecinos_i, n_distances_i = gdasc.recursive_approximate_knn_search(n_capas, n_centroides, punto, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, dimensionalidad, float(radio))
+        vecinos_i, n_distances_i = gdasc.recursive_approximate_knn_search_newstructure(n_capas, n_centroides, punto, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, dimensionalidad, float(radio))
+        #vecinos_i, n_distances_i = gdasc.recursive_approximate_knn_search(n_capas, n_centroides, punto, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, dimensionalidad, float(radio))
+
         #vecinos_i = gdasc.knn_approximate_search(n_centroides, punto, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, dimensionalidad, float(radio))
 
         end_time_iter = timer()

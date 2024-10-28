@@ -36,9 +36,9 @@ def explore_experiments(dataset):
                         'radius': int(parts[7][1:]),
                         'Algorithm': parts[8],
                         'Implementation': parts[9],
-                        'Dist_Computed': np.median(n_dist),
+                        'Dist_Computed(Av)': np.mean(n_dist),
                         # Get the recall of the experiment
-                        'Recall': get_recall_new(dataset, parts[2], parts[3], indices, coords, distances),
+                        'Recall(Av)': get_recall_new(dataset, parts[2], parts[3], indices, coords, distances),
                         'Search_Time': search_time
                     })
 
@@ -52,9 +52,9 @@ def explore_experiments(dataset):
                         'radius': None,
                         'Algorithm': parts[5] if parts[5] != 'hdf5' else None,
                         'Implementation': None,
-                        'Dist_Computed': np.median(n_dist),
+                        'Dist_Computed(Av)': np.mean(n_dist),
                         # Get the recall of the experiment
-                        'Recall': get_recall_new(dataset, parts[2], parts[3], indices, coords, distances),
+                        'Recall(Av)': get_recall_new(dataset, parts[2], parts[3], indices, coords, distances),
                         'Search_Time': search_time
                     })
 
