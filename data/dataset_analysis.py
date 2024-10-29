@@ -119,7 +119,7 @@ def distance_analysis(vector_training, distances):
     logging.info("\n------------ Distance Matrixes (built using several distance metrics)-----------\n")
 
     for d in distances:
-        print(f"Distance analysis using {d} distance")
+        print(f"-- Distance analysis using {d} distance --")
 
         # If the distance is 'manhattan', we change it to 'cityblock' to use scipy
         if d == 'manhattan':
@@ -147,6 +147,9 @@ def distance_analysis(vector_training, distances):
 
 # Plot the distribution of pairwise distances between the elements composing the dataset
 def distances_distribution_plot(dataset):
+
+    # Print a title for the analysis
+    print(f"-- Analysis of the {k}th neighbour distances --")
 
     # Regarding the dataset name, set the file name to load the train and test set
     file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
@@ -176,7 +179,7 @@ def distances_distribution_plot(dataset):
 
     # Obtain the median distance
     median_distance = np.median(distances)
-    print(f"Median distance: {median_distance}")
+    print(f"Median distance: {median_distance}\n")
 
     # Plot the distribution of pairwise distances (histogram)
     plt.hist(distances, bins=30, edgecolor='black')
@@ -185,25 +188,20 @@ def distances_distribution_plot(dataset):
     plt.ylabel('Frequency')
     plt.show()
 
-# Plot the distribution of the distances regarding the 5th neighbour of each element in the dataset
-def neighbours_distribution_plot(dataset):
+# Plot the distribution of the distances regarding the kth neighbour of each element in the dataset
+def neighbours_distribution_plot(dataset, k):
+
+    # Print a title for the analysis
+    print(f"-- Analysis of the {k}th neighbour distances --")
 
     # Regarding the dataset name, set the file name to load the train and test set
     file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
     vector_training, vector_testing = load_train_test_h5py(file_name)
 
-    # If vector_training is bigger than 10000, we take a sample of 10% of the data
-    if len(vector_training) > 1000:
-        sample = vector_training[np.random.choice(len(vector_training), int(vector_training.shape[0]/10), replace=True)]
-    else:
-        sample = vector_training
-
-    k = 5
-
     # Y el número de distancias calculadas en cada ejecución
     n_distances = np.empty(len(vector_testing))
 
-    # Obtenemos los 5 vecinos mas cercanos
+    # Obtenemos los k vecinos mas cercanos
 
     dists = []
 
@@ -216,7 +214,7 @@ def neighbours_distribution_plot(dataset):
         indices, coords, dists, n_dist = Exact_nn_search(sample1, sample2, len(sample2), 'euclidean', None, False)
 
         # The fifth neighbours are those with index 4
-        fifth_neighbour = dists[:, 4]
+        kth_neighbour = dists[:, k-1]
 
     # If vector_training is smaller than 10000, we calculate the pairwise distances between every element on the dataset
     else:
@@ -226,27 +224,27 @@ def neighbours_distribution_plot(dataset):
         indices, coords, dists, n_dist = Exact_nn_search(sample, sample, len(sample)-1, 'euclidean', None, True)
 
         # The fifth neighbours are those with index 5 (as the first one is the element itself)
-        fifth_neighbour = dists[:, 5]
+        kth_neighbour = dists[:, k]
 
-    # Fifth neighbour mean distance
-    mean_distance = np.mean(fifth_neighbour)
-    print(f"Fifth neighbour mean distance: {mean_distance}")
+    # k th neighbour mean distance
+    mean_distance = np.mean(kth_neighbour)
+    print(f"{k}th neighbour mean distance: {mean_distance}")
 
-    # Fifth neighbour median distance
-    median_distance = np.median(fifth_neighbour)
-    print(f"Fifth neighbour median distance: {median_distance}")
+    # k th neighbour median distance
+    median_distance = np.median(kth_neighbour)
+    print(f"{k}th neighbour median distance: {median_distance}")
 
     # Compute the 3rd quartile of fifth neighbour
-    q3 = np.percentile(fifth_neighbour, 75)
-    print(f"Third quartile of fifth neighbour: {q3}")
+    q3 = np.percentile(kth_neighbour, 75)
+    print(f"Third quartile of {k}th neighbour: {q3}")
 
     # Compute the 90% percentile of fifth neighbour
-    p90 = np.percentile(fifth_neighbour, 90)
-    print(f"90% percentile of fifth neighbour: {p90}")
+    p90 = np.percentile(kth_neighbour, 90)
+    print(f"90% percentile of {k}th neighbour: {p90}")
 
     # Plot the distribution of pairwise distances (histogram)
-    plt.hist(fifth_neighbour, bins=30, edgecolor='black')
-    plt.title('Distribution of 5th Neighbour Distances')
+    plt.hist(kth_neighbour, bins=30, edgecolor='black')
+    plt.title(f'Distribution of {k}th Neighbour Distances')
     plt.xlabel('Distance')
     plt.ylabel('Frequency')
     plt.show()
@@ -256,6 +254,7 @@ if __name__ == "__main__":
 
     dataset = 'wdbc'
     distances = ['euclidean', 'manhattan', 'chebyshev', 'cosine']
+    k =5
 
     # Perform the descriptive analysis of the dataset
     # dataset_analysis(dataset, distances)
@@ -263,6 +262,6 @@ if __name__ == "__main__":
     # Plot the distribution of pairwise distances between the elements composing the dataset
     distances_distribution_plot(dataset)
 
-    # Plot the distribution of the distances regarding the 5th neighbour of each element in the dataset
-    neighbours_distribution_plot(dataset)
+    # Plot the distribution of the distances regarding the k-th neighbour of each element in the dataset
+    neighbours_distribution_plot(dataset, k)
 

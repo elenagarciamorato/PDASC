@@ -645,158 +645,11 @@ def explore_centroid_optimised(punto_buscado, current_layer, inheritage, current
     This function is an optimised version of `explore_centroid` that avoids redundant distance computation in the
     case of centroids that have only one child prototype (which would be actually itself)
 
-    This optimisation applies only on intermediate layers, no last layer of the index.
-    (Does not apply when the prototypes layering down are actually dataset points)
+    In case that one prototype is associated to a sole prototype in the last layer (an actual point of the dataset)
+    the after distance computation is avoided, returning the id of that point and alsa its distance to the query point
 
     This optimisation still conserves the possibility of use an adaptively radius at each layer
 
-    Parameters:
-    punto_buscado : numpy.ndarray
-        The query point for which the nearest neighbors are to be found.
-    current_layer : int
-        The current layer in the hierarchical tree being explored.
-    inheritage : list
-        List of ancestor groups leading to the current group.
-    current_centroid_id : int
-        The ID of the current centroid being explored.
-    current_centroid_distance : float
-        The distance from the query point to the current centroid.
-    coords_puntos_capas : list
-        Coordinates of points at each layer.
-    puntos_capas : list
-        Cluster centroids at each layer.
-    grupos_capa : list
-        Number of points in each group at each layer.
-    n_centroides : int
-        Number of centroids in each group.
-    metrica : str
-        The distance metric to use for calculating distances.
-    radio : float
-        Search radius for the approximate search.
-    neighbours : list
-        List to store the nearest neighbors found during the search.
-    distances_computed : list
-        List to store the count of distance computations.
-
-    Returns:
-    list
-        Updated list of nearest neighbors.
-    """
-
-    # Calculate the number of groups in the current layer
-    if current_layer == grupos_capa.size:
-        groups_current_layer = 1
-    else:
-        groups_current_layer = grupos_capa[current_layer].size
-
-    # Calculate the group onto the layer which the centroid belongs to
-    prototype_group = inheritage[-1]
-
-    # print("Exploro el prototipo ", current_centroid_id, " perteneciente a la capa ", current_layer, " y el grupo ", inheritage[-1], " de un total de ", groups_current_layer, " grupos")
-
-    # Obtain the IDs of prototypes from the layer below
-    id_prototypes_layer_down = puntos_capas[current_layer-1][prototype_group]
-
-    # Obtain the prototypes of the layer below which are mapped by this prototype
-    id_associated_prototypes_layer_down = np.where(id_prototypes_layer_down == current_centroid_id)[0]
-
-    # Explore each associated prototype in the layer below
-    associated_prototypes_layer_down = []
-
-    for i in range(0, len(id_associated_prototypes_layer_down)):
-        subgroup = id_associated_prototypes_layer_down[i] // n_centroides
-        group = find_centroid_group(inheritage, grupos_capa, n_centroides, subgroup)
-        # print("Mapeo al hijo con indice ", (id_associated_prototypes_layer_down[i]), " perteneciente al grupo ", group, " de la capa ", current_layer-1)
-
-        id_associated_prototypes_layer_down[i] = id_associated_prototypes_layer_down[i] % n_centroides
-
-        prototype_layer_down = np.empty(4, dtype=object)
-        prototype_layer_down[0] = id_associated_prototypes_layer_down[i]
-        prototype_layer_down[1] = group
-
-        # If the layer below contains the actual points of tha dataset (current_layer-1 == 0), we have not more prototypes below
-        if current_layer-1 == 0:
-            prototype_layer_down[2] = None
-
-        # Otherwise, we have to obtain the coordinates of the prototypes below
-        else:
-            prototype_layer_down[2] = coords_puntos_capas[current_layer-2][prototype_layer_down[1]][prototype_layer_down[0]]
-
-        associated_prototypes_layer_down.append(prototype_layer_down)
-
-    associated_prototypes_layer_down = np.array(associated_prototypes_layer_down)
-
-    # If the centroid explored is in the last layer of the index
-    # (meaning that the prototypes below are actually dataset points)
-    if current_layer == 1:
-
-        # For each of the points below
-        for i in range(0, len(associated_prototypes_layer_down)):
-            # Obtain the ID of the point in the dataset
-            neighbour_id = n_centroides*associated_prototypes_layer_down[i][1]+associated_prototypes_layer_down[i][0]
-            neighbours.append(neighbour_id)
-
-        # Add them to the neighbours stack
-        return neighbours
-
-    else:
-
-        # Compute the distances between the query point and the associated prototypes below
-
-        # If just a single prototype is associated to the current centroid
-        if len(id_associated_prototypes_layer_down) == 1:
-
-            # No distance computation is needed because the distances to the children is indeed the distance to the parent
-
-            # Only to store the info about the distance of the associated prototype to the query point
-            associated_prototypes_layer_down[:, 3] = current_centroid_distance
-            #print("The distance to the sole bottomed prototype is: " + str(current_centroid_distance))
-
-
-        else:
-
-            # Compute the distances between the query point and the associated prototypes below
-            coordinates_bottomed_prototypes = np.vstack(associated_prototypes_layer_down[:, 2])
-            distances_bottomed_prototypes = distance.cdist(np.array(punto_buscado), coordinates_bottomed_prototypes, metric=metrica)
-            # print("The distances to the bottomed prototypes are: " + str(distances_bottomed_prototypes))
-
-            # Increment the counter of distances computed
-            #print(f"Number of distances computed {len(distances_bottomed_prototypes[0])}")
-            distances_computed.append(len(distances_bottomed_prototypes[0]))
-
-            # Store the info about the distance of each associated prototype to the query point
-            associated_prototypes_layer_down[:, 3] = distances_bottomed_prototypes
-            #print("Las distancias de los hijos son: " + str(distances_bottomed_prototypes))
-
-        # Filter the prototypes that are within the search radius
-        explorable_prototypes_indices = np.where(associated_prototypes_layer_down[:, 3] <= radio)[0]
-        explorable_prototypes = associated_prototypes_layer_down[explorable_prototypes_indices]
-        #print("Los siguientes centroides a explorar son: " + str(explorable_prototypes[:, 0]))
-
-        # For each of the prototypes that meets the search radius condition
-        for i in range(0, len(explorable_prototypes)):
-            centroid = explorable_prototypes[i]
-            centroid_layer = current_layer-1
-            centroid_inheritage = inheritage + [centroid[1]]
-            centroid_id = centroid[0]
-            centroid_coords = centroid[2]
-            centroid_distance_q = centroid[3]
-
-            # Explore it recursively
-            # explore_centroid(punto_buscado, centroid_layer, centroid_inheritage, centroid_id, coords_puntos_capas, puntos_capas, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
-            explore_centroid_optimised(punto_buscado, centroid_layer, centroid_inheritage, centroid_id, centroid_distance_q, coords_puntos_capas, puntos_capas, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
-
-
-
-def explore_centroid_newstructure(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed):
-    """
-    Explores the hierarchical tree structure to find centroids within a given radius.
-
-    This function is an optimized version of `explore_centroid_optimised` that applies the last
-    optimisation also over the last layer of the dataset.
-
-    In case that one prototype is associated but a sole prototype in the last layer (an actual point of the dataset)
-    the after distance computation is avoided, returning the id of that point and alsa its distance to the query point
 
     Parameters:
     punto_buscado : numpy.ndarray
@@ -936,4 +789,4 @@ def explore_centroid_newstructure(punto_buscado, current_layer, inheritage, curr
             centroid_distance_q = centroid[3]
 
             # Explore it recursively
-            explore_centroid_newstructure(punto_buscado, centroid_layer, centroid_inheritage, centroid_id, centroid_distance_q, coords_puntos_capas, puntos_capas, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
+            explore_centroid_optimised(punto_buscado, centroid_layer, centroid_inheritage, centroid_id, centroid_distance_q, coords_puntos_capas, puntos_capas, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)

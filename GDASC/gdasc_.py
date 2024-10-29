@@ -479,8 +479,48 @@ def knn_approximate_search(n_centroides, punto_buscado, vector_original, k_vecin
 
     return [indices_k_vecinos, coords_k_vecinos, dists_k_vecinos]
 
+
 def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vector_original, k_vecinos, metrica,
                            grupos_capa, puntos_capa, labels_capa, dimensiones, radio):
+    """
+    Performs an approximate k-nearest neighbors (A-KNN) search using a hierarchical tree structure
+    and a search radius.
+
+    It is prepared to manage the new version of explore_centroid_optimised() that may return a list of
+    candidate neighbours whose distance to the query point is known or must be computed, depending on the situation.
+
+
+    Parameters:
+    n_capas : int
+        Number of layers in the hierarchical tree.
+    n_centroides : int
+        Number of centroids in each group.
+    punto_buscado : numpy.ndarray
+        The query point for which the nearest neighbors are to be found.
+    vector_original : numpy.ndarray
+        The original dataset of points.
+    k_vecinos : int
+        Number of nearest neighbors to find.
+    metrica : str
+        The distance metric to use for calculating distances.
+    grupos_capa : list
+        Number of points in each group at each layer.
+    puntos_capa : list
+        Cluster centroids at each layer.
+    labels_capa : list
+        Labels assigned to each point at each layer.
+    dimensiones : int
+        Number of dimensions of the points.
+    radio : float
+        Search radius for the approximate search.
+
+    Returns:
+    list: A list containing three elements:
+        - numpy.ndarray: Indices of the k nearest neighbors.
+        - numpy.ndarray: Coordinates of the k nearest neighbors.
+        - numpy.ndarray: Distances to the k nearest neighbors.
+"""
+
     # Update the metric name for compatibility with scipy
     if metrica == 'manhattan':
         metrica = 'cityblock'  # scipy cdist requires 'cityblock' instead of 'manhattan'
@@ -493,43 +533,58 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
     inheritage = [0]
 
     # We take the top-layer prototypes, including its coordinates and distances to the query point
-    coordinates_top_prototypes = np.vstack(puntos_capa[n_capas - 1][:])
+    coordinates_top_prototypes = np.vstack(puntos_capa[n_capas-1][:])
     distances_top_prototypes = distance.cdist(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
+    distances_computed = [len(distances_top_prototypes)]
 
     # We would only explore those prototypes which meets the condition / are within a radius (dist<radius)
     explorable_prototypes = np.where(distances_top_prototypes <= radio)[0]
 
     # We search for every neighbour by exploring each top-layer prototype that meets the radius condition recursively
     neighbours = []
-    distances_computed = [len(distances_top_prototypes)]
     for prototype_id in explorable_prototypes:
         prototype_distance = distances_top_prototypes[prototype_id]
-        #explore_centroid(punto_buscado, n_capas, inheritage, prototype_id, puntos_capa, labels_capa, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
+        #explore_centroid_optimised(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
         explore_centroid_optimised(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
-
     # Once the complete index has been explored:
     # Get the number of total distances computed
     distances_computed = sum(distances_computed)
 
+    # print(neighbours)
+
     # If no neighbours have been found:
-    if np.array(neighbours).size == 0:
+    if not neighbours:
 
         #print("No neighbours have been found for this query point")
 
         # Pad the array of close points with None objects until it reaches the size of k neighbors
         # To avoid index out of bounds error
-        return [np.empty(k_vecinos, dtype=int), np.empty([k_vecinos, vector_original.shape[1]], dtype=float),
-                np.empty(k_vecinos, dtype=float)], distances_computed
+        return [np.empty(k_vecinos, dtype=int), np.empty([k_vecinos, vector_original.shape[1]], dtype=float), np.empty(k_vecinos, dtype=float)], distances_computed
 
 
     # If any neighbour have been found:
     else:
 
+        neighbours_with_d = [n for n in neighbours if isinstance(n, tuple)]
+
+        # Separate tuple\_neighbours into two sublists: one for the first coordinates and one for the second coordinates
+        id_neighbours_with_d = [n[0] for n in neighbours_with_d]
+        distances_neighbours_with_d = [n[1] for n in neighbours_with_d]
+
+        id_neighbours_without_d = [n for n in neighbours if not isinstance(n, tuple)]
+
         # We obtain its indices, coordinates and distances
-        neighbours_ids = np.array(neighbours)
-        neighbours_coords = vector_original[neighbours_ids]
-        neighbours_dists = distance.cdist(np.array(punto_buscado), neighbours_coords, metric=metrica)[0]
-        distances_computed = distances_computed + (len(neighbours_dists))
+        coords_neighbours_with_d = vector_original[id_neighbours_with_d]
+        coords_neighbours_without_d = vector_original[id_neighbours_without_d]
+        #print(id_neighbours_with_d)
+        distances_neighbours_without_d = distance.cdist(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
+        distances_computed += len(distances_neighbours_without_d)
+
+        #Print the number of elements in distances_neighbours_without_d and
+        #print(f"{len(distances_neighbours_with_d)} distances have been found and {len(distances_neighbours_without_d)} have been computed")
+        neighbours_ids = np.concatenate((id_neighbours_with_d, id_neighbours_without_d))
+        neighbours_coords = np.concatenate((coords_neighbours_with_d, coords_neighbours_without_d))
+        neighbours_dists = np.concatenate((distances_neighbours_with_d, distances_neighbours_without_d))
 
         # And we store them together into a single structure
         neighbours = np.empty((len(neighbours), 3), object)
@@ -566,7 +621,7 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
         # And return the results
         return [indices_k_vecinos, coords_k_vecinos, dists_k_vecinos], distances_computed
 
-
+# On development
 def create_tree_newstructure(cant_ptos, tam_grupo, n_centroides, metrica, vector_original, dimensiones, algorithm, implementation):
     """
     Constructs a hierarchical tree structure using clustering algorithms.
@@ -743,142 +798,3 @@ def create_tree_newstructure(cant_ptos, tam_grupo, n_centroides, metrica, vector
     logger.info('tree time=%s seconds', end_time_constr - start_time_constr)
 
     return n_capas, grupos_capa, puntos_capa, labels_capa
-
-# On development
-def recursive_approximate_knn_search_newstructure(n_capas, n_centroides, punto_buscado, vector_original, k_vecinos, metrica,
-                           grupos_capa, puntos_capa, labels_capa, dimensiones, radio):
-    """
-    Performs an approximate k-nearest neighbors (A-KNN) search using a hierarchical tree structure
-    and a search radius.
-
-    Parameters:
-    n_capas : int
-        Number of layers in the hierarchical tree.
-    n_centroides : int
-        Number of centroids in each group.
-    punto_buscado : numpy.ndarray
-        The query point for which the nearest neighbors are to be found.
-    vector_original : numpy.ndarray
-        The original dataset of points.
-    k_vecinos : int
-        Number of nearest neighbors to find.
-    metrica : str
-        The distance metric to use for calculating distances.
-    grupos_capa : list
-        Number of points in each group at each layer.
-    puntos_capa : list
-        Cluster centroids at each layer.
-    labels_capa : list
-        Labels assigned to each point at each layer.
-    dimensiones : int
-        Number of dimensions of the points.
-    radio : float
-        Search radius for the approximate search.
-
-    Returns:
-    list: A list containing three elements:
-        - numpy.ndarray: Indices of the k nearest neighbors.
-        - numpy.ndarray: Coordinates of the k nearest neighbors.
-        - numpy.ndarray: Distances to the k nearest neighbors.
-"""
-
-    # Update the metric name for compatibility with scipy
-    if metrica == 'manhattan':
-        metrica = 'cityblock'  # scipy cdist requires 'cityblock' instead of 'manhattan'
-
-    # Establish the query point
-    # print("El punto de query es: ", punto_buscado)
-    punto_buscado = np.reshape(punto_buscado, (1, dimensiones))
-
-    # (At the first level, current layer=n_capas-1 and current_group = grupos_capa[n_layer].size[0]-1 = 0)
-    inheritage = [0]
-
-    # We take the top-layer prototypes, including its coordinates and distances to the query point
-    coordinates_top_prototypes = np.vstack(puntos_capa[n_capas-1][:])
-    distances_top_prototypes = distance.cdist(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
-    distances_computed = [len(distances_top_prototypes)]
-
-    # We would only explore those prototypes which meets the condition / are within a radius (dist<radius)
-    explorable_prototypes = np.where(distances_top_prototypes <= radio)[0]
-
-    # We search for every neighbour by exploring each top-layer prototype that meets the radius condition recursively
-    neighbours = []
-    for prototype_id in explorable_prototypes:
-        prototype_distance = distances_top_prototypes[prototype_id]
-        #explore_centroid_optimised(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
-        explore_centroid_newstructure(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
-    # Once the complete index has been explored:
-    # Get the number of total distances computed
-    distances_computed = sum(distances_computed)
-
-    # print(neighbours)
-
-    # If no neighbours have been found:
-    if not neighbours:
-
-        #print("No neighbours have been found for this query point")
-
-        # Pad the array of close points with None objects until it reaches the size of k neighbors
-        # To avoid index out of bounds error
-        return [np.empty(k_vecinos, dtype=int), np.empty([k_vecinos, vector_original.shape[1]], dtype=float), np.empty(k_vecinos, dtype=float)], distances_computed
-
-
-    # If any neighbour have been found:
-    else:
-
-        neighbours_with_d = [n for n in neighbours if isinstance(n, tuple)]
-
-        # Separate tuple\_neighbours into two sublists: one for the first coordinates and one for the second coordinates
-        id_neighbours_with_d = [n[0] for n in neighbours_with_d]
-        distances_neighbours_with_d = [n[1] for n in neighbours_with_d]
-
-        id_neighbours_without_d = [n for n in neighbours if not isinstance(n, tuple)]
-
-        # We obtain its indices, coordinates and distances
-        coords_neighbours_with_d = vector_original[id_neighbours_with_d]
-        coords_neighbours_without_d = vector_original[id_neighbours_without_d]
-        #print(id_neighbours_with_d)
-        distances_neighbours_without_d = distance.cdist(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
-        distances_computed += len(distances_neighbours_without_d)
-
-        #Print the number of elements in distances_neighbours_without_d and
-        #print(f"{len(distances_neighbours_with_d)} distances have been found and {len(distances_neighbours_without_d)} have been computed")
-        neighbours_ids = np.concatenate((id_neighbours_with_d, id_neighbours_without_d))
-        neighbours_coords = np.concatenate((coords_neighbours_with_d, coords_neighbours_without_d))
-        neighbours_dists = np.concatenate((distances_neighbours_with_d, distances_neighbours_without_d))
-
-        # And we store them together into a single structure
-        neighbours = np.empty((len(neighbours), 3), object)
-        for i in range(len(neighbours)):
-            neighbours[i][0] = neighbours_ids[i]
-            neighbours[i][1] = neighbours_coords[i]
-            neighbours[i][2] = neighbours_dists[i]
-
-        neighbours = np.vstack(neighbours)
-        #print(f"Se han encontrado {neighbours.shape[0]} vecinos")
-
-        # Sort them according to their distance to the query point
-        sorted_neighbours = neighbours[neighbours[:, 2].argsort()]
-
-        # Create the structures to store the data related to the neighbors
-        indices_k_vecinos = np.empty(k_vecinos, dtype=int)
-        coords_k_vecinos = np.empty([k_vecinos, vector_original.shape[1]], dtype=float)
-        dists_k_vecinos = np.empty(k_vecinos, dtype=float)
-
-        # Select the minimum value between k_vecinos and the number of neighbours founded
-        minimum = min(k_vecinos, sorted_neighbours.shape[0])
-
-        # Select the k closest points as neighbors
-        for i in range(minimum):
-            indices_k_vecinos[i] = sorted_neighbours[i][0]
-            coords_k_vecinos[i, :] = sorted_neighbours[i][1]
-            dists_k_vecinos[i] = sorted_neighbours[i][2]
-
-        # Print them
-        #print(f"The neighbours are: {indices_k_vecinos} with distances {dists_k_vecinos}")
-
-        #print("The search process computes ", distances_computed, " distances")
-
-        # And return the results
-        return [indices_k_vecinos, coords_k_vecinos, dists_k_vecinos], distances_computed
-
