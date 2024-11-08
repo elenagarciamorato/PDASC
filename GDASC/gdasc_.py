@@ -1,3 +1,5 @@
+from copy import deepcopy, copy
+
 import numpy as np
 import pandas
 from sklearn import preprocessing
@@ -5,6 +7,7 @@ from timeit import default_timer as timer
 import logging
 from scipy.spatial import distance
 from GDASC.utils import *
+from sys import getsizeof
 
 # Clustering methods to be used: k-means, k-medoids
 import sklearn.cluster  # k-means sklearn implementation
@@ -15,23 +18,19 @@ import kmedoids as fast_kmedoids  # k-medoids fast_k-medoids (PAM) implementatio
 logger = logging.getLogger(__name__)
 
 
-def create_tree(cant_ptos, tam_grupo, n_centroides, metrica, vector_original, dimensiones, algorithm, implementation):
+def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, implementation):
     """
     Constructs a hierarchical tree structure using clustering algorithms.
 
     Parameters:
-    cant_ptos : int
-            Total number of points.
+    vector_original : np.array
+            Original data points.
     tam_grupo : int
             Size of the group to be clustered with centroids.
     n_centroides : int
             Number of centroids to be used in each clustering.
-    metrica   : str
-            Metric to be used for distance calculation in clustering.
-    vector_original : np.array
-            Original data points.
-    dimensiones   : int
-            Dimensionality of the data points.
+    metric   : str
+            Distance function to be used for distance calculation in clustering.
     algorithm : str
             Clustering algorithm to be used ('kmedoids' or 'kmeans').
     implementation : str
@@ -39,7 +38,7 @@ def create_tree(cant_ptos, tam_grupo, n_centroides, metrica, vector_original, di
 
     Returns:
     tuple: A tuple containing:
-        - n_capas  : int
+        - n_layers  : int
                 Number of layers in the hierarchical tree.
         - grupos_capa : list
                 Group structure for each layer.
@@ -47,53 +46,82 @@ def create_tree(cant_ptos, tam_grupo, n_centroides, metrica, vector_original, di
                 Centroids for each group in each layer.
         - labels_capa : list
                 Labels assigned to each point in each group for each layer.
+
+    Note:
+        To avoid future redundant distance computations, the structures are improved to contain nan values in the place of duplicated points.
     """
 
     normaliza = False
 
-    # Inicio del proceso iterativo de construcción-deconstrucción.
+    # Starts the iterative process of construction-deconstruction of the index
     start_time_constr = timer()
 
     vector = vector_original
     if normaliza:
         vector = preprocessing.normalize(vector, axis=0, norm='l2')
 
-    n_capas = calculate_numcapas(cant_ptos, tam_grupo, n_centroides)
-    puntos_capa, labels_capa, grupos_capa = built_estructuras_capa(cant_ptos, tam_grupo, n_centroides, n_capas,
-                                                                   dimensiones)
+    vector_length = vector_original.shape[0]
+    vector_dimensionality = vector_original.shape[1]
+    n_layers = calculate_numcapas(vector_length, tam_grupo, n_centroides)
+    puntos_capa, labels_capa, grupos_capa, promoted_points = built_estructuras_capa_new(vector_length, tam_grupo,
+                                                                                        n_centroides, n_layers,
+                                                                                        vector_dimensionality)
+    simplified_puntos_capa = copy(puntos_capa)
+    duplicates = 0
 
-    # Proceso iterativo para aplicar el algortimo de clustering seleccionado:
-    for id_capa in range(n_capas):
-        ngrupos = len(grupos_capa[id_capa])
+    # Iterative process to apply the clustering algorithm to each layer
+    for id_layer in range(n_layers):
+        ngrupos = len(grupos_capa[id_layer])
         inicio = 0
-        # puntos_grupo y labels_grupo ahora van a ser un np.array de tres dimensiones y los calculo
-        # cuando calculo el número de grupos
-        cont_ptos = 0  # Contador de los puntos en cada capa
-        npuntos = np.zeros(ngrupos, dtype=int)
-        for id_grupo in range(ngrupos):
+        cont_ptos = 0  # Counts numer of points of each layer
+        n_points = np.zeros(ngrupos, dtype=int)
+
+        for id_group in range(ngrupos):
             fin = inicio + tam_grupo
-            # Control del último grupo (no tiene cantidad de puntos suficientes para formar
-            # grupo
-            if fin > cant_ptos:
-                fin = cant_ptos
-            npuntos[id_grupo] = fin - inicio
+
+            # We control that the last group has the correct number of points
+            if fin > vector_length:
+                fin = vector_length
+            n_points[id_group] = fin - inicio
+
             if ((fin - inicio) >= n_centroides):
                 if algorithm == 'kmedoids':
 
                     if implementation == 'sklearnextra':
 
-                        kmedoids = sklearn_extra.cluster.KMedoids(n_clusters=n_centroides, method='pam',
-                                                                  metric=metrica).fit(vector[inicio:fin])
-                        puntos_capa[id_capa][id_grupo] = kmedoids.cluster_centers_
-                        labels_capa[id_capa][id_grupo] = kmedoids.labels_
+                        print(f'implementation {algorithm} {implementation}')
 
 
                     elif implementation == 'fastkmedoids':
 
                         kmedoids = fast_kmedoids.KMedoids(n_clusters=n_centroides, method='fasterpam',
-                                                          metric=metrica).fit(vector[inicio:fin])
-                        puntos_capa[id_capa][id_grupo] = kmedoids.cluster_centers_
-                        labels_capa[id_capa][id_grupo] = kmedoids.labels_
+                                                          metric=metric).fit(vector[inicio:fin])
+
+                        # print(f"cluster_centers {kmedoids.cluster_centers_}")  # coordenadas de los (nc=35) puntos que promocionan como medoides
+                        # print(f"indices {kmedoids.medoid_indices_}")  # indices de los (nc=35) puntos que promocionan como medoides
+                        # print(f"labels {kmedoids.labels_}")  # medoide al que se asociará cada uno de los tg=70 puntos en el nivel superior (cluster)
+
+                        labels_capa[id_layer][id_group] = kmedoids.labels_
+
+                        puntos_capa[id_layer][id_group] = kmedoids.cluster_centers_
+                        simplified_puntos_capa[id_layer][id_group] = puntos_capa[id_layer][id_group]
+
+                        prototype_points = kmedoids.medoid_indices_
+
+                        # For the first layer, we store the promoted real points in an auxiliar structure
+                        if id_layer == 0:
+                            promoted_points[id_group] = np.full(fin - inicio, False, dtype=bool)
+                            promoted_points[id_group][prototype_points] = True
+
+                        # For the intermediate layers, we set to NaN the corresponding point in the lower layer
+                        elif 0 < id_layer < n_layers:
+
+                            # For every point that has been promoted as prototype, we set to NaN the corresponding point in the lower layer
+                            for i in prototype_points:
+                                id_lower_group = id_group * 2 + (i >= n_centroides)
+                                element = int(i % n_centroides)
+                                simplified_puntos_capa[id_layer - 1][id_lower_group][element] = np.nan
+                                duplicates += 1
 
                     cont_ptos += n_centroides
 
@@ -101,67 +129,96 @@ def create_tree(cant_ptos, tam_grupo, n_centroides, metrica, vector_original, di
 
                     if implementation == 'sklearn':
 
-                        # Sklearn's Kmeans method uses as default kmeans++ to initialice centroids, Elkan's algoritm
-                        # and euclidean distance (non editable)
-                        print("En desuso")
+                        print(f'implementation {algorithm} {implementation}')
 
                     elif implementation == 'kclust':
 
-                        # THE ALGORITHMS
-                        # This alternative Kmeans implementation uses sklearn.metrics.pairwise_distances(x,centroids,metric'euclidean')
-                        # to associate each point with its closer centroid (this sklearn method cant be used with large
-                        # datasets as GLOVE). This function can be parametrized with different distance metrics, by default
-                        # it uses euclidean distance (EDITABLE ON kmeans_kclust.py). It takes as arg the initial centroids Unlike it does kmeans++
-                        # that can be generated randomly using a function provided on the same script or in a customized way
-                        # (we can choose to generate them using kmeans++ but WARNING it may use euclidean distance as default)
-
-                        # Generate initial centers using function provided by k_means_clust
-                        initial_centers_kclust = kmeans_kclust.get_initial_centroids(data=vector[inicio:fin],
-                                                                                     k=n_centroides).tolist()
-                        initial_centers = list([np.array(x) for x in initial_centers_kclust])
-
-                        # Generate centroids and clusters using kmeans implementation provided by k_means_clust
-                        kmeans = kmeans_kclust.kmeans(data=vector[inicio:fin], k=n_centroides,
-                                                      initial_centroids=initial_centers, metric=metrica)
-                        puntos_capa[id_capa][id_grupo] = kmeans[0]
-                        labels_capa[id_capa][id_grupo] = kmeans[1]
-
-                    cont_ptos += n_centroides
+                        print(f'implementation {algorithm} {implementation}')
 
 
-                else:  # En principio, nunca se accede
+                else:  # Never accessed
 
-                    print("Es necesario añadir un algoritmo de clustering valido")
+                    print("A valid clustering algorithm is needed")
 
+            # If the group has less points than centroids
             else:
 
-                puntos_capa[id_capa][id_grupo] = np.array(vector[inicio:fin])
-                # siguiente capa para cada grupo
+                # We store the points in the group as they are
+                puntos_capa[id_layer][id_group] = np.array(vector[inicio:fin])
+
+                # Next layer for each group
                 cont_ptos = cont_ptos + (fin - inicio)
                 etiquetas = []
                 for i in range((fin - inicio)):
                     etiquetas.append(i)
 
-                labels_capa[id_capa][id_grupo] = np.array(etiquetas)
+                labels_capa[id_layer][id_group] = np.array(etiquetas)
+                prototype_points = list(range(fin - inicio))
+
+                # The same process is done in order to simplify the structure
+                # For the first layer, we store the promoted real points in an auxiliar structure
+                if id_layer == 0:
+                    promoted_points[id_group] = np.full(fin - inicio, False, dtype=bool)
+                    promoted_points[id_group][prototype_points] = True
+
+                # For the intermediate layers, we set to NaN the corresponding point in the lower layer
+                elif 0 < id_layer < n_layers:
+
+                    # For every point that has been promoted as prototype, we set to NaN the corresponding point in the lower layer
+                    for i in prototype_points:
+                        id_lower_group = id_group * 2 + (i >= n_centroides)
+                        element = int(i % n_centroides)
+                        simplified_puntos_capa[id_layer - 1][id_lower_group][element] = np.nan
+                        duplicates += 1
 
             inicio = fin
 
-        grupos_capa[id_capa] = npuntos
+        grupos_capa[id_layer] = n_points
 
-        # Guardamos los centroides de la capa para poder hacer el proceso inverso
-        vector = puntos_capa[id_capa]
+        # We store the centroids of the layer to be able to do the inverse process
+        vector = puntos_capa[id_layer]
         vector = np.concatenate(vector).ravel().tolist()
         vector = np.array(vector)
-        vector = vector.reshape(cont_ptos, dimensiones)
+        vector = vector.reshape(cont_ptos, vector_dimensionality)
 
-        # Calculamos el numero de grupos de la siguiente capa
-        cant_ptos = cont_ptos  # Actualizamos cant_ptos con el número de puntos del siguiente nivel
+        # Calculate the number of groups for the next layer
+        vector_length = cont_ptos  # Actualizamos vector_length con el número de puntos del siguiente nivel
+
+    '''## Funciona pero solo detecta 139 coincidencias
+
+    print(promoted_points)
+    simplified_puntos_capa = copy(puntos_capa)
+
+    duplicates = 0
+    for capa in range(len(grupos_capa) - 2, -1, - 1):
+        for grupo in range(len(grupos_capa[capa])):
+            tam_grupo = len(puntos_capa[capa][grupo])
+            tam_grupo_padre = len(puntos_capa[capa+1][grupo//2])
+            #print(f'Visiting group {grupo} of layer {capa} with {tam_grupo} elements')
+            #print(tam_grupo)
+
+            for i in range(tam_grupo):
+                #print(f'Checking element {i} of group {grupo} of layer {capa}')
+                #print(len(puntos_capa[capa+1][grupo//2]))
+                for j in range(tam_grupo_padre):
+                    if np.array_equal(puntos_capa[capa][grupo][i], puntos_capa[capa+1][grupo//2][j]) and ((labels_capa[capa+1][grupo//2][i] == j)) : # Hay que revisar esta ultima , no se si es correcta (revisar incluir esta parte en la construcción)
+                        #print(f'Element {i} of group {grupo} of layer {capa} is the same as element {j} of group {grupo//2} of layer {capa+1}')
+                        duplicates = duplicates + 1
+                        simplified_puntos_capa[capa][grupo][i] = np.nan
+                        #print(simplified_puntos_capa[capa][grupo][i])
+                    else:
+                        simplified_puntos_capa[capa][grupo][i] = puntos_capa[capa][grupo][i]
+                        #print(f'Group {grupo} of layer {capa} has {duplicates} duplicated elements')
+    '''
+
+    # Print the number of elements that have been substituted by NaN
+    # print(f'Duplicates found = {duplicates}')
 
     end_time_constr = timer()
 
     logger.info('tree time=%s seconds', end_time_constr - start_time_constr)
 
-    return n_capas, grupos_capa, puntos_capa, labels_capa
+    return n_layers, grupos_capa, simplified_puntos_capa, labels_capa, promoted_points
 
 
 def knn_search(n_capas, n_centroides, seq_buscada, vector_original, vecinos, centroides_examinados,
@@ -481,7 +538,7 @@ def knn_approximate_search(n_centroides, punto_buscado, vector_original, k_vecin
 
 
 def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vector_original, k_vecinos, metrica,
-                           grupos_capa, puntos_capa, labels_capa, dimensiones, radio):
+                           grupos_capa, puntos_capa, labels_capa, promoted_points, radio):
     """
     Performs an approximate k-nearest neighbors (A-KNN) search using a hierarchical tree structure
     and a search radius.
@@ -509,8 +566,6 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
         Cluster centroids at each layer.
     labels_capa : list
         Labels assigned to each point at each layer.
-    dimensiones : int
-        Number of dimensions of the points.
     radio : float
         Search radius for the approximate search.
 
@@ -527,7 +582,7 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
 
     # Establish the query point
     # print("El punto de query es: ", punto_buscado)
-    punto_buscado = np.reshape(punto_buscado, (1, dimensiones))
+    punto_buscado = np.reshape(punto_buscado, (1, vector_original.shape[1]))
 
     # (At the first level, current layer=n_capas-1 and current_group = grupos_capa[n_layer].size[0]-1 = 0)
     inheritage = [0]
@@ -535,20 +590,22 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
     # We take the top-layer prototypes, including its coordinates and distances to the query point
     coordinates_top_prototypes = np.vstack(puntos_capa[n_capas-1][:])
     distances_top_prototypes = distance.cdist(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
-    distances_computed = [len(distances_top_prototypes)]
+
+    # We store the distances computed on the distances_computed lists
+    distances_computed = distances_top_prototypes.tolist()
 
     # We would only explore those prototypes which meets the condition / are within a radius (dist<radius)
     explorable_prototypes = np.where(distances_top_prototypes <= radio)[0]
 
     # We search for every neighbour by exploring each top-layer prototype that meets the radius condition recursively
     neighbours = []
+
     for prototype_id in explorable_prototypes:
         prototype_distance = distances_top_prototypes[prototype_id]
-        #explore_centroid_optimised(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
-        explore_centroid_optimised(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
+        explore_centroid_optimised(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, radio, neighbours, distances_computed)
+
     # Once the complete index has been explored:
     # Get the number of total distances computed
-    distances_computed = sum(distances_computed)
 
     # print(neighbours)
 
@@ -559,34 +616,44 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
 
         # Pad the array of close points with None objects until it reaches the size of k neighbors
         # To avoid index out of bounds error
-        return [np.empty(k_vecinos, dtype=int), np.empty([k_vecinos, vector_original.shape[1]], dtype=float), np.empty(k_vecinos, dtype=float)], distances_computed
-
+        return [np.empty(k_vecinos, dtype=int), np.empty([k_vecinos, vector_original.shape[1]], dtype=float), np.empty(k_vecinos, dtype=float)], len(distances_computed)
 
     # If any neighbour have been found:
     else:
 
-        neighbours_with_d = [n for n in neighbours if isinstance(n, tuple)]
+        # print(f'{len(neighbours)} neighbours have been found for this query point')
 
-        # Separate tuple\_neighbours into two sublists: one for the first coordinates and one for the second coordinates
+        # The neighbours whose distance is already computed are those which are stored as tuples
+        neighbours_with_d = [n for n in neighbours if isinstance(n, tuple)]
+        # print(f'There are {len(neighbours_with_d)} which distance is already computed')
+
+        # Separate tuple\_neighbours into two sublists: one for the ids and one for the distances to the query point
         id_neighbours_with_d = [n[0] for n in neighbours_with_d]
         distances_neighbours_with_d = [n[1] for n in neighbours_with_d]
 
-        id_neighbours_without_d = [n for n in neighbours if not isinstance(n, tuple)]
-
-        # We obtain its indices, coordinates and distances
+        # By acceding the original dataset, we obtain its coordinates
         coords_neighbours_with_d = vector_original[id_neighbours_with_d]
-        coords_neighbours_without_d = vector_original[id_neighbours_without_d]
-        #print(id_neighbours_with_d)
-        distances_neighbours_without_d = distance.cdist(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
-        distances_computed += len(distances_neighbours_without_d)
 
-        #Print the number of elements in distances_neighbours_without_d and
-        #print(f"{len(distances_neighbours_with_d)} distances have been found and {len(distances_neighbours_without_d)} have been computed")
+        # For control, print the distances already computed
+        # print(f'The distances computed until now are {len(distances_computed)}')
+
+        # The neighbours whose distance is not computed yet are those which are not tuples
+        id_neighbours_without_d = [n for n in neighbours if not isinstance(n, tuple)]
+        # print(f'There are {len(id_neighbours_without_d)} which distance is not computed yet')
+
+        # By acceding the original dataset, we obtain its coordinates and compute its distances to the query point
+        coords_neighbours_without_d = vector_original[id_neighbours_without_d]
+        distances_neighbours_without_d = distance.cdist(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
+
+        # And add the distances computed on the distances_computed list
+        distances_computed.extend(distances_neighbours_without_d.tolist())
+
+        # We concatenate the neighbours whose distance is already computed and the neighbours whose distance is not computed yet
         neighbours_ids = np.concatenate((id_neighbours_with_d, id_neighbours_without_d))
         neighbours_coords = np.concatenate((coords_neighbours_with_d, coords_neighbours_without_d))
         neighbours_dists = np.concatenate((distances_neighbours_with_d, distances_neighbours_without_d))
 
-        # And we store them together into a single structure
+        # And we store the info about each neighbour together into a single structure
         neighbours = np.empty((len(neighbours), 3), object)
         for i in range(len(neighbours)):
             neighbours[i][0] = neighbours_ids[i]
@@ -594,15 +661,16 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
             neighbours[i][2] = neighbours_dists[i]
 
         neighbours = np.vstack(neighbours)
-        #print(f"Se han encontrado {neighbours.shape[0]} vecinos")
 
-        # Sort them according to their distance to the query point
-        sorted_neighbours = neighbours[neighbours[:, 2].argsort()]
+        # To be able to find the k nearest
 
         # Create the structures to store the data related to the neighbors
         indices_k_vecinos = np.empty(k_vecinos, dtype=int)
         coords_k_vecinos = np.empty([k_vecinos, vector_original.shape[1]], dtype=float)
         dists_k_vecinos = np.empty(k_vecinos, dtype=float)
+
+        # Sort them according to their distance to the query point
+        sorted_neighbours = neighbours[neighbours[:, 2].argsort()]
 
         # Select the minimum value between k_vecinos and the number of neighbours founded
         minimum = min(k_vecinos, sorted_neighbours.shape[0])
@@ -614,187 +682,8 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
             dists_k_vecinos[i] = sorted_neighbours[i][2]
 
         # Print them
-        #print(f"The neighbours are: {indices_k_vecinos} with distances {dists_k_vecinos}")
-
-        #print("The search process computes ", distances_computed, " distances")
+        # print(f"The neighbours are: {indices_k_vecinos} with distances {dists_k_vecinos}")
 
         # And return the results
-        return [indices_k_vecinos, coords_k_vecinos, dists_k_vecinos], distances_computed
-
-# On development
-def create_tree_newstructure(cant_ptos, tam_grupo, n_centroides, metrica, vector_original, dimensiones, algorithm, implementation):
-    """
-    Constructs a hierarchical tree structure using clustering algorithms.
-
-    Parameters:
-    cant_ptos : int
-            Total number of points.
-    tam_grupo : int
-            Size of the group to be clustered with centroids.
-    n_centroides : int
-            Number of centroids to be used in each clustering.
-    metrica   : str
-            Metric to be used for distance calculation in clustering.
-    vector_original : np.array
-            Original data points.
-    dimensiones   : int
-            Dimensionality of the data points.
-    algorithm : str
-            Clustering algorithm to be used ('kmedoids' or 'kmeans').
-    implementation : str
-            Specific implementation of the clustering algorithm to use.
-
-    Returns:
-    tuple: A tuple containing:
-        - n_capas  : int
-                Number of layers in the hierarchical tree.
-        - grupos_capa : list
-                Group structure for each layer.
-        - puntos_capa : list
-                Centroids for each group in each layer.
-        - labels_capa : list
-                Labels assigned to each point in each group for each layer.
-    """
-
-    normaliza = False
-
-    # Inicio del proceso iterativo de construcción-deconstrucción.
-    start_time_constr = timer()
-
-    vector = vector_original
-    if normaliza:
-        vector = preprocessing.normalize(vector, axis=0, norm='l2')
-
-    n_capas = calculate_numcapas(cant_ptos, tam_grupo, n_centroides)
-    puntos_capa, labels_capa, grupos_capa = built_estructuras_capa(cant_ptos, tam_grupo, n_centroides, n_capas,
-                                                                   dimensiones)
-
-    # Proceso iterativo para aplicar el algortimo de clustering seleccionado:
-    for id_capa in range(n_capas):
-        ngrupos = len(grupos_capa[id_capa])
-        inicio = 0
-        # puntos_grupo y labels_grupo ahora van a ser un np.array de tres dimensiones y los calculo
-        # cuando calculo el número de grupos
-        cont_ptos = 0  # Contador de los puntos en cada capa
-        npuntos = np.zeros(ngrupos, dtype=int)
-        for id_grupo in range(ngrupos):
-            fin = inicio + tam_grupo
-            # Control del último grupo (no tiene cantidad de puntos suficientes para formar
-            # grupo
-            if fin > cant_ptos:
-                fin = cant_ptos
-            npuntos[id_grupo] = fin - inicio
-            if ((fin - inicio) >= n_centroides):
-                if algorithm == 'kmedoids':
-
-                    if implementation == 'sklearnextra':
-
-                        kmedoids = sklearn_extra.cluster.KMedoids(n_clusters=n_centroides, method='pam',
-                                                                  metric=metrica).fit(vector[inicio:fin])
-                        puntos_capa[id_capa][id_grupo] = kmedoids.cluster_centers_
-                        labels_capa[id_capa][id_grupo] = kmedoids.labels_
-
-
-                    elif implementation == 'fastkmedoids':
-
-                        kmedoids = fast_kmedoids.KMedoids(n_clusters=n_centroides, method='fasterpam',
-                                                          metric=metrica).fit(vector[inicio:fin])
-                        # puntos_capa[id_capa][id_grupo] = kmedoids.cluster_centers_
-                        # labels_capa[id_capa][id_grupo] = kmedoids.labels_
-
-                        print(f"cluster_centers {kmedoids.cluster_centers_}")  # coordenadas de los (nc=35) puntos que promocionan como medoides
-                        print(f"indices {kmedoids.medoid_indices_}")  # indices de los (nc=35) puntos que promocionan como medoides
-                        print(f"labels {kmedoids.labels_}")  # medoide al que se asociará cada uno de los tg=70 puntos en el nivel superior (cluster)
-
-                        # Take the elements in kmedoids.labels_ that only appear once
-                        # unique_labels = [i for i in kmedoids.labels_ if list(kmedoids.labels_).count(i) == 1]
-                        # print(f'Puntos que solo se mapean a ellos mismos = {unique_labels}')
-
-                        #puntos_capa[id_capa][id_grupo] = kmedoids.cluster_centers_
-                        labels_capa[id_capa][id_grupo] = kmedoids.labels_
-
-                        # To change indexes id
-                        #aux = []
-                        #for i in range(len(kmedoids.labels_)):
-                            # aux.append((kmedoids.labels_[i],kmedoids.medoid_indices_[kmedoids.labels_[i]]))
-
-                        #print(aux)
-                        #labels_capa[id_capa][id_grupo] = aux
-
-                        if id_capa == 0:
-                            # for each element in kmedoids.medoid_indices_, get is global id by applying the formula
-                            aux = id_grupo * tam_grupo + kmedoids.medoid_indices_
-                            puntos_capa[id_capa][id_grupo] = vector[aux]
-                            print(f'Puntos de la capa 0 = {puntos_capa[id_capa][id_grupo]}')
-                        else:
-                            # for each element in kmedoids.medoid_indices_, get is global id by applying the formula
-                            puntos_capa[id_capa][id_grupo] = puntos_capa[id_capa-1][int(id_grupo%2)]
-
-
-                    cont_ptos += n_centroides
-
-                elif algorithm == 'kmeans':
-
-                    if implementation == 'sklearn':
-
-                        # Sklearn's Kmeans method uses as default kmeans++ to initialice centroids, Elkan's algoritm
-                        # and euclidean distance (non editable)
-                        print("Deprecated")
-
-                    elif implementation == 'kclust':
-
-                        # THE ALGORITHMS
-                        # This alternative Kmeans implementation uses sklearn.metrics.pairwise_distances(x,centroids,metric'euclidean')
-                        # to associate each point with its closer centroid (this sklearn method cant be used with large
-                        # datasets as GLOVE). This function can be parametrized with different distance metrics, by default
-                        # it uses euclidean distance (EDITABLE ON kmeans_kclust.py). It takes as arg the initial centroids Unlike it does kmeans++
-                        # that can be generated randomly using a function provided on the same script or in a customized way
-                        # (we can choose to generate them using kmeans++ but WARNING it may use euclidean distance as default)
-
-                        # Generate initial centers using function provided by k_means_clust
-                        initial_centers_kclust = kmeans_kclust.get_initial_centroids(data=vector[inicio:fin],
-                                                                                     k=n_centroides).tolist()
-                        initial_centers = list([np.array(x) for x in initial_centers_kclust])
-
-                        # Generate centroids and clusters using kmeans implementation provided by k_means_clust
-                        kmeans = kmeans_kclust.kmeans(data=vector[inicio:fin], k=n_centroides,
-                                                      initial_centroids=initial_centers, metric=metrica)
-                        puntos_capa[id_capa][id_grupo] = kmeans[0]
-                        labels_capa[id_capa][id_grupo] = kmeans[1]
-
-                    cont_ptos += n_centroides
-
-
-                else:  # En principio, nunca se accede
-
-                    print("A valid clustering algorithm is needed")
-
-            else:
-
-                puntos_capa[id_capa][id_grupo] = np.array(vector[inicio:fin])
-                # siguiente capa para cada grupo
-                cont_ptos = cont_ptos + (fin - inicio)
-                etiquetas = []
-                for i in range((fin - inicio)):
-                    etiquetas.append(i)
-
-                labels_capa[id_capa][id_grupo] = np.array(etiquetas)
-
-            inicio = fin
-
-        grupos_capa[id_capa] = npuntos
-
-        # Guardamos los centroides de la capa para poder hacer el proceso inverso
-        vector = puntos_capa[id_capa]
-        vector = np.concatenate(vector).ravel().tolist()
-        vector = np.array(vector)
-        vector = vector.reshape(cont_ptos, dimensiones)
-
-        # Calculamos el numero de grupos de la siguiente capa
-        cant_ptos = cont_ptos  # Actualizamos cant_ptos con el número de puntos del siguiente nivel
-
-    end_time_constr = timer()
-
-    logger.info('tree time=%s seconds', end_time_constr - start_time_constr)
-
-    return n_capas, grupos_capa, puntos_capa, labels_capa
+        # print(f"The search process computes a total of {len(distances_computed)} distances")
+        return [indices_k_vecinos, coords_k_vecinos, dists_k_vecinos], len(distances_computed)

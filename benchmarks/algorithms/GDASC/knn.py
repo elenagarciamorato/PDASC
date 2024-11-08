@@ -2,6 +2,7 @@ import GDASC.gdasc_ as gdasc
 from timeit import default_timer as timer
 import data.load_train_test_set as lts
 from benchmarks.neighbors_utils import *
+from sys import getsizeof
 
 
 def GDASC(config_file):
@@ -32,17 +33,13 @@ def GDASC(config_file):
     # Read train and test set from original file
     # vector_training, vector_testing = lts.load_train_test(str(dataset))
 
-    dimensionalidad = vector_testing.shape[1]
-    cant_ptos = len(vector_training)
-
-
     # 2º Generamos el árbol
-    # Implementación legacy
-    n_capas, grupos_capa, puntos_capa, labels_capa = gdasc.create_tree(cant_ptos, tam_grupo, n_centroides, distance, vector_training, dimensionalidad, algorithm, implementation)
 
-    # Implementación nueva
-    #n_capas, grupos_capa, puntos_capa, labels_capa = gdasc.create_tree_newstructure(cant_ptos, tam_grupo, n_centroides, distance, vector_training, dimensionalidad, algorithm, implementation)
+    # Updated implementation
+    n_capas, grupos_capa, puntos_capa, labels_capa, promoted_points = gdasc.create_tree(vector_training, tam_grupo, n_centroides, distance, algorithm, implementation)
 
+    # Size of the index
+    #print(getsizeof(puntos_capa) + getsizeof(labels_capa) + getsizeof(grupos_capa) + getsizeof(n_capas))
 
     # Print the number of elements in the arrays composing labels_capa whose value is not 999999999
     """
@@ -54,7 +51,7 @@ def GDASC(config_file):
             n_medoides = n_medoides + np.count_nonzero(labels_capa[i][j] != 999999999)
     print(n_medoides)
     """
-    
+
 
 
     # Store index in a file
@@ -71,7 +68,7 @@ def GDASC(config_file):
     dists_vecinos = np.empty([len(vector_testing), k], dtype=float)
 
     # Y el número de distancias calculadas en cada ejecución
-    n_distances = np.empty(len(vector_testing), dtype=int)
+    n_distances = np.empty([len(vector_testing)], dtype=int)
 
     # For every point in the testing set, find its k nearest neighbors
     for i in range(len(vector_testing)):
@@ -81,9 +78,9 @@ def GDASC(config_file):
 
         start_time_iter = timer()
 
-        vecinos_i, n_distances_i = gdasc.recursive_approximate_knn_search_newstructure(n_capas, n_centroides, punto, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, dimensionalidad, float(radio))
-        #vecinos_i, n_distances_i = gdasc.recursive_approximate_knn_search(n_capas, n_centroides, punto, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, dimensionalidad, float(radio))
+        vecinos_i, n_distances_i = gdasc.recursive_approximate_knn_search(n_capas, n_centroides, punto, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(radio))
 
+        # Legacy implementation
         #vecinos_i = gdasc.knn_approximate_search(n_centroides, punto, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, dimensionalidad, float(radio))
 
         end_time_iter = timer()
