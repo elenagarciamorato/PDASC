@@ -1,0 +1,167 @@
+2024-11-19 15:13:40,586 - root - ------------------------------------------------------------------------
+2024-11-19 15:13:40,586 - root -                     municipios Dataset Benchmarking
+2024-11-19 15:13:40,586 - root - ------------------------------------------------------------------------
+2024-11-19 15:13:40,587 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_FLANN.hdf5
+2024-11-19 15:13:40,589 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,593 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_chebyshev_PYNN.hdf5
+2024-11-19 15:13:40,594 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,598 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_cosine_PYNN.hdf5
+2024-11-19 15:13:40,599 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,603 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_PYNN.hdf5
+2024-11-19 15:13:40,604 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,608 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,609 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,613 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,614 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,618 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_manhattan_FLANN.hdf5
+2024-11-19 15:13:40,619 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,622 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,624 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,627 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_euclidean_PYNN.hdf5
+2024-11-19 15:13:40,629 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,632 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,634 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,637 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_chebyshev_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,639 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,642 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_chebyshev_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,644 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,647 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_chebyshev_PYNN.hdf5
+2024-11-19 15:13:40,648 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,652 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_PYNN.hdf5
+2024-11-19 15:13:40,653 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,657 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,658 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,661 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,663 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,666 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_chebyshev_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,668 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,671 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_manhattan_PYNN.hdf5
+2024-11-19 15:13:40,673 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,676 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_manhattan_FLANN.hdf5
+2024-11-19 15:13:40,678 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,681 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_PYNN.hdf5
+2024-11-19 15:13:40,682 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,686 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,687 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,691 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,692 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,696 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_PYNN.hdf5
+2024-11-19 15:13:40,697 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,700 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,702 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,705 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_manhattan_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,707 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,710 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,712 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,715 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_cosine_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,716 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,720 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,721 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,725 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,726 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,729 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,731 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,734 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,736 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,739 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_manhattan_PYNN.hdf5
+2024-11-19 15:13:40,741 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,744 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_cosine_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,746 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,749 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,750 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,754 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_cosine_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,755 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,758 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_manhattan_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,760 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,763 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_FLANN.hdf5
+2024-11-19 15:13:40,765 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,768 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_euclidean_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,770 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,773 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_manhattan_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,775 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,778 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,780 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,783 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_euclidean_FLANN.hdf5
+2024-11-19 15:13:40,785 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,788 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_cosine_PYNN.hdf5
+2024-11-19 15:13:40,789 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,793 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_chebyshev_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,794 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,798 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,799 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,802 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,804 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,807 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,809 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,812 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_FLANN.hdf5
+2024-11-19 15:13:40,814 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,817 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_cosine_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,818 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,821 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,823 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_auto.hdf5
+2024-11-19 15:13:40,826 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,828 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,831 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,833 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,836 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_manhattan_Exact_LinearScan.hdf5
+2024-11-19 15:13:40,837 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_5_manhattan_Exact_auto.hdf5
+2024-11-19 15:13:40,841 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_PYNN.hdf5
+2024-11-19 15:13:40,842 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_auto.hdf5
+2024-11-19 15:13:40,846 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_euclidean_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-19 15:13:40,847 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_15_euclidean_Exact_auto.hdf5
+2024-11-19 15:13:40,859 - root - ------------------------------------------------------------------------
+   Method   Distance   k  radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+4   Exact  chebyshev  10     NaN        auto                NaN  100.000000     0.035050
+11  Exact  chebyshev  15     NaN  LinearScan             8031.0  100.000000     0.067504
+14  Exact  chebyshev   5     NaN        auto                NaN  100.000000     0.049207
+16  Exact  chebyshev   5     NaN  LinearScan             8031.0  100.000000     0.054365
+28  Exact  chebyshev  15     NaN        auto                NaN  100.000000     0.062887
+48  Exact  chebyshev  10     NaN  LinearScan             8031.0  100.000000     0.063968
+5   Exact     cosine  15     NaN        auto                NaN  100.000000     0.061533
+26  Exact     cosine  15     NaN  LinearScan             8031.0  100.000000     0.076345
+27  Exact     cosine  10     NaN  LinearScan             8031.0  100.000000     0.085209
+44  Exact     cosine   5     NaN        auto                NaN  100.000000     0.111157
+47  Exact     cosine   5     NaN  LinearScan             8031.0  100.000000     0.072496
+50  Exact     cosine  10     NaN        auto                NaN  100.000000     0.084861
+15  Exact  euclidean  15     NaN        auto                NaN  100.000000     0.037442
+23  Exact  euclidean  10     NaN        auto                NaN  100.000000     0.066239
+25  Exact  euclidean   5     NaN        auto                NaN  100.000000     0.061852
+29  Exact  euclidean  10     NaN  LinearScan             8031.0  100.000000     0.074314
+37  Exact  euclidean  15     NaN  LinearScan             8031.0  100.000000     0.065849
+45  Exact  euclidean   5     NaN  LinearScan             8031.0  100.000000     0.068802
+20  Exact  manhattan  10     NaN  LinearScan             8031.0  100.000000     0.140089
+35  Exact  manhattan  15     NaN  LinearScan             8031.0  100.000000     0.068081
+39  Exact  manhattan  15     NaN        auto                NaN  100.000000     0.065789
+43  Exact  manhattan  10     NaN        auto                NaN  100.000000     0.055576
+49  Exact  manhattan   5     NaN        auto                NaN  100.000000     0.041323
+51  Exact  manhattan   5     NaN  LinearScan             8031.0  100.000000     0.054020
+36  FLANN  euclidean  10     NaN        None                NaN   99.500000     0.037342
+40  FLANN  euclidean  15     NaN        None                NaN   99.866667     0.064416
+46  FLANN  euclidean   5     NaN        None                NaN  100.000000     0.070176
+0   FLANN  manhattan  10     NaN        None                NaN   95.300000     0.193804
+6   FLANN  manhattan  15     NaN        None                NaN   94.200000     0.042641
+18  FLANN  manhattan   5     NaN        None                NaN   98.800000     0.056263
+10  GDASC  chebyshev  15    40.0    kmedoids             8031.0  100.000000    51.431650
+33  GDASC  chebyshev  10    40.0    kmedoids             8031.0  100.000000    55.925162
+42  GDASC  chebyshev   5    40.0    kmedoids             8031.0  100.000000    54.961356
+30  GDASC     cosine  10    40.0    kmedoids             8031.0  100.000000    56.605634
+32  GDASC     cosine   5    40.0    kmedoids             8031.0  100.000000    54.480884
+34  GDASC     cosine  15    40.0    kmedoids             8031.0  100.000000    59.677928
+9   GDASC  euclidean   5    40.0    kmedoids             8031.0  100.000000    47.689115
+21  GDASC  euclidean  10    40.0    kmedoids             8031.0  100.000000    52.157701
+53  GDASC  euclidean  15    40.0    kmedoids             8031.0  100.000000    33.978798
+7   GDASC  manhattan  10    40.0    kmedoids             8031.0  100.000000    33.866000
+24  GDASC  manhattan   5    40.0    kmedoids             8031.0  100.000000    55.899127
+38  GDASC  manhattan  15    40.0    kmedoids             8031.0  100.000000    57.518098
+1    PYNN  chebyshev  15     NaN        None                NaN  100.000000     0.002442
+12   PYNN  chebyshev   5     NaN        None                NaN   99.600000     0.004019
+19   PYNN  chebyshev  10     NaN        None                NaN  100.000000     0.004211
+2    PYNN     cosine  15     NaN        None                NaN   71.133333     0.050930
+41   PYNN     cosine   5     NaN        None                NaN   37.400000     0.002607
+52   PYNN     cosine  10     NaN        None                NaN   57.800000     0.002454
+8    PYNN  euclidean  15     NaN        None                NaN  100.000000     0.004619
+13   PYNN  euclidean   5     NaN        None                NaN  100.000000     0.004300
+22   PYNN  euclidean  10     NaN        None                NaN  100.000000     0.004483
+3    PYNN  manhattan  10     NaN        None                NaN   99.700000     0.002437
+17   PYNN  manhattan  15     NaN        None                NaN   99.933333     0.004185
+31   PYNN  manhattan   5     NaN        None                NaN  100.000000     0.003986

@@ -11,10 +11,11 @@ def FLANN_nn_index(dataset, ncentroids, distance_type, algorithm):
 
     # Create a FLANN instance and build and index
     flann = FLANN()
-    flann.build_index(dataset, target_precision=0.9, log_level="info", algorithm=algorithm)
+    flann.build_index(dataset, algorithm=algorithm)
 
     # Using kmeans, compute the n-centroids describing the data
-    centroids = flann.kmeans(dataset, num_clusters=ncentroids, max_iterations=None, mdtype=None)
+    #centroids = flann.kmeans(dataset, num_clusters=ncentroids, max_iterations=None, mdtype=None)
+
     # print centroids
 
     # Store index built on disk to use it later on a file called 'index_'
@@ -24,9 +25,8 @@ def FLANN_nn_index(dataset, ncentroids, distance_type, algorithm):
     # Store index on disk to obtain its size
     #with open("./algorithms/FLANN/MNIST_knn.pickle", 'wb') as handle:
         #dump(flann.nn_index, handle)
-    
 
-    return centroids
+    return None
 
 
 def FLANN_nn_search(dataset, seq_buscada, k, distance_type, algorithm):
@@ -59,7 +59,7 @@ def FLANN_nn_search(dataset, seq_buscada, k, distance_type, algorithm):
     # nearest neighbors on this dataset using FLANN and the index built previously
     for f in range(seq_buscada.shape[0]):
         # print("Point number " + str(f))
-        indices, dists = flann.nn_index(seq_buscada[f], num_neighbors=k, algorithm=algorithm)
+        indices, dists = flann.nn_index(seq_buscada[f], num_neighbors=k, algorithm=algorithm, checks=64)
         indices = indices.reshape(indices.size,)
         coords = np.array(dataset[indices])
 

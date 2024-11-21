@@ -10,16 +10,13 @@ def GDASC(config_file):
     # Read config file containing experiment's parameters
     dataset, k, distance, method, tam_grupo, n_centroides, radio, algorithm, implementation = read_config_file(config_file)
 
-    # Set log configuration
-    logging.basicConfig(filename="./benchmarks/logs/" + dataset + "/test_knn_" + dataset + "_" + str(k) + "_" + distance + "_" + method + "_tg" + str(tam_grupo) + "_nc" + str(n_centroides) + "_r" + str(radio) + "_" + str(algorithm) + "_" + str(implementation) + ".log", filemode='w', format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
+    # Print information about the experiment in the log file
     logging.info('------------------------------------------------------------------------')
-    logging.info('                          plotting Searching')
-    logging.info('------------------------------------------------------------------------\n')
-    logging.info("")
     logging.info("---- Searching the " + str(k) + " nearest neighbors within " + method + " over " + str(
         dataset) + " dataset using " + str(distance) + " distance. ----")
     logging.info("")
     logging.info('---- GDASC Parameters - tam_grupo=%s - n_centroids=%s - radius=%s - algorithm=%s - implementation=%s ----', tam_grupo, n_centroides, radio, algorithm, implementation)
+    logging.info('------------------------------------------------------------------------\n')
 
     # Regarding the dataset name, set the file name to load the train and test set
     file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
@@ -41,23 +38,9 @@ def GDASC(config_file):
     # Size of the index
     #print(getsizeof(puntos_capa) + getsizeof(labels_capa) + getsizeof(grupos_capa) + getsizeof(n_capas))
 
-    # Print the number of elements in the arrays composing labels_capa whose value is not 999999999
-    """
-    n_medoides=0
-    print(f'grupos capa = {grupos_capa}')
-    for i in range(len(labels_capa)):
-        for j in range(len(labels_capa[i])):
-            print(f'Number of elements in labels_capa[{i}][{j}] whose value is not 999999999 = {np.count_nonzero(labels_capa[i][j] != 999999999)}')
-            n_medoides = n_medoides + np.count_nonzero(labels_capa[i][j] != 999999999)
-    print(n_medoides)
-    """
-
-
-
     # Store index in a file
     # with open("./algorithms/GDASC_MNIST" + str(k) +".pickle", 'wb') as handle:
     #    dump((puntos_capa, labels_capa), handle)
-
 
     # 3º Buscamos los k vecinos de los puntos de testing
     start_time_s = timer()
@@ -106,4 +89,4 @@ def GDASC(config_file):
     # Store indices, coords and dist into a hdf5 file
     save_neighbors_and_performance(indices_vecinos, coords_vecinos, dists_vecinos, n_distances, search_time, file_name)
 
-    logging.info('------------------------------------------------------------------------\n')
+    logging.info("\n")

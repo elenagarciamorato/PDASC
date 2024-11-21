@@ -110,7 +110,9 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
 
                         # For the first layer, we store the promoted real points in an auxiliar structure
                         if id_layer == 0:
+                            # Setting all points to False
                             promoted_points[id_group] = np.full(fin - inicio, False, dtype=bool)
+                            # And setting to True the points that have been promoted as prototypes
                             promoted_points[id_group][prototype_points] = True
 
                         # For the intermediate layers, we set to NaN the corresponding point in the lower layer
@@ -566,6 +568,8 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
         Cluster centroids at each layer.
     labels_capa : list
         Labels assigned to each point at each layer.
+    promoted_points: list
+        List of boolean arrays to track which points from the original dataset have been promoted as prototypes
     radio : float
         Search radius for the approximate search.
 

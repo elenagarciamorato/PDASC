@@ -113,6 +113,35 @@ For each dataset, a pointplot illustrates the recall of three different algorith
 
 The experimental results not only highlight the efficiency of this novel framework but also support the hypothesis that employing alternative distance measures beyond the Euclidean metric can yield better outcomes for nearest-neighbor queries, depending on the specific characteristics of the dataset.
   
+## How to use GDASC API
+This appendix is a guide to the usage of the GDASC Experiments Launcher and Benchmarking tool. Both are designed to facilitate the execution of approximate k-Nearest Neighbours searches by using the proposed method but also several SOTA related algorithms, then evaluating its performance on different contexts.
 
+### Experiments Launcher
+The experiments_launcher.py script is designed to execute machine learning experiments based on configuration files (.ini). 
+#### Usage:  
+The script expects two arguments:
+- Experiment: The name of the dataset whose experiments sould be launched or a single .ini configuration file.
+- Optional Filters: Optional filters to apply to the configuration files (if a directory is provided).<br />
+`python3 -m benchmarks/experiments_launcher <dataset_name_or_ini_file> [optional_filters]`
 
+#### Examples:  
+- To run an experiment using a single .ini file:<br />
+`python3 -m benchmarks/experiments_launcher knn_NYtimes_10_chebyshev_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.ini`
+- To run experiments for a dataset with optional filters:<br />
+`python3 -m benchmarks/experiments_launcher NYtimes chebyshev GDASC`
 
+### Performance Benchmarking
+The performance_benchmark.py script is designed to evaluate the performance of machine learning algorithms.
+
+#### Usage:  
+The script expects two arguments:
+- Dataset: The name of the dataset whose experiments want to be benchmarked.
+- Optional Filters: Optional filters to only show info about the desired experiments.
+`python3 -m benchmarks/performance_benchmark <dataset_name> [optional_filters]`
+
+#### Examples:  
+- To benchmark experiments for a dataset:<br />
+`python3 -m benchmarks/performance_benchmark NYtimes`
+
+- To benchmark experiments for a dataset with optional filters:<br />
+`python3 -m benchmarks/performance_benchmark NYtimes chebyshev GDASC`

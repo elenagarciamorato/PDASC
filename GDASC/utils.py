@@ -331,7 +331,7 @@ def built_estructuras_capa(total_points, group_size, num_centroids, num_layers, 
             points_per_layer[capa] = group_points
             groups_per_layer[capa] = np.zeros(num_groups, dtype=int)
         else:
-            points_per_layer[capa] = np.zeros((num_groups, num_centroids, dimensions), dtype=float)
+            points_per_layer[capa] = np.zeros((num_groups, num_centroids, dimensions), dtype=object)
             labels_per_layer[capa] = np.zeros((num_groups, group_size), dtype=int)
             groups_per_layer[capa] = np.zeros(num_groups, dtype=int)
             new_rest = (num_groups * num_centroids) % group_size
@@ -811,8 +811,8 @@ def explore_centroid_optimised(punto_buscado, current_layer, inheritage, current
 
             #print(f"Neighbour id {neighbour_id} ({neighbour_id % 70}) and group id {group_id}")
 
-            # If the real point is a promoted point
-            if (promoted_points)[group_id][neighbour_id % tam_grupo]:
+            # If the prototype only maps one point or the real point mapped is a promoted point
+            if len(associated_prototypes_layer_down) == 1 or (promoted_points)[group_id][neighbour_id % tam_grupo]:
                 # Store its id and the distance to the query point (the distance to the current centroid)
                 neighbours.append(tuple((neighbour_id, current_centroid_distance)))
 
@@ -826,37 +826,45 @@ def explore_centroid_optimised(punto_buscado, current_layer, inheritage, current
 
     else:
 
-        # Obtain the coordinates of the associated prototypes below
-        coordinates_bottomed_prototypes = np.vstack(associated_prototypes_layer_down[:, 2])
+        # If the prototype has only one associated prototype below
+        if len(associated_prototypes_layer_down) == 1:
 
+            # It means that the prototype is a promoted point, so the distance is the same as the distance to the current centroid
+            associated_prototypes_layer_down[0, 3] = current_centroid_distance
+            explorable_prototypes = associated_prototypes_layer_down
 
-        # Store the info about the distance of each associated prototype to the query point
-        for i in range(len(coordinates_bottomed_prototypes)):
-            # print(coordinates_bottomed_prototypes[i])
+        else:
+            # Obtain the coordinates of the associated prototypes below
+            coordinates_bottomed_prototypes = np.vstack(associated_prototypes_layer_down[:, 2])
 
-            # If i is an array full of nan values
-            if np.isnan(coordinates_bottomed_prototypes[i]).all():
+            # Store the info about the distance of each associated prototype to the query point
+            for i in range(len(coordinates_bottomed_prototypes)):
+                # print(coordinates_bottomed_prototypes[i])
 
-                # It means that the prototype is a promoted point, so the distance is the same as the distance to the current centroid
-                #print("The coordinates of the prototype are nan, so the distance is the same as the distance to the current centroid")
-                associated_prototypes_layer_down[i, 3] = current_centroid_distance
+                # If i is an array full of nan values
+                if np.isnan(coordinates_bottomed_prototypes[i]).any():
+                #if np.isnan(coordinates_bottomed_prototypes[i][0]):
 
-            # Otherwise, compute the distance to the prototype
-            else:
-                associated_prototypes_layer_down[i, 3] = distance.pdist(np.array([punto_buscado[0], coordinates_bottomed_prototypes[i]]), metric=metrica)[0]
-                #print(f'The distance to prototype is {associated_prototypes_layer_down[i, 3]}')
+                    # It means that the prototype is a promoted point, so the distance is the same as the distance to the current centroid
+                    #print("The coordinates of the prototype are nan, so the distance is the same as the distance to the current centroid")
+                    associated_prototypes_layer_down[i, 3] = current_centroid_distance
 
-                # And add the distance to the list of distances computed
-                distances_computed.append(associated_prototypes_layer_down[i, 3])
+                # Otherwise, compute the distance to the prototype
+                else:
+                    associated_prototypes_layer_down[i, 3] = distance.pdist(np.array([punto_buscado[0], coordinates_bottomed_prototypes[i]]), metric=metrica)[0]
+                    #print(f'The distance to prototype is {associated_prototypes_layer_down[i, 3]}')
 
-        # Once we have the children's distances
-        #print(f"Number of nan distances {nan_distances}")
-        #print("The distances to the childs are: " + str(distances_bottomed_prototypes))
+                    # And add the distance to the list of distances computed
+                    distances_computed.append(associated_prototypes_layer_down[i, 3])
 
-        # Explore only those that are within the search radius
-        explorable_prototypes_indices = np.where(associated_prototypes_layer_down[:, 3] <= radio)[0]
-        explorable_prototypes = associated_prototypes_layer_down[explorable_prototypes_indices]
-        #print("The next prototypes to be explored are: " + str(explorable_prototypes[:, 0]))
+            # Once we have the children's distances
+            #print(f"Number of nan distances {nan_distances}")
+            #print("The distances to the childs are: " + str(distances_bottomed_prototypes))
+
+            # Explore only those that are within the search radius
+            explorable_prototypes_indices = np.where(associated_prototypes_layer_down[:, 3] <= radio)[0]
+            explorable_prototypes = associated_prototypes_layer_down[explorable_prototypes_indices]
+            #print("The next prototypes to be explored are: " + str(explorable_prototypes[:, 0]))
 
         # For each prototype that meets the search radius condition
         for i in range(0, len(explorable_prototypes)):

@@ -1,14 +1,11 @@
-import os
-import h5py
-import numpy as np
-import pandas as pd
-import sys
-from benchmarks.neighbors_utils import *
 from benchmarks.plotting.performance_utils import *
+import argparse
+import datetime
+import logging
 
 
 # Load the performance of the k-nn experiments regarding the selected dataset
-def explore_experiments(dataset):
+def explore_experiments(dataset, optional_filters=None):
 
     # Set the directory path to load the experiments according to the dataset provided
     directory_path = "./benchmarks/NearestNeighbors/" + dataset
@@ -17,6 +14,12 @@ def explore_experiments(dataset):
 
     # For every .hdf5 file in the directory (file containing the neighbors and performances)
     for root, _, files in os.walk(directory_path):
+
+        # Apply optional filter if provided
+        if optional_filters:
+            filter_options = optional_filters
+            files = [f for f in files if all(opt in f for opt in filter_options)]
+
         for file in files:
             if file.endswith('.hdf5'):
 
@@ -35,11 +38,11 @@ def explore_experiments(dataset):
                         'k': parts[2],
                         'radius': int(parts[7][1:]),
                         'Algorithm': parts[8],
-                        'Implementation': parts[9],
+                        # 'Implementation': parts[9],
                         'Dist_Computed(Av)': np.mean(n_dist),
                         # Get the recall of the experiment
                         'Recall(Av)': get_recall_new(dataset, parts[2], parts[3], indices, coords, distances),
-                        'Search_Time': search_time
+                        'Search_Time': np.round(search_time, 8)
                     })
 
                 # If the method is other
@@ -51,23 +54,50 @@ def explore_experiments(dataset):
                         'k': parts[2],
                         'radius': None,
                         'Algorithm': parts[5] if parts[5] != 'hdf5' else None,
-                        'Implementation': None,
+                        # 'Implementation': None,
                         'Dist_Computed(Av)': np.mean(n_dist),
                         # Get the recall of the experiment
                         'Recall(Av)': get_recall_new(dataset, parts[2], parts[3], indices, coords, distances),
-                        'Search_Time': search_time
+                        'Search_Time': np.round(search_time, 8)
                     })
 
-        # Return the results
-        return pd.DataFrame(results).sort_values(by=['Method', 'radius'], ascending=[True, False])
+        formatted_results = pd.DataFrame(results).sort_values(by=['Method', 'radius', 'Distance'], ascending=[True, False, True])
 
+        # Log the results
+        logging.info('------------------------------------------------------------------------\n' + formatted_results.to_string())
+        logging.shutdown()
+
+        # Return the results
+        return formatted_results
 
 if __name__ == "__main__":
 
-    dataset=("wdbc")
+    #dataset=("wdbc")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("dataset", help="Name of the dataset whose results would be benchmarked", type=str)
+    parser.add_argument("optional_filters", help="Benchmark optional filters", nargs='*', default=[])
+
+    args = parser.parse_args()
+
+    # Create a log file to store the performance of the k-nn experiments
+    # Get the current date and time, formatting it
+    current_time = datetime.datetime.now()
+    formatted_time = current_time.strftime("%d-%m-%Y_%H:%M")
+
+    logging.basicConfig(
+        filename="./benchmarks/logs/" + args.dataset + "/benchmark_knn_" + args.dataset + "_" + str(formatted_time) + ".log",
+        filemode='w', format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
+
+    logging.info('------------------------------------------------------------------------')
+    logging.info('                    %s Dataset Benchmarking', args.dataset)
+    logging.info('------------------------------------------------------------------------')
 
     # Explore the results of the experiments regarding the dataset provided
-    df = explore_experiments(dataset)
+    df = explore_experiments(args.dataset, args.optional_filters)
 
     # Print the results
     print(df.to_string())
+
+    exit(0)
+

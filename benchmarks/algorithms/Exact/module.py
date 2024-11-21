@@ -61,6 +61,11 @@ def LinearScan_nn_search(train_set, test_set, k, metric, same_set=None):
         distances = np.insert(distances, len(distances), d)
     """
 
+    # Update the metric name for compatibility with scipy
+    if metric == 'manhattan':
+        metric = 'cityblock'  # scipy cdist requires 'cityblock' instead of 'manhattan'
+
+
     # Calculate the pairwise distances between the elements of two samples
     distances = cdist(test_set, train_set, metric)
 

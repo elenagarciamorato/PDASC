@@ -1,0 +1,860 @@
+2024-11-20 09:23:36,481 - root - ------------------------------------------------------------------------
+2024-11-20 09:23:36,482 - root -                     Experiments launcher for MNIST Dataset
+2024-11-20 09:23:36,483 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:23:36,483 - root - Gathering system architecture information...
+
+2024-11-20 09:23:36,483 - root - Platform: Linux-5.15.0-126-generic-x86_64-with-debian-bookworm-sid
+
+2024-11-20 09:23:37,705 - root - Processor: AMD EPYC 7451 24-Core Processor
+2024-11-20 09:23:37,705 - root - Processor Architecture: X86_64
+2024-11-20 09:23:37,710 - root - Processor Cores: 48
+2024-11-20 09:23:37,710 - root - Logical Processors: 96
+
+2024-11-20 09:23:37,711 - root - Python Version: 3.7.13 (default, Mar 29 2022, 02:18:16) 
+[GCC 7.5.0]
+
+2024-11-20 09:23:37,711 - root - Total RAM: 125.74 GB
+2024-11-20 09:23:37,711 - root - Available RAM: 123.05 GB
+2024-11-20 09:23:37,711 - root - Used RAM: 1.75 GB
+2024-11-20 09:23:37,711 - root - RAM Usage Percentage: 2.10%
+
+2024-11-20 09:23:37,711 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:23:37,712 - root - ------------------------------------------------------------------------
+2024-11-20 09:23:37,712 - root -  Searching the 10 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using manhattan distance. ----
+2024-11-20 09:23:37,712 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:23:37,713 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:23:38,645 - root - Index time= 2.9380003979895264e-05 seconds
+2024-11-20 09:23:42,629 - root - Search time = 3.984217561999685 seconds
+
+2024-11-20 09:23:42,629 - root - Average time spended in searching a single point = 0.03984217561999685
+2024-11-20 09:23:42,629 - root - Speed (points/s) = 25.099030975057957
+
+2024-11-20 09:23:42,638 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_Exact_LinearScan.hdf5
+2024-11-20 09:23:42,641 - root - 
+
+2024-11-20 09:23:42,656 - root - ------------------------------------------------------------------------
+2024-11-20 09:23:42,657 - root -  Searching the 15 nearest neighbors within Exact - auto algorithm over MNIST dataset using euclidean distance. ----
+2024-11-20 09:23:42,657 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:23:42,657 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:23:48,346 - root - Building index using euclidean metric and kd_tree algorithm
+2024-11-20 09:23:48,347 - root - Index time= 5.274755869999353 seconds
+2024-11-20 09:23:56,267 - root - Search time = 7.919894357000885 seconds
+
+2024-11-20 09:23:56,267 - root - Average time spended in searching a single point = 0.07919894357000885
+2024-11-20 09:23:56,267 - root - Speed (points/s) = 12.62643104722777
+
+2024-11-20 09:23:56,276 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_euclidean_Exact_auto.hdf5
+2024-11-20 09:23:56,279 - root - 
+
+2024-11-20 09:23:56,285 - root - ------------------------------------------------------------------------
+2024-11-20 09:23:56,285 - root - ---- Searching the 5 nearest neighbors within GDASC over MNIST dataset using cosine distance. ----
+2024-11-20 09:23:56,285 - root - 
+2024-11-20 09:23:56,285 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 09:23:56,285 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:23:56,285 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:27:17,808 - GDASC.gdasc_ - tree time=201.1532980990014 seconds
+2024-11-20 09:35:18,925 - root - Search time = 481.1166507020025 seconds
+
+2024-11-20 09:35:18,926 - root - Average time spent in searching a single point = 4.811166507020025
+2024-11-20 09:35:18,926 - root - Speed (points/s) = 0.20784980077926823
+
+2024-11-20 09:35:18,934 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_cosine_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 09:35:18,936 - root - 
+
+2024-11-20 09:35:18,991 - root - ------------------------------------------------------------------------
+2024-11-20 09:35:18,991 - root - ---- Searching the 5 nearest neighbors within GDASC over MNIST dataset using euclidean distance. ----
+2024-11-20 09:35:18,991 - root - 
+2024-11-20 09:35:18,991 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 09:35:18,991 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:35:18,992 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:38:25,382 - GDASC.gdasc_ - tree time=185.85954908699932 seconds
+2024-11-20 09:45:05,711 - root - Search time = 400.32773948900285 seconds
+
+2024-11-20 09:45:05,711 - root - Average time spent in searching a single point = 4.003277394890029
+2024-11-20 09:45:05,711 - root - Speed (points/s) = 0.24979533051505423
+
+2024-11-20 09:45:05,720 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_euclidean_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 09:45:05,722 - root - 
+
+2024-11-20 09:45:05,768 - root - ------------------------------------------------------------------------
+2024-11-20 09:45:05,768 - root -  Searching the 15 nearest neighbors within Exact - auto algorithm over MNIST dataset using cosine distance. ----
+2024-11-20 09:45:05,768 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:45:05,769 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:45:06,256 - root - Building index using cosine metric and brute algorithm
+2024-11-20 09:45:06,257 - root - Index time= 0.023333053999522235 seconds
+2024-11-20 09:45:33,623 - root - Search time = 27.36560616600036 seconds
+
+2024-11-20 09:45:33,624 - root - Average time spended in searching a single point = 0.2736560616600036
+2024-11-20 09:45:33,624 - root - Speed (points/s) = 3.654221996523586
+
+2024-11-20 09:45:33,640 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_cosine_Exact_auto.hdf5
+2024-11-20 09:45:33,648 - root - 
+
+2024-11-20 09:45:33,652 - root - ------------------------------------------------------------------------
+2024-11-20 09:45:33,652 - root - ---- Searching the 5 nearest neighbors within PYNN over MNIST dataset using cosine distance. ----
+2024-11-20 09:45:33,652 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:45:33,653 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:48:03,873 - root - Index time= 149.7910523669998 seconds
+2024-11-20 09:48:03,934 - root - Search time = 0.06066452099912567 seconds
+
+2024-11-20 09:48:03,935 - root - Average time spent in searching a single point = 0.0006066452099912568
+2024-11-20 09:48:03,935 - root - Speed (points/s) = 1648.409949555874
+
+2024-11-20 09:48:03,940 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_cosine_PYNN.hdf5
+2024-11-20 09:48:03,941 - root - 
+
+2024-11-20 09:48:03,950 - root - ------------------------------------------------------------------------
+2024-11-20 09:48:03,950 - root - ---- Searching the 15 nearest neighbors within GDASC over MNIST dataset using euclidean distance. ----
+2024-11-20 09:48:03,950 - root - 
+2024-11-20 09:48:03,950 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 09:48:03,950 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:48:03,950 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:51:08,764 - GDASC.gdasc_ - tree time=184.44219030599925 seconds
+2024-11-20 09:58:02,270 - root - Search time = 413.5011193600003 seconds
+
+2024-11-20 09:58:02,271 - root - Average time spent in searching a single point = 4.135011193600003
+2024-11-20 09:58:02,271 - root - Speed (points/s) = 0.24183731389838994
+
+2024-11-20 09:58:02,284 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_euclidean_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 09:58:02,289 - root - 
+
+2024-11-20 09:58:02,343 - root - ------------------------------------------------------------------------
+2024-11-20 09:58:02,343 - root -  Searching the 10 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using euclidean distance. ----
+2024-11-20 09:58:02,343 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:58:02,344 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:58:02,819 - root - Index time= 1.9089995475951582e-05 seconds
+2024-11-20 09:58:06,809 - root - Search time = 3.990106372999435 seconds
+
+2024-11-20 09:58:06,809 - root - Average time spended in searching a single point = 0.03990106372999435
+2024-11-20 09:58:06,809 - root - Speed (points/s) = 25.061988491506856
+
+2024-11-20 09:58:06,816 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_LinearScan.hdf5
+2024-11-20 09:58:06,818 - root - 
+
+2024-11-20 09:58:06,820 - root - ------------------------------------------------------------------------
+2024-11-20 09:58:06,820 - root -  Searching the 5 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using cosine distance. ----
+2024-11-20 09:58:06,820 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:58:06,820 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:58:07,266 - root - Index time= 2.629996743053198e-06 seconds
+2024-11-20 09:58:14,326 - root - Search time = 7.059523507996346 seconds
+
+2024-11-20 09:58:14,326 - root - Average time spended in searching a single point = 0.07059523507996346
+2024-11-20 09:58:14,327 - root - Speed (points/s) = 14.165261987828169
+
+2024-11-20 09:58:14,333 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_cosine_Exact_LinearScan.hdf5
+2024-11-20 09:58:14,335 - root - 
+
+2024-11-20 09:58:14,338 - root - ------------------------------------------------------------------------
+2024-11-20 09:58:14,338 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over MNIST dataset using chebyshev distance. ----
+2024-11-20 09:58:14,338 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:58:14,338 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:58:22,068 - root - Building index using chebyshev metric and kd_tree algorithm
+2024-11-20 09:58:22,068 - root - Index time= 7.3475796560014714 seconds
+2024-11-20 09:58:27,169 - root - Search time = 5.100557610996475 seconds
+
+2024-11-20 09:58:27,170 - root - Average time spended in searching a single point = 0.05100557610996475
+2024-11-20 09:58:27,170 - root - Speed (points/s) = 19.605699538498776
+
+2024-11-20 09:58:27,178 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_chebyshev_Exact_auto.hdf5
+2024-11-20 09:58:27,184 - root - 
+
+2024-11-20 09:58:27,187 - root - ------------------------------------------------------------------------
+2024-11-20 09:58:27,187 - root -  Searching the 15 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using cosine distance. ----
+2024-11-20 09:58:27,187 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:58:27,188 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:58:27,647 - root - Index time= 2.629996743053198e-06 seconds
+2024-11-20 09:58:33,940 - root - Search time = 6.292955704993801 seconds
+
+2024-11-20 09:58:33,941 - root - Average time spended in searching a single point = 0.06292955704993801
+2024-11-20 09:58:33,941 - root - Speed (points/s) = 15.890784027074048
+
+2024-11-20 09:58:33,953 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_cosine_Exact_LinearScan.hdf5
+2024-11-20 09:58:33,960 - root - 
+
+2024-11-20 09:58:33,963 - root - ------------------------------------------------------------------------
+2024-11-20 09:58:33,963 - root - ---- Searching the 10 nearest neighbors within FLANN over MNIST dataset using euclidean distance. ----
+2024-11-20 09:58:33,963 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:58:33,964 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:58:57,558 - root - Saving FLANN index at 'index_'
+2024-11-20 09:58:57,569 - root - Index time= 23.137292506005906 seconds
+2024-11-20 09:58:57,941 - root - Search time = 0.3687321180041181 seconds
+
+2024-11-20 09:58:57,944 - root - Average time spent in searching a single point = 0.003687321180041181
+2024-11-20 09:58:57,944 - root - Speed (points/s) = 271.1995921084455
+
+2024-11-20 09:58:57,965 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_FLANN.hdf5
+2024-11-20 09:58:57,973 - root - 
+
+2024-11-20 09:58:57,980 - root - ------------------------------------------------------------------------
+2024-11-20 09:58:57,980 - root -  Searching the 5 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using euclidean distance. ----
+2024-11-20 09:58:57,980 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:58:57,982 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 09:58:58,356 - root - Index time= 2.7429996407590806e-05 seconds
+2024-11-20 09:59:02,510 - root - Search time = 4.153771461998986 seconds
+
+2024-11-20 09:59:02,511 - root - Average time spended in searching a single point = 0.041537714619989854
+2024-11-20 09:59:02,511 - root - Speed (points/s) = 24.074506966706206
+
+2024-11-20 09:59:02,516 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_euclidean_Exact_LinearScan.hdf5
+2024-11-20 09:59:02,518 - root - 
+
+2024-11-20 09:59:02,521 - root - ------------------------------------------------------------------------
+2024-11-20 09:59:02,521 - root - ---- Searching the 10 nearest neighbors within GDASC over MNIST dataset using chebyshev distance. ----
+2024-11-20 09:59:02,521 - root - 
+2024-11-20 09:59:02,521 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 09:59:02,521 - root - ------------------------------------------------------------------------
+
+2024-11-20 09:59:02,522 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:01:18,077 - GDASC.gdasc_ - tree time=135.08934182600206 seconds
+2024-11-20 10:07:13,568 - root - Search time = 355.486729010001 seconds
+
+2024-11-20 10:07:13,569 - root - Average time spent in searching a single point = 3.55486729010001
+2024-11-20 10:07:13,569 - root - Speed (points/s) = 0.28130445341374943
+
+2024-11-20 10:07:13,578 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_chebyshev_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 10:07:13,583 - root - 
+
+2024-11-20 10:07:13,633 - root - ------------------------------------------------------------------------
+2024-11-20 10:07:13,633 - root - ---- Searching the 15 nearest neighbors within GDASC over MNIST dataset using manhattan distance. ----
+2024-11-20 10:07:13,633 - root - 
+2024-11-20 10:07:13,633 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 10:07:13,634 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:07:13,634 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:11:02,784 - GDASC.gdasc_ - tree time=228.67577990100108 seconds
+2024-11-20 10:16:09,123 - root - Search time = 306.33377545300027 seconds
+
+2024-11-20 10:16:09,124 - root - Average time spent in searching a single point = 3.0633377545300027
+2024-11-20 10:16:09,124 - root - Speed (points/s) = 0.326441313407645
+
+2024-11-20 10:16:09,132 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_manhattan_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 10:16:09,136 - root - 
+
+2024-11-20 10:16:09,173 - root - ------------------------------------------------------------------------
+2024-11-20 10:16:09,173 - root -  Searching the 15 nearest neighbors within Exact - auto algorithm over MNIST dataset using chebyshev distance. ----
+2024-11-20 10:16:09,173 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:16:09,174 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:16:13,409 - root - Building index using chebyshev metric and kd_tree algorithm
+2024-11-20 10:16:13,409 - root - Index time= 3.8855705880050664 seconds
+2024-11-20 10:16:17,464 - root - Search time = 4.054597782000201 seconds
+
+2024-11-20 10:16:17,464 - root - Average time spended in searching a single point = 0.04054597782000201
+2024-11-20 10:16:17,464 - root - Speed (points/s) = 24.663358827831335
+
+2024-11-20 10:16:17,472 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_chebyshev_Exact_auto.hdf5
+2024-11-20 10:16:17,475 - root - 
+
+2024-11-20 10:16:17,477 - root - ------------------------------------------------------------------------
+2024-11-20 10:16:17,477 - root - ---- Searching the 5 nearest neighbors within GDASC over MNIST dataset using manhattan distance. ----
+2024-11-20 10:16:17,477 - root - 
+2024-11-20 10:16:17,477 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 10:16:17,477 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:16:17,478 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:19:32,728 - GDASC.gdasc_ - tree time=194.90004491299624 seconds
+2024-11-20 10:26:17,869 - root - Search time = 405.13544578300207 seconds
+
+2024-11-20 10:26:17,870 - root - Average time spent in searching a single point = 4.051354457830021
+2024-11-20 10:26:17,870 - root - Speed (points/s) = 0.24683103154978403
+
+2024-11-20 10:26:17,877 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_manhattan_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 10:26:17,880 - root - 
+
+2024-11-20 10:26:17,919 - root - ------------------------------------------------------------------------
+2024-11-20 10:26:17,919 - root - ---- Searching the 15 nearest neighbors within PYNN over MNIST dataset using cosine distance. ----
+2024-11-20 10:26:17,919 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:26:17,920 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:26:44,845 - root - Index time= 26.48265318000631 seconds
+2024-11-20 10:26:44,868 - root - Search time = 0.022939815993595403 seconds
+
+2024-11-20 10:26:44,869 - root - Average time spent in searching a single point = 0.00022939815993595404
+2024-11-20 10:26:44,869 - root - Speed (points/s) = 4359.232873878288
+
+2024-11-20 10:26:44,881 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_cosine_PYNN.hdf5
+2024-11-20 10:26:44,886 - root - 
+
+2024-11-20 10:26:44,895 - root - ------------------------------------------------------------------------
+2024-11-20 10:26:44,896 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over MNIST dataset using euclidean distance. ----
+2024-11-20 10:26:44,896 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:26:44,896 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:26:51,427 - root - Building index using euclidean metric and kd_tree algorithm
+2024-11-20 10:26:51,427 - root - Index time= 6.119144233998668 seconds
+2024-11-20 10:26:59,481 - root - Search time = 8.05336249100219 seconds
+
+2024-11-20 10:26:59,481 - root - Average time spended in searching a single point = 0.0805336249100219
+2024-11-20 10:26:59,481 - root - Speed (points/s) = 12.41717358578201
+
+2024-11-20 10:26:59,489 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-20 10:26:59,491 - root - 
+
+2024-11-20 10:26:59,493 - root - ------------------------------------------------------------------------
+2024-11-20 10:26:59,493 - root -  Searching the 5 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using manhattan distance. ----
+2024-11-20 10:26:59,493 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:26:59,494 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:26:59,839 - root - Index time= 2.6699999580159783e-06 seconds
+2024-11-20 10:27:03,917 - root - Search time = 4.077695842999674 seconds
+
+2024-11-20 10:27:03,918 - root - Average time spended in searching a single point = 0.04077695842999674
+2024-11-20 10:27:03,918 - root - Speed (points/s) = 24.52365351664803
+
+2024-11-20 10:27:03,922 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_manhattan_Exact_LinearScan.hdf5
+2024-11-20 10:27:03,924 - root - 
+
+2024-11-20 10:27:03,927 - root - ------------------------------------------------------------------------
+2024-11-20 10:27:03,927 - root - ---- Searching the 5 nearest neighbors within FLANN over MNIST dataset using euclidean distance. ----
+2024-11-20 10:27:03,927 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:27:03,927 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:27:28,134 - root - Saving FLANN index at 'index_'
+2024-11-20 10:27:28,143 - root - Index time= 23.82478034399537 seconds
+2024-11-20 10:27:28,314 - root - Search time = 0.16847911600052612 seconds
+
+2024-11-20 10:27:28,318 - root - Average time spent in searching a single point = 0.0016847911600052611
+2024-11-20 10:27:28,318 - root - Speed (points/s) = 593.5453744883592
+
+2024-11-20 10:27:28,334 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_euclidean_FLANN.hdf5
+2024-11-20 10:27:28,342 - root - 
+
+2024-11-20 10:27:28,346 - root - ------------------------------------------------------------------------
+2024-11-20 10:27:28,346 - root - ---- Searching the 15 nearest neighbors within FLANN over MNIST dataset using euclidean distance. ----
+2024-11-20 10:27:28,346 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:27:28,347 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:27:43,607 - root - Saving FLANN index at 'index_'
+2024-11-20 10:27:43,619 - root - Index time= 14.870030133002729 seconds
+2024-11-20 10:27:43,782 - root - Search time = 0.16043896799965296 seconds
+
+2024-11-20 10:27:43,786 - root - Average time spent in searching a single point = 0.0016043896799965297
+2024-11-20 10:27:43,786 - root - Speed (points/s) = 623.2899727964862
+
+2024-11-20 10:27:43,797 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_euclidean_FLANN.hdf5
+2024-11-20 10:27:43,804 - root - 
+
+2024-11-20 10:27:43,806 - root - ------------------------------------------------------------------------
+2024-11-20 10:27:43,806 - root -  Searching the 15 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using chebyshev distance. ----
+2024-11-20 10:27:43,807 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:27:43,807 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:27:44,172 - root - Index time= 1.984000118682161e-05 seconds
+2024-11-20 10:27:46,904 - root - Search time = 2.731182510004146 seconds
+
+2024-11-20 10:27:46,904 - root - Average time spended in searching a single point = 0.02731182510004146
+2024-11-20 10:27:46,904 - root - Speed (points/s) = 36.61417705836443
+
+2024-11-20 10:27:46,912 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_chebyshev_Exact_LinearScan.hdf5
+2024-11-20 10:27:46,915 - root - 
+
+2024-11-20 10:27:46,917 - root - ------------------------------------------------------------------------
+2024-11-20 10:27:46,917 - root -  Searching the 5 nearest neighbors within Exact - auto algorithm over MNIST dataset using manhattan distance. ----
+2024-11-20 10:27:46,917 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:27:46,918 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:27:51,185 - root - Building index using manhattan metric and kd_tree algorithm
+2024-11-20 10:27:51,185 - root - Index time= 3.9255305219994625 seconds
+2024-11-20 10:27:57,385 - root - Search time = 6.200341285002651 seconds
+
+2024-11-20 10:27:57,385 - root - Average time spended in searching a single point = 0.06200341285002651
+2024-11-20 10:27:57,385 - root - Speed (points/s) = 16.128144468737457
+
+2024-11-20 10:27:57,390 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_manhattan_Exact_auto.hdf5
+2024-11-20 10:27:57,391 - root - 
+
+2024-11-20 10:27:57,393 - root - ------------------------------------------------------------------------
+2024-11-20 10:27:57,393 - root -  Searching the 15 nearest neighbors within Exact - auto algorithm over MNIST dataset using manhattan distance. ----
+2024-11-20 10:27:57,393 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:27:57,394 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:28:01,648 - root - Building index using manhattan metric and kd_tree algorithm
+2024-11-20 10:28:01,648 - root - Index time= 3.9051391040047747 seconds
+2024-11-20 10:28:07,858 - root - Search time = 6.209591965998698 seconds
+
+2024-11-20 10:28:07,858 - root - Average time spended in searching a single point = 0.062095919659986974
+2024-11-20 10:28:07,858 - root - Speed (points/s) = 16.104117717808347
+
+2024-11-20 10:28:07,866 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_manhattan_Exact_auto.hdf5
+2024-11-20 10:28:07,871 - root - 
+
+2024-11-20 10:28:07,873 - root - ------------------------------------------------------------------------
+2024-11-20 10:28:07,873 - root - ---- Searching the 10 nearest neighbors within PYNN over MNIST dataset using cosine distance. ----
+2024-11-20 10:28:07,873 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:28:07,873 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:28:37,221 - root - Index time= 29.00418498500221 seconds
+2024-11-20 10:28:37,238 - root - Search time = 0.016424112996901385 seconds
+
+2024-11-20 10:28:37,238 - root - Average time spent in searching a single point = 0.00016424112996901385
+2024-11-20 10:28:37,238 - root - Speed (points/s) = 6088.608865444743
+
+2024-11-20 10:28:37,245 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_cosine_PYNN.hdf5
+2024-11-20 10:28:37,248 - root - 
+
+2024-11-20 10:28:37,257 - root - ------------------------------------------------------------------------
+2024-11-20 10:28:37,258 - root - ---- Searching the 10 nearest neighbors within GDASC over MNIST dataset using cosine distance. ----
+2024-11-20 10:28:37,258 - root - 
+2024-11-20 10:28:37,258 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 10:28:37,258 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:28:37,258 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:31:21,385 - GDASC.gdasc_ - tree time=163.7863819310005 seconds
+2024-11-20 10:36:20,415 - root - Search time = 299.0288829550045 seconds
+
+2024-11-20 10:36:20,415 - root - Average time spent in searching a single point = 2.990288829550045
+2024-11-20 10:36:20,415 - root - Speed (points/s) = 0.33441585646108707
+
+2024-11-20 10:36:20,423 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_cosine_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 10:36:20,426 - root - 
+
+2024-11-20 10:36:20,483 - root - ------------------------------------------------------------------------
+2024-11-20 10:36:20,483 - root - ---- Searching the 5 nearest neighbors within GDASC over MNIST dataset using chebyshev distance. ----
+2024-11-20 10:36:20,483 - root - 
+2024-11-20 10:36:20,483 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 10:36:20,483 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:36:20,483 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:38:14,107 - GDASC.gdasc_ - tree time=113.26549286799855 seconds
+2024-11-20 10:42:29,342 - root - Search time = 255.23415292300342 seconds
+
+2024-11-20 10:42:29,343 - root - Average time spent in searching a single point = 2.552341529230034
+2024-11-20 10:42:29,343 - root - Speed (points/s) = 0.39179709633203763
+
+2024-11-20 10:42:29,348 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_chebyshev_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 10:42:29,350 - root - 
+
+2024-11-20 10:42:29,408 - root - ------------------------------------------------------------------------
+2024-11-20 10:42:29,408 - root - ---- Searching the 5 nearest neighbors within PYNN over MNIST dataset using manhattan distance. ----
+2024-11-20 10:42:29,408 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:42:29,409 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:44:14,327 - root - Index time= 104.48327641499782 seconds
+2024-11-20 10:44:14,341 - root - Search time = 0.013990718995046336 seconds
+
+2024-11-20 10:44:14,342 - root - Average time spent in searching a single point = 0.00013990718995046336
+2024-11-20 10:44:14,342 - root - Speed (points/s) = 7147.595490653967
+
+2024-11-20 10:44:14,346 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_manhattan_PYNN.hdf5
+2024-11-20 10:44:14,348 - root - 
+
+2024-11-20 10:44:14,357 - root - ------------------------------------------------------------------------
+2024-11-20 10:44:14,357 - root - ---- Searching the 15 nearest neighbors within GDASC over MNIST dataset using cosine distance. ----
+2024-11-20 10:44:14,357 - root - 
+2024-11-20 10:44:14,357 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 10:44:14,357 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:44:14,357 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:46:52,446 - GDASC.gdasc_ - tree time=157.70989612900303 seconds
+2024-11-20 10:53:08,673 - root - Search time = 376.22644966900407 seconds
+
+2024-11-20 10:53:08,674 - root - Average time spent in searching a single point = 3.7622644966900407
+2024-11-20 10:53:08,674 - root - Speed (points/s) = 0.2657973677501352
+
+2024-11-20 10:53:08,685 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_cosine_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 10:53:08,689 - root - 
+
+2024-11-20 10:53:08,744 - root - ------------------------------------------------------------------------
+2024-11-20 10:53:08,744 - root -  Searching the 10 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using chebyshev distance. ----
+2024-11-20 10:53:08,744 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:53:08,744 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:53:09,158 - root - Index time= 2.5159999495372176e-05 seconds
+2024-11-20 10:53:12,907 - root - Search time = 3.7492369590036105 seconds
+
+2024-11-20 10:53:12,908 - root - Average time spended in searching a single point = 0.03749236959003611
+2024-11-20 10:53:12,908 - root - Speed (points/s) = 26.67209384028258
+
+2024-11-20 10:53:12,915 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_chebyshev_Exact_LinearScan.hdf5
+2024-11-20 10:53:12,918 - root - 
+
+2024-11-20 10:53:12,920 - root - ------------------------------------------------------------------------
+2024-11-20 10:53:12,920 - root -  Searching the 5 nearest neighbors within Exact - auto algorithm over MNIST dataset using cosine distance. ----
+2024-11-20 10:53:12,920 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:53:12,920 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:53:13,319 - root - Building index using cosine metric and brute algorithm
+2024-11-20 10:53:13,319 - root - Index time= 0.026358007999078836 seconds
+2024-11-20 10:53:41,830 - root - Search time = 28.509958752001694 seconds
+
+2024-11-20 10:53:41,830 - root - Average time spended in searching a single point = 0.28509958752001696
+2024-11-20 10:53:41,830 - root - Speed (points/s) = 3.5075462882940496
+
+2024-11-20 10:53:41,844 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_cosine_Exact_auto.hdf5
+2024-11-20 10:53:41,845 - root - 
+
+2024-11-20 10:53:41,851 - root - ------------------------------------------------------------------------
+2024-11-20 10:53:41,851 - root -  Searching the 5 nearest neighbors within Exact - auto algorithm over MNIST dataset using chebyshev distance. ----
+2024-11-20 10:53:41,852 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:53:41,852 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:53:49,656 - root - Building index using chebyshev metric and kd_tree algorithm
+2024-11-20 10:53:49,657 - root - Index time= 7.296132350995322 seconds
+2024-11-20 10:53:55,724 - root - Search time = 6.0670351829976426 seconds
+
+2024-11-20 10:53:55,724 - root - Average time spended in searching a single point = 0.060670351829976425
+2024-11-20 10:53:55,724 - root - Speed (points/s) = 16.482515262189615
+
+2024-11-20 10:53:55,732 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_chebyshev_Exact_auto.hdf5
+2024-11-20 10:53:55,734 - root - 
+
+2024-11-20 10:53:55,739 - root - ------------------------------------------------------------------------
+2024-11-20 10:53:55,740 - root - ---- Searching the 15 nearest neighbors within GDASC over MNIST dataset using chebyshev distance. ----
+2024-11-20 10:53:55,740 - root - 
+2024-11-20 10:53:55,740 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 10:53:55,740 - root - ------------------------------------------------------------------------
+
+2024-11-20 10:53:55,740 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 10:56:36,404 - GDASC.gdasc_ - tree time=160.2367009869995 seconds
+2024-11-20 11:01:16,526 - root - Search time = 280.1201135480005 seconds
+
+2024-11-20 11:01:16,526 - root - Average time spent in searching a single point = 2.8012011354800053
+2024-11-20 11:01:16,527 - root - Speed (points/s) = 0.35698971678042074
+
+2024-11-20 11:01:16,542 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_chebyshev_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 11:01:16,545 - root - 
+
+2024-11-20 11:01:16,598 - root - ------------------------------------------------------------------------
+2024-11-20 11:01:16,598 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over MNIST dataset using cosine distance. ----
+2024-11-20 11:01:16,598 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:01:16,599 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:01:16,977 - root - Building index using cosine metric and brute algorithm
+2024-11-20 11:01:16,978 - root - Index time= 0.0212082990037743 seconds
+2024-11-20 11:01:39,251 - root - Search time = 22.27356789699843 seconds
+
+2024-11-20 11:01:39,252 - root - Average time spended in searching a single point = 0.22273567896998428
+2024-11-20 11:01:39,252 - root - Speed (points/s) = 4.489626469474427
+
+2024-11-20 11:01:39,258 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_cosine_Exact_auto.hdf5
+2024-11-20 11:01:39,261 - root - 
+
+2024-11-20 11:01:39,263 - root - ------------------------------------------------------------------------
+2024-11-20 11:01:39,263 - root - ---- Searching the 15 nearest neighbors within PYNN over MNIST dataset using euclidean distance. ----
+2024-11-20 11:01:39,263 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:01:39,263 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:03:20,558 - root - Index time= 100.93837191999773 seconds
+2024-11-20 11:03:20,667 - root - Search time = 0.10884585000167135 seconds
+
+2024-11-20 11:03:20,667 - root - Average time spent in searching a single point = 0.0010884585000167134
+2024-11-20 11:03:20,667 - root - Speed (points/s) = 918.7304798342286
+
+2024-11-20 11:03:20,674 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_euclidean_PYNN.hdf5
+2024-11-20 11:03:20,678 - root - 
+
+2024-11-20 11:03:20,687 - root - ------------------------------------------------------------------------
+2024-11-20 11:03:20,687 - root - ---- Searching the 10 nearest neighbors within GDASC over MNIST dataset using manhattan distance. ----
+2024-11-20 11:03:20,687 - root - 
+2024-11-20 11:03:20,687 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 11:03:20,687 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:03:20,687 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:06:24,094 - GDASC.gdasc_ - tree time=183.06607786799577 seconds
+2024-11-20 11:11:00,160 - root - Search time = 276.0649615459988 seconds
+
+2024-11-20 11:11:00,161 - root - Average time spent in searching a single point = 2.760649615459988
+2024-11-20 11:11:00,161 - root - Speed (points/s) = 0.3622335824147596
+
+2024-11-20 11:11:00,168 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 11:11:00,171 - root - 
+
+2024-11-20 11:11:00,220 - root - ------------------------------------------------------------------------
+2024-11-20 11:11:00,220 - root - ---- Searching the 10 nearest neighbors within PYNN over MNIST dataset using manhattan distance. ----
+2024-11-20 11:11:00,220 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:11:00,220 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:11:27,561 - root - Index time= 26.971555479998642 seconds
+2024-11-20 11:11:27,669 - root - Search time = 0.1076456570008304 seconds
+
+2024-11-20 11:11:27,669 - root - Average time spent in searching a single point = 0.001076456570008304
+2024-11-20 11:11:27,670 - root - Speed (points/s) = 928.9738460997881
+
+2024-11-20 11:11:27,675 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_PYNN.hdf5
+2024-11-20 11:11:27,678 - root - 
+
+2024-11-20 11:11:27,686 - root - ------------------------------------------------------------------------
+2024-11-20 11:11:27,686 - root - ---- Searching the 15 nearest neighbors within PYNN over MNIST dataset using chebyshev distance. ----
+2024-11-20 11:11:27,686 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:11:27,687 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:13:14,385 - root - Index time= 106.33735192300082 seconds
+2024-11-20 11:13:18,750 - root - Search time = 4.36458748899895 seconds
+
+2024-11-20 11:13:18,750 - root - Average time spent in searching a single point = 0.0436458748899895
+2024-11-20 11:13:18,750 - root - Speed (points/s) = 22.911672695770783
+
+2024-11-20 11:13:18,760 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_chebyshev_PYNN.hdf5
+2024-11-20 11:13:18,763 - root - 
+
+2024-11-20 11:13:18,767 - root - ------------------------------------------------------------------------
+2024-11-20 11:13:18,767 - root -  Searching the 5 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using chebyshev distance. ----
+2024-11-20 11:13:18,768 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:13:18,768 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:13:19,127 - root - Index time= 2.4310000299010426e-05 seconds
+2024-11-20 11:13:21,839 - root - Search time = 2.711240362994431 seconds
+
+2024-11-20 11:13:21,839 - root - Average time spended in searching a single point = 0.027112403629944312
+2024-11-20 11:13:21,839 - root - Speed (points/s) = 36.88348748598407
+
+2024-11-20 11:13:21,843 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_chebyshev_Exact_LinearScan.hdf5
+2024-11-20 11:13:21,845 - root - 
+
+2024-11-20 11:13:21,847 - root - ------------------------------------------------------------------------
+2024-11-20 11:13:21,847 - root - ---- Searching the 5 nearest neighbors within PYNN over MNIST dataset using euclidean distance. ----
+2024-11-20 11:13:21,847 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:13:21,847 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:13:46,417 - root - Index time= 24.20938539099734 seconds
+2024-11-20 11:13:46,430 - root - Search time = 0.012744130995997693 seconds
+
+2024-11-20 11:13:46,431 - root - Average time spent in searching a single point = 0.00012744130995997693
+2024-11-20 11:13:46,431 - root - Speed (points/s) = 7846.74922373327
+
+2024-11-20 11:13:46,435 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_euclidean_PYNN.hdf5
+2024-11-20 11:13:46,436 - root - 
+
+2024-11-20 11:13:46,441 - root - ------------------------------------------------------------------------
+2024-11-20 11:13:46,441 - root - ---- Searching the 10 nearest neighbors within FLANN over MNIST dataset using manhattan distance. ----
+2024-11-20 11:13:46,441 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:13:46,441 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:14:01,610 - root - Saving FLANN index at 'index_'
+2024-11-20 11:14:01,623 - root - Index time= 14.822069503999955 seconds
+2024-11-20 11:14:01,751 - root - Search time = 0.12732741200306918 seconds
+
+2024-11-20 11:14:01,752 - root - Average time spent in searching a single point = 0.0012732741200306918
+2024-11-20 11:14:01,752 - root - Speed (points/s) = 785.3768361960387
+
+2024-11-20 11:14:01,761 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_FLANN.hdf5
+2024-11-20 11:14:01,766 - root - 
+
+2024-11-20 11:14:01,768 - root - ------------------------------------------------------------------------
+2024-11-20 11:14:01,768 - root - ---- Searching the 10 nearest neighbors within GDASC over MNIST dataset using euclidean distance. ----
+2024-11-20 11:14:01,769 - root - 
+2024-11-20 11:14:01,769 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=80000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-20 11:14:01,769 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:14:01,769 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:16:47,901 - GDASC.gdasc_ - tree time=165.74984114799736 seconds
+2024-11-20 11:22:22,236 - root - Search time = 334.3347583299983 seconds
+
+2024-11-20 11:22:22,237 - root - Average time spent in searching a single point = 3.343347583299983
+2024-11-20 11:22:22,237 - root - Speed (points/s) = 0.299101417093155
+
+2024-11-20 11:22:22,250 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-20 11:22:22,257 - root - 
+
+2024-11-20 11:22:22,332 - root - ------------------------------------------------------------------------
+2024-11-20 11:22:22,332 - root -  Searching the 15 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using manhattan distance. ----
+2024-11-20 11:22:22,332 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:22:22,333 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:22:22,838 - root - Index time= 3.029000072274357e-05 seconds
+2024-11-20 11:22:27,561 - root - Search time = 4.722888028998568 seconds
+
+2024-11-20 11:22:27,561 - root - Average time spended in searching a single point = 0.04722888028998568
+2024-11-20 11:22:27,561 - root - Speed (points/s) = 21.17348524589176
+
+2024-11-20 11:22:27,570 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_manhattan_Exact_LinearScan.hdf5
+2024-11-20 11:22:27,575 - root - 
+
+2024-11-20 11:22:27,578 - root - ------------------------------------------------------------------------
+2024-11-20 11:22:27,578 - root - ---- Searching the 5 nearest neighbors within PYNN over MNIST dataset using chebyshev distance. ----
+2024-11-20 11:22:27,578 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:22:27,578 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:23:04,045 - root - Index time= 35.95911012799479 seconds
+2024-11-20 11:23:10,979 - root - Search time = 6.934252671002469 seconds
+
+2024-11-20 11:23:10,980 - root - Average time spent in searching a single point = 0.06934252671002468
+2024-11-20 11:23:10,980 - root - Speed (points/s) = 14.421164723082297
+
+2024-11-20 11:23:10,985 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_chebyshev_PYNN.hdf5
+2024-11-20 11:23:10,987 - root - 
+
+2024-11-20 11:23:10,993 - root - ------------------------------------------------------------------------
+2024-11-20 11:23:10,993 - root -  Searching the 15 nearest neighbors within Exact - LinearScan algorithm over MNIST dataset using euclidean distance. ----
+2024-11-20 11:23:10,993 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:23:10,994 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:23:11,387 - root - Index time= 2.646999928401783e-05 seconds
+2024-11-20 11:23:15,195 - root - Search time = 3.807415105999098 seconds
+
+2024-11-20 11:23:15,195 - root - Average time spended in searching a single point = 0.038074151059990985
+2024-11-20 11:23:15,195 - root - Speed (points/s) = 26.264538332696233
+
+2024-11-20 11:23:15,208 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_euclidean_Exact_LinearScan.hdf5
+2024-11-20 11:23:15,213 - root - 
+
+2024-11-20 11:23:15,215 - root - ------------------------------------------------------------------------
+2024-11-20 11:23:15,215 - root - ---- Searching the 10 nearest neighbors within PYNN over MNIST dataset using euclidean distance. ----
+2024-11-20 11:23:15,216 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:23:15,216 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:23:42,318 - root - Index time= 26.605129691997718 seconds
+2024-11-20 11:23:42,335 - root - Search time = 0.016829002001031768 seconds
+
+2024-11-20 11:23:42,336 - root - Average time spent in searching a single point = 0.00016829002001031768
+2024-11-20 11:23:42,336 - root - Speed (points/s) = 5942.12300847484
+
+2024-11-20 11:23:42,344 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_PYNN.hdf5
+2024-11-20 11:23:42,346 - root - 
+
+2024-11-20 11:23:42,352 - root - ------------------------------------------------------------------------
+2024-11-20 11:23:42,352 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over MNIST dataset using manhattan distance. ----
+2024-11-20 11:23:42,352 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:23:42,352 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:23:47,778 - root - Building index using manhattan metric and kd_tree algorithm
+2024-11-20 11:23:47,778 - root - Index time= 5.028624370999751 seconds
+2024-11-20 11:23:56,526 - root - Search time = 8.747888183999748 seconds
+
+2024-11-20 11:23:56,527 - root - Average time spended in searching a single point = 0.08747888183999748
+2024-11-20 11:23:56,527 - root - Speed (points/s) = 11.431330384732645
+
+2024-11-20 11:23:56,534 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_Exact_auto.hdf5
+2024-11-20 11:23:56,538 - root - 
+
+2024-11-20 11:23:56,540 - root - ------------------------------------------------------------------------
+2024-11-20 11:23:56,541 - root - ---- Searching the 10 nearest neighbors within PYNN over MNIST dataset using chebyshev distance. ----
+2024-11-20 11:23:56,541 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:23:56,541 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:24:27,527 - root - Index time= 30.579254106996814 seconds
+2024-11-20 11:24:34,472 - root - Search time = 6.945039158999862 seconds
+
+2024-11-20 11:24:34,473 - root - Average time spent in searching a single point = 0.06945039158999862
+2024-11-20 11:24:34,473 - root - Speed (points/s) = 14.39876690549874
+
+2024-11-20 11:24:34,483 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_chebyshev_PYNN.hdf5
+2024-11-20 11:24:34,486 - root - 
+
+2024-11-20 11:24:34,492 - root - ------------------------------------------------------------------------
+2024-11-20 11:24:34,492 - root - ---- Searching the 5 nearest neighbors within FLANN over MNIST dataset using manhattan distance. ----
+2024-11-20 11:24:34,492 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:24:34,492 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:25:00,132 - root - Saving FLANN index at 'index_'
+2024-11-20 11:25:00,140 - root - Index time= 25.161634921998484 seconds
+2024-11-20 11:25:00,322 - root - Search time = 0.1802824500045972 seconds
+
+2024-11-20 11:25:00,323 - root - Average time spent in searching a single point = 0.001802824500045972
+2024-11-20 11:25:00,323 - root - Speed (points/s) = 554.685162074567
+
+2024-11-20 11:25:00,329 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_manhattan_FLANN.hdf5
+2024-11-20 11:25:00,331 - root - 
+
+2024-11-20 11:25:00,334 - root - ------------------------------------------------------------------------
+2024-11-20 11:25:00,334 - root - ---- Searching the 15 nearest neighbors within FLANN over MNIST dataset using manhattan distance. ----
+2024-11-20 11:25:00,334 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:25:00,335 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:25:21,381 - root - Saving FLANN index at 'index_'
+2024-11-20 11:25:21,386 - root - Index time= 20.629506864999712 seconds
+2024-11-20 11:25:21,650 - root - Search time = 0.2626644789997954 seconds
+
+2024-11-20 11:25:21,651 - root - Average time spent in searching a single point = 0.002626644789997954
+2024-11-20 11:25:21,651 - root - Speed (points/s) = 380.71383074251884
+
+2024-11-20 11:25:21,662 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_manhattan_FLANN.hdf5
+2024-11-20 11:25:21,666 - root - 
+
+2024-11-20 11:25:21,669 - root - ------------------------------------------------------------------------
+2024-11-20 11:25:21,670 - root -  Searching the 5 nearest neighbors within Exact - auto algorithm over MNIST dataset using euclidean distance. ----
+2024-11-20 11:25:21,670 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:25:21,670 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:25:26,961 - root - Building index using euclidean metric and kd_tree algorithm
+2024-11-20 11:25:26,961 - root - Index time= 4.8299630469991826 seconds
+2024-11-20 11:25:35,147 - root - Search time = 8.185385607997887 seconds
+
+2024-11-20 11:25:35,147 - root - Average time spended in searching a single point = 0.08185385607997887
+2024-11-20 11:25:35,147 - root - Speed (points/s) = 12.216895426684681
+
+2024-11-20 11:25:35,151 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_5_euclidean_Exact_auto.hdf5
+2024-11-20 11:25:35,153 - root - 
+
+2024-11-20 11:25:35,155 - root - ------------------------------------------------------------------------
+2024-11-20 11:25:35,155 - root - ---- Searching the 15 nearest neighbors within PYNN over MNIST dataset using manhattan distance. ----
+2024-11-20 11:25:35,155 - root - ------------------------------------------------------------------------
+
+2024-11-20 11:25:35,156 - root - Loading train and test set from ./data/MNIST_train_test_set.hdf5
+
+2024-11-20 11:26:05,630 - root - Index time= 30.049615165000432 seconds
+2024-11-20 11:26:05,771 - root - Search time = 0.1400013719976414 seconds
+
+2024-11-20 11:26:05,771 - root - Average time spent in searching a single point = 0.001400013719976414
+2024-11-20 11:26:05,771 - root - Speed (points/s) = 714.278714366347
+
+2024-11-20 11:26:05,782 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_15_manhattan_PYNN.hdf5
+2024-11-20 11:26:05,786 - root - 
+

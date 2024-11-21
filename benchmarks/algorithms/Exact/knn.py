@@ -1,7 +1,6 @@
 from data.load_train_test_set import *
 from benchmarks.neighbors_utils import *
 from benchmarks.algorithms.Exact.module import Exact_nn_index, Exact_nn_search
-import logging
 from timeit import default_timer as timer
 
 
@@ -10,15 +9,10 @@ def Exact(config_file):
     # Read config file containing experiment's parameters
     dataset, k, distance, method, exact_algorithm = read_config_file(config_file)
 
-    # Set log configuration
-    logging.basicConfig(filename="./benchmarks/logs/" + dataset + "/test_knn_" + dataset + "_" + str(k) + "_" + distance + "_" + method + ".log", filemode='w', format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
     logging.info('------------------------------------------------------------------------')
-    logging.info('                          plotting Searching')
-    logging.info('------------------------------------------------------------------------\n')
-    logging.info("")
-    logging.info("---- Searching the " + str(k) + " nearest neighbors within " + method + " and " + exact_algorithm
+    logging.info(" Searching the " + str(k) + " nearest neighbors within " + method + " - " + exact_algorithm
                  + " algorithm over " + str(dataset) + " dataset using " + str(distance) + " distance. ----")
-
+    logging.info('------------------------------------------------------------------------\n')
 
     # Regarding the dataset name, set the file name to load the train and test set
     file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
@@ -82,4 +76,4 @@ def Exact(config_file):
     # Print
     # print_knn(train_set, test_set, coords, dataset_name, d, "Exact", k)
 
-    logging.info('------------------------------------------------------------------------\n')
+    logging.info("\n")

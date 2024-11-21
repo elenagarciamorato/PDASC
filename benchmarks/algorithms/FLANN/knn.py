@@ -1,7 +1,6 @@
 from data.load_train_test_set import *
 from benchmarks.neighbors_utils import *
 from benchmarks.algorithms.FLANN.module import FLANN_nn_index, FLANN_nn_search
-import logging
 from timeit import default_timer as timer
 
 def FLANN(config_file):
@@ -9,17 +8,11 @@ def FLANN(config_file):
     # Read config file containing experiment's parameters
     dataset, k, distance, method, n_centroides, algorithm = read_config_file(config_file)
 
-    # Set log configuration
-    logging.basicConfig(filename="./benchmarks/logs/" + dataset + "/test_knn_"  + dataset + "_" + str(k) + "_" + distance + "_" + method + ".log",
-                        filemode='w', format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
+    # Print information about the experiment in the log file
     logging.info('------------------------------------------------------------------------')
-    logging.info('                          plotting Searching')
-    logging.info('------------------------------------------------------------------------\n')
-    logging.info("")
     logging.info("---- Searching the " + str(k) + " nearest neighbors within " + method + " over " + str(
         dataset) + " dataset using " + str(distance) + " distance. ----")
-
-
+    logging.info('------------------------------------------------------------------------\n')
 
     # Regarding the dataset name, set the file name to load the train and test set
     file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
@@ -71,4 +64,4 @@ def FLANN(config_file):
     error_rate(dataset, distance, 'FLANN', k, False, file_name_le, file_name)
     '''
 
-    logging.info('------------------------------------------------------------------------\n')
+    logging.info("\n")
