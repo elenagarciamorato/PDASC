@@ -122,13 +122,13 @@ The experiments_launcher.py script is designed to execute machine learning exper
 The script expects two arguments:
 - Experiment: The name of the dataset whose experiments sould be launched or a single .ini configuration file.
 - Optional Filters: Optional filters to apply to the configuration files (if a directory is provided).<br />
-`python3 -m benchmarks/experiments_launcher <dataset_name_or_ini_file> [optional_filters]`
+`python3 -m benchmarks.experiments_launcher <dataset_name_or_ini_file> [optional_filters]`
 
 #### Examples:  
 - To run an experiment using a single .ini file:<br />
-`python3 -m benchmarks/experiments_launcher knn_NYtimes_10_chebyshev_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.ini`
+`python3 -m benchmarks.experiments_launcher test_knn_NYtimes_10_chebyshev_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.ini`
 - To run experiments for a dataset with optional filters:<br />
-`python3 -m benchmarks/experiments_launcher NYtimes chebyshev GDASC`
+`python3 -m benchmarks.experiments_launcher NYtimes chebyshev GDASC`
 
 ### Performance Benchmarking
 The performance_benchmark.py script is designed to evaluate the performance of machine learning algorithms.
@@ -137,11 +137,11 @@ The performance_benchmark.py script is designed to evaluate the performance of m
 The script expects two arguments:
 - Dataset: The name of the dataset whose experiments want to be benchmarked.
 - Optional Filters: Optional filters to only show info about the desired experiments.
-`python3 -m benchmarks/performance_benchmark <dataset_name> [optional_filters]`
+`python3 -m benchmarks.performance_benchmark <dataset_name> [optional_filters]`
 
 #### Examples:  
 - To benchmark experiments for a dataset:<br />
-`python3 -m benchmarks/performance_benchmark NYtimes`
+`python3 -m benchmarks.performance_benchmark NYtimes`
 
 - To benchmark experiments for a dataset with optional filters:<br />
-`python3 -m benchmarks/performance_benchmark NYtimes chebyshev GDASC`
+`python3 -m benchmarks.performance_benchmark NYtimes chebyshev GDASC`

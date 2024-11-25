@@ -1,3 +1,5 @@
+import scipy
+
 from data.load_train_test_set import *
 from benchmarks.algorithms.Exact.module import Exact_nn_search
 import matplotlib.pyplot as plt
@@ -6,6 +8,7 @@ from scipy.spatial import distance
 import data.load_train_test_set as lts
 import seaborn as sns
 import argparse
+import sklearn
 
 from fitter import Fitter, get_common_distributions, get_distributions
 
@@ -156,10 +159,10 @@ def get_distances_between_elements(dataset, distance_metric):
     file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
     vector_training, vector_testing = load_train_test_h5py(file_name)
 
-    # If vector_training is bigger than 10000, we take a sample of 10% of the data
-    if len(vector_training) > 1000:
-        sample1 = vector_training[np.random.choice(len(vector_training), int(vector_training.shape[0]/10), replace=True)]
-        sample2 = vector_training[np.random.choice(len(vector_training), int(vector_training.shape[0]/10), replace=True)]
+    # If vector_training is bigger than 15000, we take a sample of 1500 ramdom elements of the data
+    if len(vector_training) > 1500:
+        sample1 = vector_training[np.random.choice(len(vector_training), int(1500), replace=True)]
+        sample2 = vector_training[np.random.choice(len(vector_training), int(1500), replace=True)]
 
         # Calculate the pairwise distances between every element on the dataset using Linear Scan
         indices, coords, dists, n_dist = Exact_nn_search(sample1, sample2, len(sample2), distance_metric, None, False)
@@ -171,10 +174,7 @@ def get_distances_between_elements(dataset, distance_metric):
         # Calculate the pairwise distances between every element on the dataset using Linear Scan
         indices, coords, dists, n_dist = Exact_nn_search(sample, sample, len(sample)-1, distance_metric, None, True)
 
-    # Flatten the distances matrix to get the number of distance computations
-    distances = dists.flatten()
-
-    return distances
+    return dists
 
 
 # Plot the distribution of pairwise distances between the elements composing the dataset
@@ -183,28 +183,41 @@ def distances_distribution_plot(dataset, distances, distance_metric):
     # Descriptive analysis of the distances
     print(f"\n-- Descriptive analysis of the pairwise {distance_metric} distances for the {dataset} dataset--")
 
+    # Flatten the distances matrix to get a 1-d array containing all the pairwise distances
+    distances = distances.flatten()
+
     # Obtain the medium distance
     mean_distance = np.mean(distances)
     print(f"Mean distance: {mean_distance}")
 
     # Obtain the median distance
     median_distance = np.median(distances)
-    print(f"Median distance: {median_distance}\n")
+    print(f"Median distance: {median_distance}")
 
     # Plot the distribution of pairwise distances (histogram)
-    """
-    print("-- Generating the histogram defining the pairwise distances distribution --")
-    plt.hist(distances, bins=30, edgecolor='black')
+    print("\n-- Generating the histogram defining the pairwise distances distribution --")
+    plt.hist(distances, bins=50, edgecolor='black')
     plt.title('Distribution of Pairwise Distances')
-    plt.xlabel('Distance')
+    plt.xlabel(f'{distance_metric} Distance')
     plt.ylabel('Frequency')
+
+    # Force x-axis to start at 0
+    plt.xlim(left=0)
+
+
+    # Show the plot
     plt.show()
-    """
+
+    # Clear the plot
+    plt.clf()
 
 # Plot the probability density plot of the pairwise distances between the elements composing the dataset
 def distances_probability_density_plot(dataset, distances, distance_metric):
 
-    #Print info about the fit
+    # Flatten the distances matrix to get a 1-d array containing all the pairwise distances
+    distances = distances.flatten()
+
+    # Print info about the fit
     print(f"-- Fitting the data to a distribution for {dataset} dataset--")
     # Fit the data to a distribution
     f = Fitter(distances, distributions=get_common_distributions(), timeout=120)
@@ -216,9 +229,9 @@ def distances_probability_density_plot(dataset, distances, distance_metric):
     print(f'\nThe best fitting distribution is {best_dist}')
 
     # Plot the data distribution and the best fitting distribution
-    #f.plot_pdf()
-    plt.title(f'Distances Distribution and Best Fitting Distribution (normalised)\nfor {dataset} dataset')
+    plt.title(f'Pairwise distances Distribution and Best Fitting Distribution \n (normalised) for {dataset} dataset')
     plt.xlabel(f'{distance_metric} Distance')
+    plt.ylabel('Frequency')
 
     # Force x-axis to start at 0
     plt.xlim(left=0)
@@ -229,22 +242,33 @@ def distances_probability_density_plot(dataset, distances, distance_metric):
     # Show the plot
     # plt.show()
 
+    # Clear the plot
+    plt.clf()
+
 
 # Plot the comulative distribution of pairwise distances between the elements composing the dataset
 def distances_comulative_distribution_plot(dataset, distances, distance_metric):
-    #plt.hist(distances, bins=50, edgecolor='black', density=True, cumulative=True)
-    histogram = sns.histplot(distances, stat='percent', bins=30, kde=True, alpha=0, edgecolor=None, cumulative=True)
+
+    # Flatten the distances matrix to get a 1-d array containing all the pairwise distances
+    distances = distances.flatten()
+
+    # Plot the comulative distribution function of pairwise distances estimated through the KDE curve obtained from the comulative histogram
+    # histogram = sns.histplot(distances, stat='percent', bins=30, kde=True, alpha=0, edgecolor=None, cumulative=True)
+
+    # Plot the comulative distribution function of pairwise distances estimated through the KDE curve
+    kde = sns.kdeplot(distances, cumulative=True)
+    # plt.yticks(kde.get_yticks(), [f'{int(tick * 100)}%' for tick in kde.get_yticks()])
+
     plt.title(f'Comulative Distribution of Pairwise Distances\nfor {dataset} dataset')
     plt.xlabel(f'{distance_metric} Distance')
-    #plt.ylabel('Frequency')
+    plt.ylabel('Probability')
 
     # Get the data of the KDE curve
-    kde = histogram.get_lines()[0].get_data()
-    kde_x = kde[0]
-    kde_y = kde[1]
+    kde_x = kde.get_lines()[0].get_data()[0]
+    kde_y = kde.get_lines()[0].get_data()[1]
 
     # Define percentiles to be used
-    percentiles = [70, 80, 90]
+    percentiles = [0.7, 0.8, 0.9]
 
     for p in percentiles:
 
@@ -255,7 +279,7 @@ def distances_comulative_distribution_plot(dataset, distances, distance_metric):
         plt.plot([0, kde_percentile_x], [p, p], color='r', linestyle='--')
 
         # Annotate the percentile on the y-axis at the intersection point
-        plt.text(0, p, str(p) + "%", color='r', ha='left', va='bottom')
+        plt.text(0, p, str(int(p*100)) + "%", color='r', ha='left', va='bottom')
 
         # Calculate the y-coordinate of the KDE at the intersection point
         kde_percentile_y = np.interp(kde_percentile_x, kde_x, kde_y)
@@ -266,10 +290,6 @@ def distances_comulative_distribution_plot(dataset, distances, distance_metric):
         # Annotate the KDE value on the x-axis at the intersection point
         plt.text(kde_percentile_x, p, f'{kde_percentile_x:.2f}', color='black', ha='left', va='bottom', bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3'))
 
-        # Compute the y-value of the KDE at kde_percentile_x
-        # plt.axvline(x=kde_percentile_x, color='r', ymax=kde_y_at_percentile/max(kde_y))
-        # plt.axvline(x=kde_percentile_x, color='r', linestyle='-', ymax=(q/100)
-        # plt.text(kde_percentile_x, q, f'{kde_percentile_x:.2f}', color='r', ha='right')
 
     # Force x-axis to start at 0
     plt.xlim(left=0)
@@ -280,23 +300,26 @@ def distances_comulative_distribution_plot(dataset, distances, distance_metric):
     # Show the plot
     # plt.show()
 
+    # Clear the plot
+    plt.clf()
+
 # Plot the distribution of the distances regarding the kth neighbour of each element in the dataset
 def neighbours_distribution_plot(dataset, distances, distance_metric, k):
 
     # Print a title for the analysis
-    print(f"-- Analysis of the {k}th neighbour distances --")
+    print(f"\n-- Analysis of the {k}th neighbour distances --")
 
 
-    # If vector_training is bigger than 10000, we take a sample of 10% of the data
-    if len(distances) > 1000:
+    # If vector_training is bigger than 1500, we take a sample of 1500 random elements of the data
+    #if len(distances) > 1500:
 
         # The fifth neighbours are those with index 4
-        kth_neighbour = distances[:, k-1]
+    kth_neighbour = distances[:, k-1]
 
-    # If vector_training is smaller than 10000, we calculate the pairwise distances between every element on the dataset
-    else:
+    # If vector_training is smaller than 1500, we calculate the pairwise distances between every element on the dataset
+    #else:
         # The fifth neighbours are those with index 5 (as the first one is the element itself)
-        kth_neighbour = distances[:, k]
+    #    kth_neighbour = distances[:, k]
 
     # k th neighbour mean distance
     mean_distance = np.mean(kth_neighbour)
@@ -315,23 +338,92 @@ def neighbours_distribution_plot(dataset, distances, distance_metric, k):
     print(f"90% percentile of {k}th neighbour: {p90}")
 
     # Plot the distribution of pairwise distances (histogram)
-    plt.hist(kth_neighbour, bins=30, edgecolor='black')
+    plt.hist(kth_neighbour, bins=50, edgecolor='black')
     plt.title(f'Distribution of {k}th Neighbour Distances\nfor {dataset} dataset')
     plt.xlabel(f'{distance_metric} Distance')
     plt.ylabel('Frequency')
 
-    # Store the plot
-    plt.savefig(f'./benchmarks/logs/{dataset}/{dataset}_{distance_metric}_{k}_neighbours_distribution.png')
+    # Force x-axis to start at 0
+    plt.xlim(left=0)
 
-    # Show it
+    # Store the plot
+    plt.savefig(f'./benchmarks/logs/{dataset}/{dataset}_{distance_metric}_{k}-neighbours_distribution.png')
+
+    # Show the plot
     # plt.show()
+
+    # Clear the plot
+    plt.clf()
+
+
+def neighbours_comulative_distribution_plot(dataset, distances, distance_metric, k):
+
+    # Print a title for the analysis
+    print(f"\n-- Analysis of the {k}th neighbour distances --")
+
+    # The kth (5th) neighbours are those with index k-1 (4)
+    kth_neighbour = distances[:, k-1]
+
+    # Flatten the distances matrix to get a 1-d array containing all the distances to the kth-neigbour
+    kth_neighbour = kth_neighbour.flatten()
+
+    # Plot the comulative distribution function of pairwise distances estimated through the KDE curve obtained from the comulative histogram
+    # histogram = sns.histplot(kth_neighbour, stat='percent', bins=30, kde=True, alpha=0, edgecolor=None, cumulative=True)
+
+    # Plot the comulative distribution function of pairwise distances estimated through the KDE curve
+    kde = sns.kdeplot(kth_neighbour, cumulative=True)
+    # plt.yticks(kde.get_yticks(), [f'{int(tick * 100)}%' for tick in kde.get_yticks()])
+    # kde = scipy.gaussian_kde(kth_neighbour)
+
+
+    plt.title(f'Comulative distribution of {k}th Neighbour Distances\nfor {dataset} dataset')
+    plt.xlabel(f'{distance_metric} Distance')
+    plt.ylabel('Probability')
+
+    kde_x = kde.get_lines()[0].get_data()[0]
+    kde_y = kde.get_lines()[0].get_data()[1]
+
+    # Define percentiles to be used
+    percentiles = [0.7, 0.8, 0.9, 0.95]
+
+    for p in percentiles:
+
+        # Calculate the x-coordinate for the given percentile using interpolation
+        kde_percentile_x = np.interp(p, kde_y, kde_x)
+
+        # Draw the horizontal line precisely to the KDE curve intersection
+        plt.plot([0, kde_percentile_x], [p, p], color='r', linestyle='--')
+
+        # Annotate the percentile on the y-axis at the intersection point
+        plt.text(0, p, str(int(p*100)) + "%", color='r', ha='left', va='bottom')
+
+        # Calculate the y-coordinate of the KDE at the intersection point
+        kde_percentile_y = np.interp(kde_percentile_x, kde_x, kde_y)
+
+        # Draw the vertical line from the bottom to the KDE curve
+        plt.plot([kde_percentile_x, kde_percentile_x], [0, kde_percentile_y], color='r', linestyle='--')
+
+        # Annotate the KDE value on the x-axis at the intersection point
+        plt.text(kde_percentile_x, p, f'{kde_percentile_x:.2f}', color='black', ha='left', va='bottom', bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3'))
+
+    # Force x-axis to start at 0
+    plt.xlim(left=0)
+
+    # Store the plot
+    plt.savefig(f'./benchmarks/logs/{dataset}/{dataset}_{distance_metric}_{k}-neighbours_comulative_distribution.png')
+
+    # Show the plot
+    # plt.show()
+
+    # Clear the plot
+    plt.clf()
 
 
 if __name__ == "__main__":
 
     # Set some options for the analysis
     distance_metrics = ['euclidean', 'manhattan', 'chebyshev', 'cosine']
-    k = 5
+    k = 10
 
     # Parse the arguments
     parser = argparse.ArgumentParser()
@@ -350,7 +442,7 @@ if __name__ == "__main__":
     print(f"-- Analysis of the pairwise distances between elements composing the dataset--")
 
     # Plot the distribution of pairwise distances between the elements composing the dataset (or a sample of it if too big)
-    distances_distribution_plot(dataset, distances, 'euclidean')
+    #distances_distribution_plot(dataset, distances, 'euclidean')
 
     # Plot the probability density of the pairwise distances between the elements composing the dataset (or a sample of it if too big)
     distances_probability_density_plot(dataset, distances, 'euclidean')
@@ -359,7 +451,10 @@ if __name__ == "__main__":
     distances_comulative_distribution_plot(dataset, distances, 'euclidean')
 
     # Plot the distribution of the distances regarding the k-th neighbour of each element in the dataset (or a sample of it if too big)
-    # neighbours_distribution_plot(dataset, distances, 'euclidean', k)
+    neighbours_distribution_plot(dataset, distances, 'euclidean', k)
+
+    # Plot the comulative distribution of distances for the k-th neighbour of each element in the dataset (or a sample of it if too big)
+    neighbours_comulative_distribution_plot(dataset, distances, 'euclidean', k)
 
     exit(0)
 
