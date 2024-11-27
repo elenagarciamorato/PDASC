@@ -27,7 +27,8 @@ def explore_experiments(dataset, optional_filters=None):
                 indices, coords, distances, n_dist, search_time = load_neighbors_performance(directory_path + "/" + file)
 
                 # Split the file name to get the information about the experiment
-                parts = re.split(r'[_\.]', file)
+                # by '_' and '.' characters, except if the '.' is between two digits
+                parts = re.split(r'[_]|(?<!\d)\.(?!\d)', file)
 
                 # If the method is GDASC
                 if parts[4] == 'GDASC':
@@ -36,7 +37,7 @@ def explore_experiments(dataset, optional_filters=None):
                         'Method': parts[4],
                         'Distance': parts[3],
                         'k': parts[2],
-                        'radius': int(parts[7][1:]),
+                        'radius': float(parts[7][1:]),
                         'Algorithm': parts[8],
                         # 'Implementation': parts[9],
                         'Dist_Computed(Av)': np.mean(n_dist),
@@ -54,6 +55,7 @@ def explore_experiments(dataset, optional_filters=None):
                         'k': parts[2],
                         'radius': None,
                         'Algorithm': parts[5] if parts[5] != 'hdf5' else None,
+                        #'Algorithm': parts[5] if not parts[4].endswith('.hdf5') else None,
                         # 'Implementation': None,
                         'Dist_Computed(Av)': np.mean(n_dist),
                         # Get the recall of the experiment

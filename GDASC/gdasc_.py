@@ -540,7 +540,7 @@ def knn_approximate_search(n_centroides, punto_buscado, vector_original, k_vecin
 
 
 def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vector_original, k_vecinos, metrica,
-                           grupos_capa, puntos_capa, labels_capa, promoted_points, radio):
+                           grupos_capa, puntos_capa, labels_capa, promoted_points, initial_radius, dataset):
     """
     Performs an approximate k-nearest neighbors (A-KNN) search using a hierarchical tree structure
     and a search radius.
@@ -584,12 +584,19 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
     if metrica == 'manhattan':
         metrica = 'cityblock'  # scipy cdist requires 'cityblock' instead of 'manhattan'
 
+    # We obtain the list of adaptative radius to be used
+    dynamic_radius_list = get_dynamic_radius_list(n_capas, initial_radius, dataset)
+
     # Establish the query point
     # print("El punto de query es: ", punto_buscado)
     punto_buscado = np.reshape(punto_buscado, (1, vector_original.shape[1]))
 
     # (At the first level, current layer=n_capas-1 and current_group = grupos_capa[n_layer].size[0]-1 = 0)
     inheritage = [0]
+
+    # At the first lever, the radius to be used is the first one stored in the dynamic_radius_list
+    current_layer_radius = dynamic_radius_list[n_capas-1]
+    #print(current_layer_radius)
 
     # We take the top-layer prototypes, including its coordinates and distances to the query point
     coordinates_top_prototypes = np.vstack(puntos_capa[n_capas-1][:])
@@ -599,14 +606,14 @@ def recursive_approximate_knn_search(n_capas, n_centroides, punto_buscado, vecto
     distances_computed = distances_top_prototypes.tolist()
 
     # We would only explore those prototypes which meets the condition / are within a radius (dist<radius)
-    explorable_prototypes = np.where(distances_top_prototypes <= radio)[0]
+    explorable_prototypes = np.where(distances_top_prototypes <= current_layer_radius)[0]
 
-    # We search for every neighbour by exploring each top-layer prototype that meets the radius condition recursively
+    # We search for every neighbour by exploring each top-layer prototype that meets the radius condition (established for each layer) recursively
     neighbours = []
 
     for prototype_id in explorable_prototypes:
         prototype_distance = distances_top_prototypes[prototype_id]
-        explore_centroid_optimised(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, radio, neighbours, distances_computed)
+        explore_centroid_optimised(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, dynamic_radius_list, neighbours, distances_computed)
 
     # Once the complete index has been explored:
     # Get the number of total distances computed

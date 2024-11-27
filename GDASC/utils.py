@@ -1,5 +1,6 @@
 # coding=utf-8
 import numpy as np
+import scipy
 from sklearn.metrics.pairwise import pairwise_distances
 import math as m
 from scipy.spatial import distance
@@ -637,7 +638,7 @@ def explore_centroid(punto_buscado, current_layer, inheritage, current_centroid_
 
     # Obtain the prototypes of the layer below which are mapped by this prototype
     id_associated_prototypes_layer_down = np.where(id_prototypes_layer_down == current_centroid_id)[0]
-    #print(f"Number of associated prototypes layer down {len(id_associated_prototypes_layer_down)}")
+    # print(f"Number of associated prototypes layer down {len(id_associated_prototypes_layer_down)}")
 
     # Explore each associated prototype in the layer below
     associated_prototypes_layer_down = []
@@ -645,7 +646,7 @@ def explore_centroid(punto_buscado, current_layer, inheritage, current_centroid_
     for i in range(0, len(id_associated_prototypes_layer_down)):
         subgroup = id_associated_prototypes_layer_down[i] // n_centroides
         group = find_centroid_group(inheritage, grupos_capa, n_centroides, subgroup)
-        #print("Mapeo al hijo con indice ", (id_associated_prototypes_layer_down[i]), " perteneciente al grupo ", group, " de la capa ", current_layer-1)
+        # print("Mapeo al hijo con indice ", (id_associated_prototypes_layer_down[i]), " perteneciente al grupo ", group, " de la capa ", current_layer-1)
 
         id_associated_prototypes_layer_down[i] = id_associated_prototypes_layer_down[i] % n_centroides
 
@@ -707,7 +708,51 @@ def explore_centroid(punto_buscado, current_layer, inheritage, current_centroid_
             explore_centroid(punto_buscado, centroid_layer, centroid_inheritage, centroid_id, coords_puntos_capas, puntos_capas, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
 
 
-def explore_centroid_optimised(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, radio, neighbours, distances_computed):
+
+def get_dynamic_radius_list(n_layers, initial_radius, dataset):
+    """
+    Calculate the radius for the current layer based on a function.
+
+    In this case, the function established calculates the radius for the current layer based on a naive approximation
+    that reduces the radius by 20% based on the radius value of the layer above.
+
+    This function is also compatible with a static radius, where the same radius value is used for all layers.
+    """
+
+    # To still being able to use the legacy implementation (static radius), just asign the initial radius to all the layers
+    #dynamic_radius_list = [initial_radius] * n_layers
+
+    # Calculate the radius for the current layer based on a naive approximation
+    # (reducing the radius by a fixed percentage at each layer)
+    dynamic_radius_list = [initial_radius * (0.80 ** layer) for layer in range(int(n_layers)-1, -1, -1)]
+
+    # Calculate the radius for the current layer based on the 10th neighbours CDF distribution
+
+    '''
+    # Define the interval and the number of partitions
+    start = CDF_100
+    end = CDF_80
+    partitions = n_layers
+
+    # Calculate the step size
+    step = (start - end) / n
+    
+
+    '''
+
+    start = 2159.0
+    end = 119.0
+
+    # Generate the x values
+    #dynamic_radius_list = np.linspace(end, start, n_layers)
+
+    # Print the result
+    print(f" radius values are = {dynamic_radius_list}")
+
+    return dynamic_radius_list
+
+
+def explore_centroid_optimised(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, dynamic_radius_list, neighbours, distances_computed):
     """
     Explores the hierarchical tree structure to find centroids within a given radius.
 
@@ -761,6 +806,9 @@ def explore_centroid_optimised(punto_buscado, current_layer, inheritage, current
 
     # Calculate the group onto the layer which the centroid belongs to
     prototype_group = inheritage[-1]
+
+    # Get the radius value to be used in this layer in order to the comulative kde function
+    radius = dynamic_radius_list[current_layer-1]
 
     # print("Exploring prototype ", current_centroid_id, " belonging to layer ", current_layer, " and group ", inheritage[-1], " out of a total of ", groups_current_layer, " groups")
 
@@ -862,7 +910,7 @@ def explore_centroid_optimised(punto_buscado, current_layer, inheritage, current
             #print("The distances to the childs are: " + str(distances_bottomed_prototypes))
 
             # Explore only those that are within the search radius
-            explorable_prototypes_indices = np.where(associated_prototypes_layer_down[:, 3] <= radio)[0]
+            explorable_prototypes_indices = np.where(associated_prototypes_layer_down[:, 3] <= radius)[0]
             explorable_prototypes = associated_prototypes_layer_down[explorable_prototypes_indices]
             #print("The next prototypes to be explored are: " + str(explorable_prototypes[:, 0]))
 
@@ -876,4 +924,4 @@ def explore_centroid_optimised(punto_buscado, current_layer, inheritage, current
             centroid_distance_q = centroid[3]
 
             # Explore it recursively
-            explore_centroid_optimised(punto_buscado, centroid_layer, centroid_inheritage, centroid_id, centroid_distance_q, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, radio, neighbours, distances_computed)
+            explore_centroid_optimised(punto_buscado, centroid_layer, centroid_inheritage, centroid_id, centroid_distance_q, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, dynamic_radius_list, neighbours, distances_computed)

@@ -384,7 +384,7 @@ def neighbours_comulative_distribution_plot(dataset, distances, distance_metric,
     kde_y = kde.get_lines()[0].get_data()[1]
 
     # Define percentiles to be used
-    percentiles = [0.7, 0.8, 0.9, 0.95]
+    percentiles = [0.7, 0.8, 0.9, 0.95, 1]
 
     for p in percentiles:
 
@@ -442,13 +442,13 @@ if __name__ == "__main__":
     print(f"-- Analysis of the pairwise distances between elements composing the dataset--")
 
     # Plot the distribution of pairwise distances between the elements composing the dataset (or a sample of it if too big)
-    #distances_distribution_plot(dataset, distances, 'euclidean')
+    # distances_distribution_plot(dataset, distances, 'euclidean')
 
     # Plot the probability density of the pairwise distances between the elements composing the dataset (or a sample of it if too big)
-    distances_probability_density_plot(dataset, distances, 'euclidean')
+    # distances_probability_density_plot(dataset, distances, 'euclidean')
 
     # Plot the comulative distribution of pairwise distances between the elements composing the dataset (or a sample of it if too big)
-    distances_comulative_distribution_plot(dataset, distances, 'euclidean')
+    # distances_comulative_distribution_plot(dataset, distances, 'euclidean')
 
     # Plot the distribution of the distances regarding the k-th neighbour of each element in the dataset (or a sample of it if too big)
     neighbours_distribution_plot(dataset, distances, 'euclidean', k)

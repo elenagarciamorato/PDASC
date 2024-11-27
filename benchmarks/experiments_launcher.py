@@ -16,8 +16,10 @@ from cpuinfo import get_cpu_info  # Install with `pip install py-cpuinfo`
 # Function to execute the particular experiment described in the configuration file provided
 def experiment(config_file):
 
-    # Extract the method from the configuration file name
-    method = re.split('_|\.', config_file)[5]
+    # Split the file name to get the method to be used
+    # by '_' and '.' characters, except if the '.' is between two digits
+    #method = re.split('_|\.', config_file)[5]
+    method = re.split(r'[_]|(?<!\d)\.(?!\d)', config_file)[5]
 
     # Print the configuration file name
     #print(config_file)
@@ -112,4 +114,4 @@ if __name__ == "__main__":
 
     execute_experiments(args.argument, args.optional_filters)
 
-    exit(0)
+    #exit(0)
