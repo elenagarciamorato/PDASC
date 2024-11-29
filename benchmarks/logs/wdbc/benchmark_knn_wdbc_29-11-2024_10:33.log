@@ -1,0 +1,23 @@
+2024-11-29 10:33:44,736 - root - ------------------------------------------------------------------------
+2024-11-29 10:33:44,736 - root -                     wdbc Dataset Benchmarking
+2024-11-29 10:33:44,736 - root - ------------------------------------------------------------------------
+2024-11-29 10:33:44,737 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_FLANN.hdf5
+2024-11-29 10:33:44,740 - root - Loading neighbors from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_Exact_auto.hdf5
+2024-11-29 10:33:44,744 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_Exact_auto.hdf5
+2024-11-29 10:33:44,747 - root - Loading neighbors from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_Exact_auto.hdf5
+2024-11-29 10:33:44,751 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_Exact_LinearScan.hdf5
+2024-11-29 10:33:44,753 - root - Loading neighbors from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_Exact_auto.hdf5
+2024-11-29 10:33:44,757 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_PYNN.hdf5
+2024-11-29 10:33:44,760 - root - Loading neighbors from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_Exact_auto.hdf5
+2024-11-29 10:33:44,764 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_GDASC_tg70_nc35_r2159_kmedoids_fastkmedoids.hdf5
+2024-11-29 10:33:44,766 - root - Loading neighbors from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_Exact_auto.hdf5
+2024-11-29 10:33:44,771 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_GDASC_tg70_nc35_r5000_kmedoids_fastkmedoids.hdf5
+2024-11-29 10:33:44,773 - root - Loading neighbors from ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_Exact_auto.hdf5
+2024-11-29 10:33:44,785 - root - ------------------------------------------------------------------------
+  Method   Distance   k  radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+1  Exact  euclidean  10     NaN        auto                NaN       100.0     0.056471
+2  Exact  euclidean  10     NaN  LinearScan             468.00       100.0     0.007324
+0  FLANN  euclidean  10     NaN        None                NaN       100.0     0.241077
+5  GDASC  euclidean  10  5000.0    kmedoids             468.00       100.0     3.189618
+4  GDASC  euclidean  10  2159.0    kmedoids             459.69       100.0     1.798076
+3   PYNN  euclidean  10     NaN        None                NaN       100.0     0.004535
