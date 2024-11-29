@@ -1,0 +1,35 @@
+2024-11-28 13:27:53,847 - root - ------------------------------------------------------------------------
+2024-11-28 13:27:53,848 - root -                     NYtimes Dataset Benchmarking
+2024-11-28 13:27:53,849 - root - ------------------------------------------------------------------------
+2024-11-28 13:27:53,849 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-28 13:27:53,855 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,861 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,866 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,873 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_PYNN.hdf5
+2024-11-28 13:27:53,875 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,880 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_FLANN.hdf5
+2024-11-28 13:27:53,882 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,887 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_GDASC_tg1000_nc500_r1.29_kmedoids_fastkmedoids.hdf5
+2024-11-28 13:27:53,892 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,897 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_GDASC_tg1000_nc500_r1.30_kmedoids_fastkmedoids.hdf5
+2024-11-28 13:27:53,900 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,904 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_LinearScan.hdf5
+2024-11-28 13:27:53,907 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,912 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_GDASC_tg1000_nc500_r1.4_kmedoids_fastkmedoids.hdf5
+2024-11-28 13:27:53,915 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,919 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_GDASC_tg1000_nc500_r1.32_kmedoids_fastkmedoids.hdf5
+2024-11-28 13:27:53,922 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,927 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_GDASC_tg1000_nc500_r1.28_kmedoids_fastkmedoids.hdf5
+2024-11-28 13:27:53,929 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-28 13:27:53,941 - root - ------------------------------------------------------------------------
+  Method   Distance   k  radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+1  Exact  euclidean  10     NaN        auto                NaN       100.0    20.497520
+6  Exact  euclidean  10     NaN  LinearScan          290000.00        43.6    21.600332
+3  FLANN  euclidean  10     NaN        None                NaN        20.7     0.486154
+0  GDASC  euclidean  10   30.00    kmedoids          290000.00        43.5  1719.117542
+7  GDASC  euclidean  10    1.40    kmedoids          266905.50        43.5  1033.147762
+8  GDASC  euclidean  10    1.32    kmedoids          228244.98        41.1   563.282731
+5  GDASC  euclidean  10    1.30    kmedoids          219744.15        41.5   372.644597
+4  GDASC  euclidean  10    1.29    kmedoids          216222.20        40.5   361.544694
+9  GDASC  euclidean  10    1.28    kmedoids          213054.07        39.6   363.330957
+2   PYNN  euclidean  10     NaN        None                NaN        32.7     0.061742

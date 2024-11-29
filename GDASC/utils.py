@@ -708,46 +708,66 @@ def explore_centroid(punto_buscado, current_layer, inheritage, current_centroid_
             explore_centroid(punto_buscado, centroid_layer, centroid_inheritage, centroid_id, coords_puntos_capas, puntos_capas, grupos_capa, n_centroides, metrica, radio, neighbours, distances_computed)
 
 
-
 def get_dynamic_radius_list(n_layers, initial_radius, dataset):
     """
-    Calculate the radius for the current layer based on a function.
+    Generate a list that allows to assign different radius values to be used at each layer.
 
-    In this case, the function established calculates the radius for the current layer based on a naive approximation
-    that reduces the radius by 20% based on the radius value of the layer above.
+    This function provides three alternatives for adjusting the radius values:
+    1. Static radius values based on the 10th-nearest neighbor CDF percentiles.
+    2. Dynamic radius values reduced over layers based on a heuristic.
+    3. Dynamic radius values equally reduced over layers based on percentile values of the 10th-nearest neighbor CDF distribution.
 
-    This function is also compatible with a static radius, where the same radius value is used for all layers.
+    Parameters:
+    n_layers (int): The number of layers.
+    initial_radius (float): The initial radius value.
+    dataset (str): The name of the dataset. Supported datasets are "wdbc", "municipios", "NYtimes", "MNIST", and "GLOVE".
+
+    Returns:
+    numpy.ndarray: A list of radius values for each layer.
     """
 
-    # To still being able to use the legacy implementation (static radius), just asign the initial radius to all the layers
-    #dynamic_radius_list = [initial_radius] * n_layers
+    # 1st Radius Adjustment Alternative: Statical Values based on 10th-nn CDF percentiles
+    # Equivalent to the legacy implementation (static radius): just assign the same radius to all the layers
+    # dynamic_radius_list = [np.round(initial_radius, 2)] * n_layers
 
-    # Calculate the radius for the current layer based on a naive approximation
-    # (reducing the radius by a fixed percentage at each layer)
-    dynamic_radius_list = [initial_radius * (0.80 ** layer) for layer in range(int(n_layers)-1, -1, -1)]
+    # 2nd Radius Adjustment Alternative: Dynamic radius which value is reduced over layers based on an heuristic
+    # (Reducing the radius by a fixed percentage at each layer, a 20% in this case)
+    # dynamic_radius_list = [np.round(initial_radius * (0.80 ** layer), 2) for layer in range(int(n_layers)-1, -1, -1)]
 
-    # Calculate the radius for the current layer based on the 10th neighbours CDF distribution
+    # 3rd Radius Adjustment Alternative: Dynamic radius which value is equally reduced over layers
+    # regarding a max and min percentile value of the 10th-nn CDF distribution (0.8 and 1 in this case)
 
-    '''
-    # Define the interval and the number of partitions
-    start = CDF_100
-    end = CDF_80
+    # Define the interval values regarding the dataset used:
+
+    # The starting value for the radius interval will be the provided initial radius,
+    # corresponding to the value for percentile 1 of the 10th-nn CDF
+    start = initial_radius
+
+    # The ending value for the radius interval will depend on the dataset used,
+    # corresponding to the value for percentile 0.8 of their 10th-nn CDF
+
+    if dataset == "wdbc":
+        end = 119.0
+    elif dataset == "municipios":
+        end = 0.42
+    elif dataset == "NYtimes":
+        end = 1.29
+    elif dataset == "MNIST":
+        end = 2005.0
+    elif dataset == "GLOVE":
+        end = 6.7
+    else:
+        print("Dataset not found")
+        return None
+
+    # The number of partitions will correspond to the number of layers
     partitions = n_layers
 
-    # Calculate the step size
-    step = (start - end) / n
-    
+    # Partition equally the interval between the start and end values in n_layers partitions
+    dynamic_radius_list = np.round(np.linspace(end, start, partitions), 2)
 
-    '''
-
-    start = 2159.0
-    end = 119.0
-
-    # Generate the x values
-    #dynamic_radius_list = np.linspace(end, start, n_layers)
-
-    # Print the result
-    print(f" radius values are = {dynamic_radius_list}")
+    # Print the values of the radius for each layer
+    # print(f" radius values are = {dynamic_radius_list}")
 
     return dynamic_radius_list
 

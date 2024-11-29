@@ -1,0 +1,35 @@
+2024-11-28 11:19:43,973 - root - ------------------------------------------------------------------------
+2024-11-28 11:19:43,973 - root -                     MNIST Dataset Benchmarking
+2024-11-28 11:19:43,974 - root - ------------------------------------------------------------------------
+2024-11-28 11:19:43,976 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_LinearScan.hdf5
+2024-11-28 11:19:43,992 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,011 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_FLANN.hdf5
+2024-11-28 11:19:44,024 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,047 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r1915_kmedoids_fastkmedoids.hdf5
+2024-11-28 11:19:44,060 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,070 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r2834_kmedoids_fastkmedoids.hdf5
+2024-11-28 11:19:44,080 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,092 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r2122_kmedoids_fastkmedoids.hdf5
+2024-11-28 11:19:44,101 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,112 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,120 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,133 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r2219_kmedoids_fastkmedoids.hdf5
+2024-11-28 11:19:44,152 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,163 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-11-28 11:19:44,174 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,186 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_PYNN.hdf5
+2024-11-28 11:19:44,195 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,208 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r2005_kmedoids_fastkmedoids.hdf5
+2024-11-28 11:19:44,230 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-11-28 11:19:44,252 - root - ------------------------------------------------------------------------
+  Method   Distance   k   radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+0  Exact  euclidean  10      NaN  LinearScan           59999.00       100.0     4.325515
+5  Exact  euclidean  10      NaN        auto                NaN       100.0     8.846630
+1  FLANN  euclidean  10      NaN        None                NaN        74.5     0.639097
+7  GDASC  euclidean  10  80000.0    kmedoids           59999.00       100.0   440.133555
+3  GDASC  euclidean  10   2834.0    kmedoids           39671.36        99.1   268.336608
+6  GDASC  euclidean  10   2219.0    kmedoids            5732.09        63.5    22.659410
+4  GDASC  euclidean  10   2122.0    kmedoids            3824.40        47.7    13.459011
+9  GDASC  euclidean  10   2005.0    kmedoids            2375.16        39.9     7.323174
+2  GDASC  euclidean  10   1915.0    kmedoids            1827.20        31.7     5.679480
+8   PYNN  euclidean  10      NaN        None                NaN        96.6     0.025769
