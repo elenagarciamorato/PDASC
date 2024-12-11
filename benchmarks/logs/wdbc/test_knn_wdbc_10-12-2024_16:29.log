@@ -1,0 +1,40 @@
+2024-12-10 16:29:10,909 - root - ------------------------------------------------------------------------
+2024-12-10 16:29:10,909 - root -                     Experiments launcher for wdbc Dataset
+2024-12-10 16:29:10,909 - root - ------------------------------------------------------------------------
+
+2024-12-10 16:29:10,909 - root - Gathering system architecture information...
+
+2024-12-10 16:29:10,910 - root - Platform: Linux-5.15.0-126-generic-x86_64-with-debian-bookworm-sid
+
+2024-12-10 16:29:12,181 - root - Processor: AMD EPYC 7451 24-Core Processor
+2024-12-10 16:29:12,182 - root - Processor Architecture: X86_64
+2024-12-10 16:29:12,191 - root - Processor Cores: 48
+2024-12-10 16:29:12,191 - root - Logical Processors: 96
+
+2024-12-10 16:29:12,191 - root - Python Version: 3.7.13 (default, Mar 29 2022, 02:18:16) 
+[GCC 7.5.0]
+
+2024-12-10 16:29:12,192 - root - Total RAM: 125.74 GB
+2024-12-10 16:29:12,192 - root - Available RAM: 121.68 GB
+2024-12-10 16:29:12,192 - root - Used RAM: 3.03 GB
+2024-12-10 16:29:12,192 - root - RAM Usage Percentage: 3.20%
+
+2024-12-10 16:29:12,192 - root - ------------------------------------------------------------------------
+
+2024-12-10 16:29:12,194 - root - ------------------------------------------------------------------------
+2024-12-10 16:29:12,194 - root - ---- Searching the 10 nearest neighbors within GDASC over wdbc dataset using euclidean distance. ----
+2024-12-10 16:29:12,194 - root - 
+2024-12-10 16:29:12,194 - root - ---- GDASC Parameters - tam_grupo=70 - n_centroids=35 - radius=2159 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-12-10 16:29:12,194 - root - ------------------------------------------------------------------------
+
+2024-12-10 16:29:12,195 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-12-10 16:29:12,321 - GDASC.gdasc_ - tree time=0.12325323605909944 seconds
+2024-12-10 16:29:13,818 - root - Search time = 1.4965005330741405 seconds
+
+2024-12-10 16:29:13,818 - root - Average time spent in searching a single point = 0.014965005330741405
+2024-12-10 16:29:13,818 - root - Speed (points/s) = 66.82256223095227
+
+2024-12-10 16:29:13,821 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_GDASC_tg70_nc35_r2159_kmedoids_fastkmedoids.hdf5
+2024-12-10 16:29:13,821 - root - 
+

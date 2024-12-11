@@ -28,6 +28,7 @@ def Exact(config_file):
     start_time_i = timer()
     knn_index = Exact_nn_index(vector_training, distance, exact_algorithm)
     end_time_i = timer()
+
     logging.info('Index time= %s seconds', end_time_i - start_time_i)
 
     # Store index on disk to obtain its size
@@ -37,26 +38,7 @@ def Exact(config_file):
     # Using Exact Algorithm and the index built, find the k nearest neighbors
     start_time_s = timer()
 
-    # Build the arrays to store the indices, coordinates and distances of the k nearest neighbors
-    indices_vecinos = np.empty([len(vector_testing), k], dtype=int)
-    coords_vecinos = np.empty([len(vector_testing), k, vector_testing.shape[1]], dtype=float)
-    dists_vecinos = np.empty([len(vector_testing), k], dtype=float)
-
-    # And number of distances computed
-    n_distances = np.empty(len(vector_testing))
-
-    # For every point in the testing set, find its k nearest neighbors
-    for i in range(len(vector_testing)):
-        punto = vector_testing[i].reshape(1, -1)
-        # logging.info('punto %s =%s', i,  punto)
-
-        indices, coords, dists, n_dist = Exact_nn_search(vector_training, punto, k, distance, knn_index)
-
-        indices_vecinos[i] = indices[0]
-        coords_vecinos[i] = coords[0]
-        dists_vecinos[i] = dists[0]
-        n_distances[i] = n_dist
-
+    indices, coords, dists, n_dist = Exact_nn_search(vector_training, vector_testing, k, distance, knn_index)
 
     end_time_s = timer()
 
@@ -71,7 +53,7 @@ def Exact(config_file):
     file_name = "./benchmarks/NearestNeighbors/" + dataset + "/knn_" + dataset + "_" + str(k) + "_" + distance + "_" + method + "_" + exact_algorithm + ".hdf5"
 
     # Store indices, coords and dist into a hdf5 file
-    save_neighbors_and_performance(indices_vecinos, coords_vecinos, dists_vecinos, n_distances, search_time, file_name)
+    save_neighbors_and_performance(indices, coords, dists, n_dist, search_time, file_name)
 
     # Print
     # print_knn(train_set, test_set, coords, dataset_name, d, "Exact", k)

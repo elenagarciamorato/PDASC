@@ -1,6 +1,5 @@
 # coding=utf-8
 import numpy as np
-import scipy
 from sklearn.metrics.pairwise import pairwise_distances
 import math as m
 from scipy.spatial import distance
@@ -557,8 +556,6 @@ def search_near_centroid(group_id, centroid_id, last_neighbor_id, examined_centr
     return point_id, distance, group_id, nearest_centroid_id
 
 
-
-
 def find_centroid_group(inheritage, grupos_capa, n_centroids, subgroup):
     """
     Determines the group of a centroid in a hierarchical tree structure.
@@ -577,13 +574,12 @@ def find_centroid_group(inheritage, grupos_capa, n_centroids, subgroup):
     int
         The group index of the centroid.
     """
+    # Number of branches depends on the number of centroids and the number of points in the group
+    n_branches = grupos_capa[-1][0] // n_centroids
 
-    tg = grupos_capa[-1][0]
-    n_branches = tg//n_centroids
-    father_group = inheritage[-1]
-    centroid_group = father_group * n_branches + subgroup
+    # The group of the centroid depends on the number of branches, the current layer and the subgroup (0 or 1) index
+    return inheritage[-1] * n_branches + subgroup
 
-    return centroid_group
 
 
 
@@ -728,7 +724,7 @@ def get_dynamic_radius_list(n_layers, initial_radius, dataset):
 
     # 1st Radius Adjustment Alternative: Statical Values based on 10th-nn CDF percentiles
     # Equivalent to the legacy implementation (static radius): just assign the same radius to all the layers
-    # dynamic_radius_list = [np.round(initial_radius, 2)] * n_layers
+    dynamic_radius_list = [np.round(initial_radius, 2)] * n_layers
 
     # 2nd Radius Adjustment Alternative: Dynamic radius which value is reduced over layers based on an heuristic
     # (Reducing the radius by a fixed percentage at each layer, a 20% in this case)
@@ -764,7 +760,7 @@ def get_dynamic_radius_list(n_layers, initial_radius, dataset):
     partitions = n_layers
 
     # Partition equally the interval between the start and end values in n_layers partitions
-    dynamic_radius_list = np.round(np.linspace(end, start, partitions), 2)
+    #dynamic_radius_list = np.round(np.linspace(end, start, partitions), 2)
 
     # Print the values of the radius for each layer
     # print(f" radius values are = {dynamic_radius_list}")
@@ -817,20 +813,11 @@ def explore_centroid_optimised(punto_buscado, current_layer, inheritage, current
     list
         Updated list of nearest neighbors.
     """
-
-    # Calculate the number of groups in the current layer
-    if current_layer == grupos_capa.size:
-        groups_current_layer = 1
-    else:
-        groups_current_layer = grupos_capa[current_layer].size
-
     # Calculate the group onto the layer which the centroid belongs to
     prototype_group = inheritage[-1]
 
     # Get the radius value to be used in this layer in order to the comulative kde function
     radius = dynamic_radius_list[current_layer-1]
-
-    # print("Exploring prototype ", current_centroid_id, " belonging to layer ", current_layer, " and group ", inheritage[-1], " out of a total of ", groups_current_layer, " groups")
 
     # Obtain the IDs of prototypes from the layer below
     id_prototypes_layer_down = puntos_capas[current_layer-1][prototype_group]
@@ -839,109 +826,47 @@ def explore_centroid_optimised(punto_buscado, current_layer, inheritage, current
     id_associated_prototypes_layer_down = np.where(id_prototypes_layer_down == current_centroid_id)[0]
 
     # Explore each associated prototype in the layer below and store it into a list
-    associated_prototypes_layer_down = []
+    associated_prototypes_layer_down = np.empty((len(id_associated_prototypes_layer_down), 4), dtype=object)
 
-    for i in range(0, len(id_associated_prototypes_layer_down)):
+    for i in range(len(id_associated_prototypes_layer_down)):
         subgroup = id_associated_prototypes_layer_down[i] // n_centroides
         group = find_centroid_group(inheritage, grupos_capa, n_centroides, subgroup)
-        #print("Mapeo al hijo con indice ", (id_associated_prototypes_layer_down[i]), " perteneciente al grupo ", group, " de la capa ", current_layer-1)
-
         id_associated_prototypes_layer_down[i] = id_associated_prototypes_layer_down[i] % n_centroides
 
-        prototype_layer_down = np.empty(4, dtype=object)
-        prototype_layer_down[0] = id_associated_prototypes_layer_down[i]
-        prototype_layer_down[1] = group
-
-        # If the layer below contains the actual points of tha dataset (current_layer-1 == 0), we have not more prototypes below
-        if current_layer-1 == 0:
-            prototype_layer_down[2] = None
-
-        # Otherwise, we have to obtain the coordinates of the prototypes below
-        else:
-            prototype_layer_down[2] = coords_puntos_capas[current_layer-2][prototype_layer_down[1]][prototype_layer_down[0]]
-
-        associated_prototypes_layer_down.append(prototype_layer_down)
-
-    associated_prototypes_layer_down = np.array(associated_prototypes_layer_down)
-    # print(f"Associated prototypes layer down {associated_prototypes_layer_down}")
+        associated_prototypes_layer_down[i, 0] = id_associated_prototypes_layer_down[i]
+        associated_prototypes_layer_down[i, 1] = group
+        associated_prototypes_layer_down[i, 2] = None if current_layer-1 == 0 else coords_puntos_capas[current_layer-2][group][id_associated_prototypes_layer_down[i]]
+        associated_prototypes_layer_down[i, 3] = current_centroid_distance if current_layer-1 == 0 else None
 
     # If the centroid explored is in the last layer of the index
-    # (meaning that the prototypes below are actually dataset points)
     if current_layer == 1:
-
-        # For each of the points below
-        for i in range(0, len(associated_prototypes_layer_down)):
-
-            # Obtain the ID of the point in the dataset
-            neighbour_id = n_centroides*associated_prototypes_layer_down[i][1] + associated_prototypes_layer_down[i][0]
+        for i in range(len(associated_prototypes_layer_down)):
+            neighbour_id = n_centroides * associated_prototypes_layer_down[i, 1] + associated_prototypes_layer_down[i, 0]
             tam_grupo = grupos_capa[0][0]
             group_id = neighbour_id // tam_grupo
 
-            #print(f"Neighbour id {neighbour_id} ({neighbour_id % 70}) and group id {group_id}")
-
-            # If the prototype only maps one point or the real point mapped is a promoted point
-            if len(associated_prototypes_layer_down) == 1 or (promoted_points)[group_id][neighbour_id % tam_grupo]:
-                # Store its id and the distance to the query point (the distance to the current centroid)
-                neighbours.append(tuple((neighbour_id, current_centroid_distance)))
-
-            # Otherwise
+            if len(associated_prototypes_layer_down) == 1 or promoted_points[group_id][neighbour_id % tam_grupo]:
+                neighbours.append((neighbour_id, current_centroid_distance))
             else:
-                # Store only its id. Its distance will be computed later
                 neighbours.append(neighbour_id)
-
-        # Add the found points to the neighbours stack
         return neighbours
 
+    # If the prototype has only one associated prototype below
+    if len(associated_prototypes_layer_down) == 1:
+        associated_prototypes_layer_down[0, 3] = current_centroid_distance
+        explorable_prototypes = associated_prototypes_layer_down
     else:
+        coordinates_bottomed_prototypes = np.vstack(associated_prototypes_layer_down[:, 2])
+        for i in range(len(coordinates_bottomed_prototypes)):
+            if np.isnan(coordinates_bottomed_prototypes[i]).any():
+                associated_prototypes_layer_down[i, 3] = current_centroid_distance
+            else:
+                associated_prototypes_layer_down[i, 3] = distance.pdist([punto_buscado[0], coordinates_bottomed_prototypes[i]], metric=metrica)[0]
+                distances_computed.append(associated_prototypes_layer_down[i, 3])
 
-        # If the prototype has only one associated prototype below
-        if len(associated_prototypes_layer_down) == 1:
+        explorable_prototypes_indices = np.where(associated_prototypes_layer_down[:, 3] <= radius)[0]
+        explorable_prototypes = associated_prototypes_layer_down[explorable_prototypes_indices]
 
-            # It means that the prototype is a promoted point, so the distance is the same as the distance to the current centroid
-            associated_prototypes_layer_down[0, 3] = current_centroid_distance
-            explorable_prototypes = associated_prototypes_layer_down
-
-        else:
-            # Obtain the coordinates of the associated prototypes below
-            coordinates_bottomed_prototypes = np.vstack(associated_prototypes_layer_down[:, 2])
-
-            # Store the info about the distance of each associated prototype to the query point
-            for i in range(len(coordinates_bottomed_prototypes)):
-                # print(coordinates_bottomed_prototypes[i])
-
-                # If i is an array full of nan values
-                if np.isnan(coordinates_bottomed_prototypes[i]).any():
-                #if np.isnan(coordinates_bottomed_prototypes[i][0]):
-
-                    # It means that the prototype is a promoted point, so the distance is the same as the distance to the current centroid
-                    #print("The coordinates of the prototype are nan, so the distance is the same as the distance to the current centroid")
-                    associated_prototypes_layer_down[i, 3] = current_centroid_distance
-
-                # Otherwise, compute the distance to the prototype
-                else:
-                    associated_prototypes_layer_down[i, 3] = distance.pdist(np.array([punto_buscado[0], coordinates_bottomed_prototypes[i]]), metric=metrica)[0]
-                    #print(f'The distance to prototype is {associated_prototypes_layer_down[i, 3]}')
-
-                    # And add the distance to the list of distances computed
-                    distances_computed.append(associated_prototypes_layer_down[i, 3])
-
-            # Once we have the children's distances
-            #print(f"Number of nan distances {nan_distances}")
-            #print("The distances to the childs are: " + str(distances_bottomed_prototypes))
-
-            # Explore only those that are within the search radius
-            explorable_prototypes_indices = np.where(associated_prototypes_layer_down[:, 3] <= radius)[0]
-            explorable_prototypes = associated_prototypes_layer_down[explorable_prototypes_indices]
-            #print("The next prototypes to be explored are: " + str(explorable_prototypes[:, 0]))
-
-        # For each prototype that meets the search radius condition
-        for i in range(0, len(explorable_prototypes)):
-            centroid = explorable_prototypes[i]
-            centroid_layer = current_layer-1
-            centroid_inheritage = inheritage + [centroid[1]]
-            centroid_id = centroid[0]
-            centroid_coords = centroid[2]
-            centroid_distance_q = centroid[3]
-
-            # Explore it recursively
-            explore_centroid_optimised(punto_buscado, centroid_layer, centroid_inheritage, centroid_id, centroid_distance_q, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, dynamic_radius_list, neighbours, distances_computed)
+    for i in range(len(explorable_prototypes)):
+        centroid = explorable_prototypes[i]
+        explore_centroid_optimised(punto_buscado, current_layer-1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, dynamic_radius_list, neighbours, distances_computed)

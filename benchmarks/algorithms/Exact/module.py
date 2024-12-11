@@ -93,24 +93,54 @@ def LinearScan_nn_search(train_set, test_set, k, metric, same_set=None):
 
 
 # Find the k nearest neighbors of the elements constituting the test set through an exact method
-def Exact_nn_search(train_set, test_set, k, metric, tree_index, same_set=None):
+def Exact_nn_search(vector_training, vector_testing, k, metric, tree_index, same_set=None):
+
+    # Build the arrays to store the indices, coordinates and distances of the k nearest neighbors
+    indices_vecinos = np.empty([len(vector_testing), k], dtype=int)
+    coords_vecinos = np.empty([len(vector_testing), k, vector_testing.shape[1]], dtype=float)
+    dists_vecinos = np.empty([len(vector_testing), k], dtype=float)
+
+    # And number of distances computed
+    n_distances_vecinos = np.empty(len(vector_testing))
 
     # If any index is provided, find the knn of the test_set elements through a linear scan
     if tree_index is None:
-        indices, coords, dists, n_distances = LinearScan_nn_search(train_set, test_set, k, metric, same_set)
+
+        # For every point in the testing set, find its k nearest neighbors
+        for i in range(len(vector_testing)):
+            #print("Punto número: ", i)
+            punto = vector_testing[i].reshape(1, -1)
+
+            indices, coords, dists, n_distances = LinearScan_nn_search(vector_training, punto, k, metric, same_set)
+
+            indices_vecinos[i] = indices[0]
+            coords_vecinos[i] = coords[0]
+            dists_vecinos[i] = dists[0]
+            n_distances_vecinos[i] = n_distances
 
     else:
-        # Find the knn of the test_set elements between those contained on the train_set index
-        dists, indices = tree_index.kneighbors(test_set, k)
 
-        # Get the coordinates of the found neighbors
-        coords = np.array(train_set[indices])
+        # For every point in the testing set, find its k nearest neighbors
+        for i in range(len(vector_testing)):
+            #print("Punto número: ", i)
+            punto = vector_testing[i].reshape(1, -1)
 
-        # Unknown number of distance computations
-        n_distances = None
+            # Find the knn of the test_set elements between those contained on the train_set index
+            dists, indices = tree_index.kneighbors(punto, k)
+
+            # Get the coordinates of the found neighbors
+            coords = np.array(vector_training[indices])
+
+            indices_vecinos[i] = indices[0]
+            coords_vecinos[i] = coords[0]
+            dists_vecinos[i] = dists[0]
+
+            # Unknown number of distance computations
+            n_distances_vecinos[i] = None
+
 
         # Return knn and the number of distance computations required to obtain them
         #print(f"Los vecinos exactos son: {indices} con distancias {dists}")
 
-    return indices, coords, dists, n_distances
+    return indices_vecinos, coords_vecinos, dists_vecinos, n_distances_vecinos
 
