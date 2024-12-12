@@ -1,0 +1,40 @@
+2024-12-11 15:41:17,926 - root - ------------------------------------------------------------------------
+2024-12-11 15:41:17,926 - root -                     Experiments launcher for NYtimes Dataset
+2024-12-11 15:41:17,926 - root - ------------------------------------------------------------------------
+
+2024-12-11 15:41:17,926 - root - Gathering system architecture information...
+
+2024-12-11 15:41:17,927 - root - Platform: Linux-5.15.0-126-generic-x86_64-with-debian-bookworm-sid
+
+2024-12-11 15:41:19,214 - root - Processor: AMD EPYC 7451 24-Core Processor
+2024-12-11 15:41:19,215 - root - Processor Architecture: X86_64
+2024-12-11 15:41:19,224 - root - Processor Cores: 48
+2024-12-11 15:41:19,224 - root - Logical Processors: 96
+
+2024-12-11 15:41:19,224 - root - Python Version: 3.7.13 (default, Mar 29 2022, 02:18:16) 
+[GCC 7.5.0]
+
+2024-12-11 15:41:19,225 - root - Total RAM: 125.74 GB
+2024-12-11 15:41:19,225 - root - Available RAM: 123.11 GB
+2024-12-11 15:41:19,225 - root - Used RAM: 1.60 GB
+2024-12-11 15:41:19,225 - root - RAM Usage Percentage: 2.10%
+
+2024-12-11 15:41:19,225 - root - ------------------------------------------------------------------------
+
+2024-12-11 15:41:19,227 - root - ------------------------------------------------------------------------
+2024-12-11 15:41:19,227 - root - ---- Searching the 10 nearest neighbors within GDASC over NYtimes dataset using euclidean distance. ----
+2024-12-11 15:41:19,227 - root - 
+2024-12-11 15:41:19,227 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=1.4 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-12-11 15:41:19,227 - root - ------------------------------------------------------------------------
+
+2024-12-11 15:41:19,229 - root - Loading train and test set from ./data/NYtimes_train_test_set.hdf5
+
+2024-12-11 15:53:56,469 - GDASC.gdasc_ - tree time=756.8870986171532 seconds
+2024-12-11 16:06:09,710 - root - Search time = 733.2405305400025 seconds
+
+2024-12-11 16:06:09,711 - root - Average time spent in searching a single point = 7.332405305400025
+2024-12-11 16:06:09,711 - root - Speed (points/s) = 0.1363808952655058
+
+2024-12-11 16:06:09,719 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_GDASC_tg1000_nc500_r1.4_kmedoids_fastkmedoids.hdf5
+2024-12-11 16:06:09,720 - root - 
+

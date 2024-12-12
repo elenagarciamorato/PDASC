@@ -599,8 +599,8 @@ def recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vect
         # We obtain the list of adaptative radius to be used
         dynamic_radius_list = get_dynamic_radius_list(n_capas, initial_radius, dataset)
 
-        # We create the list of k candidate neighbours (to store the distances discovered ordered)
-        candidates = np.empty(k_vecinos + 2, float)
+        # Create an array of k_vecinos * 2 elements where the value of them are the initial radius
+        # candidates = np.full(int(k_vecinos * 10), initial_radius, dtype=float)
 
         # Establish the query point
         punto_buscado = vector_testing[punto].reshape(1, -1)
@@ -610,8 +610,9 @@ def recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vect
         inheritage = [0]
 
         # At the first lever, the radius to be used is the first one stored in the dynamic_radius_list
-        current_layer_radius = dynamic_radius_list[n_capas-1]
-        #print(current_layer_radius)
+        current_layer_radius = dynamic_radius_list[-1]
+        # current_layer_radius = candidates[-1]
+        # print(current_layer_radius)
 
         # We take the top-layer prototypes, including its coordinates and distances to the query point
         coordinates_top_prototypes = np.vstack(puntos_capa[n_capas-1][:])
@@ -623,12 +624,13 @@ def recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vect
         # We would only explore those prototypes which meets the condition / are within a radius (dist<radius)
         explorable_prototypes = np.where(distances_top_prototypes <= current_layer_radius)[0]
 
+
         # We search for every neighbour by exploring each top-layer prototype that meets the radius condition (established for each layer) recursively
         neighbours = []
 
         for prototype_id in explorable_prototypes:
             prototype_distance = distances_top_prototypes[prototype_id]
-            explore_centroid_optimised(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, dynamic_radius_list, neighbours, distances_computed)
+            explore_centroid_optimised(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, dynamic_radius_list)
 
         # Once the complete index has been explored:
         # Get the number of total distances computed
