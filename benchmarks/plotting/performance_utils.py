@@ -89,7 +89,7 @@ def get_recall(dataset, distance, method, k, baseline, algorithm=None, implement
     logging.basicConfig(filename='./benchmarks/logs/' + dataset + '/' + dataset + "_tg" + str(tg) + "_nc" + str(nc) + "_r" + str(r) + "_GDASC_" + str(algorithm) + "_" + str(implementation) +'_recall.log',
                         filemode='w', format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO, force=True)
     logging.info('------------------------------------------------------------------------')
-    logging.info('                            %s Dataset RECALL', dataset)
+    logging.info('                            %s Dataset RECALLS', dataset)
     logging.info('------------------------------------------------------------------------')
     logging.info('Search of k nearest neighbors over a choosen dataset, using different methods, run_benchmarks.py')
     logging.info('------------------------------------------------------------------------\n')

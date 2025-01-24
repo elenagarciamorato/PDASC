@@ -245,6 +245,51 @@ def print_avgRecall_pointplot(datasets, distances, methods, avgRecall):
         plt.clf()
 
 
+def print_Recall_pointplot(dataset, results_dataset):
+
+    # Drop from the df the entrys whose methods are Exact & replace PYNN by PyNN
+    results_dataset = results_dataset[results_dataset['Method'] != 'Exact'].replace("PYNN", "PyNN")
+
+    # Set resolution of the figure
+    plt.rcParams['figure.dpi'] = 300
+
+    distances=results_dataset['Distance'].unique()
+
+    # reorder distances, putting manhattan, euclidean, chebyshev, cosine, and, if present, harversine
+    distances = ['manhattan', 'euclidean', 'chebyshev', 'cosine'] if 'haversine' not in distances else ['manhattan', 'euclidean', 'chebyshev', 'cosine', 'haversine']
+    methods = ['FLANN', 'PyNN', 'GDASC']
+
+    # Point plot
+    # lineas gruesas y GDASC discontinuo
+    sns.set_context("paper", font_scale=1.3)
+    ax = sns.pointplot(data=results_dataset, x="Distance", y="Recall(Av)", hue="Method", hue_order=methods,
+                       order=distances, palette=['#58a5e0', '#fca92d', '#b970e0'], markersize=4.5,
+                       linestyles=["-", "-", "--"])
+
+    ax.margins(x=0.07)
+    sns.move_legend(ax, "lower right", )
+    plt.setp(ax.get_legend().get_title(), fontsize='16')
+    plt.setp(ax.get_legend().get_texts(), fontsize='13')
+    ''' Title
+    # Set title and y-axis limits (0-100)
+    if dataset == "municipios":
+        plt.suptitle("municipalities", fontsize=25, ha='center')
+    else:
+        plt.suptitle(dataset, fontsize=25, ha='center')
+    '''
+
+    ax.set_ylim(0, 105)
+    ax.set_ylabel('Average Recall')
+
+    # Show graph and save it into a file
+    plt.savefig("./benchmarks/figures/fig_" + dataset + "_Recall.png")
+    #plt.show()
+
+    plt.figure().clear()
+    plt.close()
+    plt.cla()
+    plt.clf()
+
 #######################          Execution Time plots       ###########################
 
 # Build a graph to show execution time results
@@ -264,3 +309,5 @@ def print_extime_plot(dataset, distances, methods, k, ex_times):
     fig.legend(methods, loc='center right', title='Method')
     fig.suptitle(dataset + " dataset - Execution time avevarage (s)", fontsize=20, y=0.95)
     plt.show()
+
+

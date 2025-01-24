@@ -1,4 +1,3 @@
-import numpy as np
 from pyflann import *
 import logging
 import os
@@ -75,3 +74,11 @@ def FLANN_nn_search(dataset, seq_buscada, k, distance_type, algorithm):
     n_distances = np.NaN
 
     return np.array(lista_indices), np.array(lista_coords), np.array(lista_dists), n_distances
+
+# Function that returns the accepted distances by FLANN
+def FLANN_accepted_distances():
+    return ['euclidean', 'manhattan', 'minkowski', 'max_dist', 'hik', 'hellinger', 'cs', 'kl']
+
+# Function that returns the accepted algorithms by FLANN
+def FLANN_accepted_algorithms():
+    return ['kdtree', 'kmeans', 'linear', 'composite', 'kdtree_single', 'composite', 'autotuned', 'saved']

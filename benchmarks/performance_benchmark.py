@@ -1,4 +1,5 @@
 from benchmarks.plotting.performance_utils import *
+from benchmarks.plotting.draw_benchmark_plots import print_Recall_pointplot
 import argparse
 import datetime
 import logging
@@ -46,6 +47,9 @@ def explore_experiments(dataset, optional_filters=None):
                         'Search_Time': np.round(search_time, 8)
                     })
 
+                    if parts[3]=='manhattan':
+                        print((indices, coords, distances))
+
                 # If the method is other
                 else:
                     # We store the information about the experiment associated with the file
@@ -63,7 +67,7 @@ def explore_experiments(dataset, optional_filters=None):
                         'Search_Time': np.round(search_time, 8)
                     })
 
-        formatted_results = pd.DataFrame(results).sort_values(by=['Method', 'radius', 'Distance'], ascending=[True, False, True])
+        formatted_results = pd.DataFrame(results).assign(k=lambda df: df['k'].astype(int)).sort_values(by=['Method', 'radius', 'Distance', 'k'], ascending=[True, False, True, True])
 
         # Log the results
         logging.info('------------------------------------------------------------------------\n' + formatted_results.to_string())
@@ -100,6 +104,8 @@ if __name__ == "__main__":
 
     # Print the results
     print(df.to_string())
+
+    print_Recall_pointplot(args.dataset, df)  # pointplot
 
     exit(0)
 

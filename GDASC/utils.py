@@ -1,8 +1,8 @@
 # coding=utf-8
 import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
-import math as m
 from scipy.spatial import distance
+import math as m
 
 
 def busca_dist_menor(distance_matrix):
@@ -235,6 +235,29 @@ def funcdist(point, points_vector, dimensions):
             sum_of_squares += coordinate_difference
         distances[i] = m.sqrt(sum_of_squares)
     return distances
+
+def get_distances(point1, point2, metric):
+    """
+    Calculate the distance between two points using the specified metric.
+
+    Parameters:
+    point1 : array-like
+        The first point.
+    point2 : array-like
+        The second point.
+    metric : str
+        The distance metric to use.
+
+    Returns:
+    float: The calculated distance.
+    """
+    if metric == 'haversine':
+        return pairwise_distances(point1, point2, metric=metric)[0]
+    elif metric == 'manhattan':
+        return distance.cdist(point1, point2, metric='cityblock')[0]
+    else:
+        return distance.cdist(point1, point2, metric=metric)[0]
+
 
 
 def calculate_numcapas(total_points, group_size, num_centroids):
@@ -526,7 +549,7 @@ def search_near_centroid(group_id, centroid_id, last_neighbor_id, examined_centr
 
     else:
         # Si el centroide ha sido examinado, tengo que buscar el siguiente más cercano
-        next_best  = 2
+        next_best = 2
         max_length = len(distances[centroid_id])
         exit_loop = False
         while (examined_centroids[group_id][nearest_centroid_id] == 1) and (next_best < max_length) \
@@ -775,7 +798,8 @@ def explore_centroid_dynamicradius(punto_buscado, current_layer, inheritage, cur
             if np.isnan(coordinates_bottomed_prototypes[i]).any():
                 associated_prototypes_layer_down[i, 3] = current_centroid_distance
             else:
-                associated_prototypes_layer_down[i, 3] = distance.pdist([punto_buscado[0], coordinates_bottomed_prototypes[i]], metric=metrica)[0]
+                associated_prototypes_layer_down[i, 3] = get_distances(punto_buscado, coordinates_bottomed_prototypes[i].reshape(1, -1), metrica)[0]
+                #associated_prototypes_layer_down[i, 3] = distance.pdist([punto_buscado[0], coordinates_bottomed_prototypes[i]], metric=metrica)[0]
                 #associated_prototypes_layer_down[i, 3] = pairwise_distances(punto_buscado, coordinates_bottomed_prototypes[i].reshape(1, -1), metric=metrica)[0][0]
                 #distances_computed.append(associated_prototypes_layer_down[i, 3])
                 distances_computed += 1
@@ -842,7 +866,8 @@ def explore_centroid_pruning(vector_original, punto_buscado, current_layer, inhe
                 coords_neighbour = vector_original[neighbour_id]
                 #print(punto_buscado)
                 #print(coords_neighbour)
-                neig_distance = distance.pdist([punto_buscado[0], coords_neighbour], metric=metrica)[0]
+                neig_distance = get_distances(punto_buscado, coords_neighbour.reshape(1, -1), metrica)[0]
+                #neig_distance = distance.pdist([punto_buscado[0], coords_neighbour], metric=metrica)[0]
 
                 if neig_distance <= candidate_neighbours[-1]:
                     neighbours.append((neighbour_id, neig_distance))
@@ -867,7 +892,8 @@ def explore_centroid_pruning(vector_original, punto_buscado, current_layer, inhe
             if np.isnan(coordinates_bottomed_prototypes[i]).any():
                 associated_prototypes_layer_down[i, 3] = current_centroid_distance
             else:
-                associated_prototypes_layer_down[i, 3] = distance.pdist([punto_buscado[0], coordinates_bottomed_prototypes[i]], metric=metrica)[0]
+                associated_prototypes_layer_down[i, 3] = get_distances(punto_buscado, coordinates_bottomed_prototypes[i].reshape(1, -1), metrica)[0]
+                # associated_prototypes_layer_down[i, 3] = distance.pdist([punto_buscado[0], coordinates_bottomed_prototypes[i]], metric=metrica)[0]
                 distances_computed.append(associated_prototypes_layer_down[i, 3])
 
                 #print(f'Radius value at this step: {radius}')
@@ -880,5 +906,5 @@ def explore_centroid_pruning(vector_original, punto_buscado, current_layer, inhe
 
     for i in range(len(explorable_prototypes)):
         centroid = explorable_prototypes[i]
-        explore_centroid_pruning_alternative(vector_original, punto_buscado, current_layer - 1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours)
+        explore_centroid_pruning(vector_original, punto_buscado, current_layer - 1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours)
 

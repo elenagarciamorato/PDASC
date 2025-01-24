@@ -28,31 +28,14 @@ def PYNN_nn_search(train_set, test_set, k, d, index):
         lista_dists.append(neighbors[1])
 
     # Return knn and their distances with the query points
-    #logging.info(str(k) + "-Nearest Neighbors found using FLANN + " + distance_type + " distance + " + algorithm + " algorithm.")
+    #logging.info(str(k) + "-Nearest Neighbors found using PYNN + " + distance_type + " distance + " + algorithm + " algorithm.")
 
     # The number of distance computations required to obtain the knn are unknown
     n_distances = np.NaN
 
     return np.array(lista_indices), np.array(lista_coords), np.array(lista_dists), n_distances
 
+# Function that returns the accepted distances by PYNNdescent
+def PYNN_accepted_distances():
+    return pynndescent.distances.named_distances
 
-'''
-def PYNN_nn_search_antiguo(train, test, k, distance, index):
-
-    # Find the knn of each point in seq_buscada using this index
-    neighbors = index.query([test[0]], k)
-    print(neighbors)
-
-    vecinos = np.empty([neighbors[0].shape[0], neighbors[0].shape[1]])
-    coordenadas = np.empty([neighbors[0].shape[0], neighbors[0].shape[1], 2])
-    distancias = np.empty([neighbors[1].shape[0], neighbors[1].shape[1]])
-
-    for i in range(len(neighbors[0])):
-        vecinos[i] = neighbors[0][i]
-        coordenadas[i] = train[neighbors[0][i]]
-        distancias[i] = neighbors[1][i]
-
-    #logging.info(str(k) + "-Nearest Neighbors found using PYNN + " + distance + " distance.")
-
-    return vecinos, coordenadas, distancias
-'''

@@ -1,14 +1,19 @@
 import GDASC.gdasc_ as gdasc
 from timeit import default_timer as timer
 import data.load_train_test_set as lts
+from GDASC.gdasc_ import GDASC_accepted_algorithms
 from benchmarks.neighbors_utils import *
-from sys import getsizeof
 
 
 def GDASC(config_file):
 
     # Read config file containing experiment's parameters
     dataset, k, distance, method, tam_grupo, n_centroides, initial_radius, algorithm, implementation = read_config_file(config_file)
+
+    # Check if the method choosen are valid:
+    if algorithm not in GDASC_accepted_algorithms():
+        print("The algorithm choosen is not valid. Please, check the GDASC documentation and try again.")
+        exit(2)
 
     # Print information about the experiment in the log file
     logging.info('------------------------------------------------------------------------')
@@ -27,11 +32,16 @@ def GDASC(config_file):
     # Read train and test set from preprocesed h5py file
     vector_training, vector_testing = lts.load_train_test_h5py(file_name)
 
+    # If distance is haversine, convert data to radians
+    if distance == 'haversine':
+        vector_training = np.radians(vector_training)
+        vector_testing = np.radians(vector_testing)
+
     # Read train and test set from original file
     # vector_training, vector_testing = lts.load_train_test(str(dataset))
 
     # Make a np array considering the first 10 elements of vector_testing
-    #vector_testing = np.array(vector_testing[:10])
+    #vector_testing = np.array(vector_testing[:1])
 
 
     # 2nd - We build the tree
@@ -54,9 +64,8 @@ def GDASC(config_file):
     # while measuring the time spent
     start_time_s = timer()
 
-    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = gdasc.recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vector_training,
-                                                                          k, distance, grupos_capa, puntos_capa,
-                                                                          labels_capa, promoted_points, float(initial_radius), dataset)
+    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = gdasc.recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
+    # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = gdasc.recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
     end_time_s = timer()
 
     # Obtain search time and print information about it in the log file

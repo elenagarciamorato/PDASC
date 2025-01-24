@@ -1,5 +1,5 @@
 from sklearn.neighbors import NearestNeighbors
-from scipy.spatial.distance import cdist
+from sklearn.metrics import pairwise_distances
 import numpy as np
 import logging
 
@@ -9,7 +9,7 @@ sklearn.NearestNeighbors is an unsupervised learner for implementing neighbor se
 Exact method and metric to search for the nearest neighbor could be chosen, among others parameters.
 
 - Algorithm used to compute the nearest neighbors:
-    ‘ball_tree’ will use KDTree (same function as sklearn.neighbors.KDTree)
+    ‘ball_tree’ will use BallTree (same function as sklearn.neighbors.BallTree)
     ‘kd_tree’ will use KDTree (same function as sklearn.neighbors.KDTree)
     ‘brute’ will use a brute-force search.
     ‘auto’ will attempt to decide the most appropriate algorithm based on the values passed to fit method.
@@ -30,7 +30,7 @@ def Exact_nn_index(train_set, metric, exact_algorithm):
 
     if exact_algorithm == 'auto':
     # Based on the metric that is going to be used, choose an exact algorithm that supports it
-        if metric == 'cosine':
+        if metric == 'cosine' or 'haverstine':
             exact_algorithm = 'brute'
         else:
             exact_algorithm = 'kd_tree'
@@ -67,7 +67,8 @@ def LinearScan_nn_search(train_set, test_set, k, metric, same_set=None):
 
 
     # Calculate the pairwise distances between the elements of two samples
-    distances = cdist(test_set, train_set, metric)
+    # distances = cdist(test_set, train_set, metric)
+    distances = pairwise_distances(test_set, train_set, metric=metric)
 
     # For every point in the testing set, take the k elements with the smallest distances (k-nn)
     for i in range(len(test_set)):

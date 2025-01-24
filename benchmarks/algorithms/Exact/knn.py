@@ -21,6 +21,10 @@ def Exact(config_file):
     # train_set, test_set = load_train_test(str(dataset))
     vector_training, vector_testing = load_train_test_h5py(file_name)
 
+    if distance == 'haversine':
+        vector_training = np.radians(vector_training)
+        vector_testing = np.radians(vector_testing)
+
     # GENERATE INDEX AND CENTROIDS
     # AND FIND THE plotting FROM THE train_set OF THE ELEMENTS CONTAINED IN THE test_set, USING DISTANCE CHOOSEN
 

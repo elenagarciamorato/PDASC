@@ -1,12 +1,20 @@
 from data.load_train_test_set import *
 from benchmarks.neighbors_utils import *
-from benchmarks.algorithms.FLANN.module import FLANN_nn_index, FLANN_nn_search
+from benchmarks.algorithms.FLANN.module import FLANN_nn_index, FLANN_nn_search, FLANN_accepted_distances, FLANN_accepted_algorithms
 from timeit import default_timer as timer
+
+# FLANN algorithm admits the following distances:
+# 'euclidean', 'manhattan', 'minkowski', 'max_dist', 'hik', 'hellinger', 'cs', 'kl'
 
 def FLANN(config_file):
 
     # Read config file containing experiment's parameters
     dataset, k, distance, method, n_centroides, algorithm = read_config_file(config_file)
+
+    # Check if the distance and method choosen are valid:
+    if distance not in FLANN_accepted_distances() or algorithm not in FLANN_accepted_algorithms():
+        print("The distance or algorithm choosen is not valid. Please, check the FLANN documentation and try again.")
+        exit(2)
 
     # Print information about the experiment in the log file
     logging.info('------------------------------------------------------------------------')

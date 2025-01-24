@@ -1,0 +1,325 @@
+2025-01-09 12:25:13,376 - root - ------------------------------------------------------------------------
+2025-01-09 12:25:13,376 - root -                     Experiments launcher for municipios Dataset
+2025-01-09 12:25:13,377 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:25:13,377 - root - Gathering system architecture information...
+
+2025-01-09 12:25:13,377 - root - Platform: Linux-5.15.0-128-generic-x86_64-with-debian-bookworm-sid
+
+2025-01-09 12:25:14,679 - root - Processor: AMD EPYC 7451 24-Core Processor
+2025-01-09 12:25:14,679 - root - Processor Architecture: X86_64
+2025-01-09 12:25:14,688 - root - Processor Cores: 48
+2025-01-09 12:25:14,689 - root - Logical Processors: 96
+
+2025-01-09 12:25:14,689 - root - Python Version: 3.7.13 (default, Mar 29 2022, 02:18:16) 
+[GCC 7.5.0]
+
+2025-01-09 12:25:14,689 - root - Total RAM: 125.74 GB
+2025-01-09 12:25:14,689 - root - Available RAM: 123.43 GB
+2025-01-09 12:25:14,689 - root - Used RAM: 1.31 GB
+2025-01-09 12:25:14,689 - root - RAM Usage Percentage: 1.80%
+
+2025-01-09 12:25:14,690 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:25:14,691 - root - ------------------------------------------------------------------------
+2025-01-09 12:25:14,691 - root - ---- Searching the 10 nearest neighbors within GDASC over municipios dataset using chebyshev distance. ----
+2025-01-09 12:25:14,692 - root - 
+2025-01-09 12:25:14,692 - root - ---- GDASC Parameters - tam_grupo=60 - n_centroids=30 - radius=2.5 - algorithm=kmedoids - implementation=fastkmedoids ----
+2025-01-09 12:25:14,692 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:25:14,693 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:25:14,825 - GDASC.gdasc_ - tree time=0.12932261684909463 seconds
+2025-01-09 12:25:22,559 - root - Search time = 7.734234950039536 seconds
+
+2025-01-09 12:25:22,559 - root - Average time spent in searching a single point = 0.07734234950039535
+2025-01-09 12:25:22,560 - root - Speed (points/s) = 12.929527050311398
+
+2025-01-09 12:25:22,561 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_GDASC_tg60_nc30_r2.5_kmedoids_fastkmedoids.hdf5
+2025-01-09 12:25:22,562 - root - 
+
+2025-01-09 12:25:22,562 - root - ------------------------------------------------------------------------
+2025-01-09 12:25:22,562 - root - ---- Searching the 10 nearest neighbors within FLANN over municipios dataset using manhattan distance. ----
+2025-01-09 12:25:22,563 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:25:22,563 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:25:22,580 - root - Saving FLANN index at 'index_'
+2025-01-09 12:25:22,580 - root - Index time= 0.016833910020068288 seconds
+2025-01-09 12:25:22,798 - root - Search time = 0.21711345994845033 seconds
+
+2025-01-09 12:25:22,798 - root - Average time spent in searching a single point = 0.002171134599484503
+2025-01-09 12:25:22,798 - root - Speed (points/s) = 460.58867112035887
+
+2025-01-09 12:25:22,803 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_FLANN.hdf5
+2025-01-09 12:25:22,803 - root - 
+
+2025-01-09 12:25:22,805 - root - ------------------------------------------------------------------------
+2025-01-09 12:25:22,805 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over municipios dataset using chebyshev distance. ----
+2025-01-09 12:25:22,805 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:25:22,805 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:25:22,807 - root - Building index using chebyshev metric and brute algorithm
+2025-01-09 12:25:22,807 - root - Index time= 0.00047876802273094654 seconds
+2025-01-09 12:25:22,848 - root - Search time = 0.04141131602227688 seconds
+
+2025-01-09 12:25:22,848 - root - Average time spended in searching a single point = 0.0004141131602227688
+2025-01-09 12:25:22,848 - root - Speed (points/s) = 2414.7988908685206
+
+2025-01-09 12:25:22,850 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_auto.hdf5
+2025-01-09 12:25:22,850 - root - 
+
+2025-01-09 12:25:22,851 - root - ------------------------------------------------------------------------
+2025-01-09 12:25:22,851 - root - ---- Searching the 10 nearest neighbors within PYNN over municipios dataset using manhattan distance. ----
+2025-01-09 12:25:22,851 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:25:22,851 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:26:46,890 - root - Index time= 84.03766925516538 seconds
+2025-01-09 12:26:46,893 - root - Search time = 0.002446610014885664 seconds
+
+2025-01-09 12:26:46,893 - root - Average time spent in searching a single point = 2.446610014885664e-05
+2025-01-09 12:26:46,893 - root - Speed (points/s) = 40872.881003339324
+
+2025-01-09 12:26:46,895 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_PYNN.hdf5
+2025-01-09 12:26:46,895 - root - 
+
+2025-01-09 12:26:46,897 - root - ------------------------------------------------------------------------
+2025-01-09 12:26:46,897 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over municipios dataset using haversine distance. ----
+2025-01-09 12:26:46,897 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:26:46,897 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:26:46,898 - root - Building index using haversine metric and brute algorithm
+2025-01-09 12:26:46,898 - root - Index time= 0.0002588890492916107 seconds
+2025-01-09 12:26:46,965 - root - Search time = 0.06666502309963107 seconds
+
+2025-01-09 12:26:46,965 - root - Average time spended in searching a single point = 0.0006666502309963107
+2025-01-09 12:26:46,965 - root - Speed (points/s) = 1500.0369811700164
+
+2025-01-09 12:26:46,967 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_Exact_auto.hdf5
+2025-01-09 12:26:46,967 - root - 
+
+2025-01-09 12:26:46,967 - root - ------------------------------------------------------------------------
+2025-01-09 12:26:46,967 - root -  Searching the 10 nearest neighbors within Exact - LinearScan algorithm over municipios dataset using haversine distance. ----
+2025-01-09 12:26:46,968 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:26:46,968 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:26:46,969 - root - Index time= 1.369975507259369e-06 seconds
+2025-01-09 12:26:47,067 - root - Search time = 0.09822146105580032 seconds
+
+2025-01-09 12:26:47,067 - root - Average time spended in searching a single point = 0.0009822146105580032
+2025-01-09 12:26:47,067 - root - Speed (points/s) = 1018.1074372655613
+
+2025-01-09 12:26:47,068 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_Exact_LinearScan.hdf5
+2025-01-09 12:26:47,069 - root - 
+
+2025-01-09 12:26:47,069 - root - ------------------------------------------------------------------------
+2025-01-09 12:26:47,069 - root - ---- Searching the 10 nearest neighbors within GDASC over municipios dataset using euclidean distance. ----
+2025-01-09 12:26:47,069 - root - 
+2025-01-09 12:26:47,069 - root - ---- GDASC Parameters - tam_grupo=60 - n_centroids=30 - radius=2.5 - algorithm=kmedoids - implementation=fastkmedoids ----
+2025-01-09 12:26:47,069 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:26:47,070 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:26:47,279 - GDASC.gdasc_ - tree time=0.20905391103588045 seconds
+2025-01-09 12:26:53,690 - root - Search time = 6.409783892100677 seconds
+
+2025-01-09 12:26:53,690 - root - Average time spent in searching a single point = 0.06409783892100678
+2025-01-09 12:26:53,690 - root - Speed (points/s) = 15.601150004953915
+
+2025-01-09 12:26:53,693 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r2.5_kmedoids_fastkmedoids.hdf5
+2025-01-09 12:26:53,693 - root - 
+
+2025-01-09 12:26:53,694 - root - ------------------------------------------------------------------------
+2025-01-09 12:26:53,694 - root - ---- Searching the 10 nearest neighbors within PYNN over municipios dataset using haversine distance. ----
+2025-01-09 12:26:53,694 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:26:53,694 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:28:08,053 - root - Index time= 74.35723453410901 seconds
+2025-01-09 12:28:08,056 - root - Search time = 0.0024710989091545343 seconds
+
+2025-01-09 12:28:08,056 - root - Average time spent in searching a single point = 2.4710989091545343e-05
+2025-01-09 12:28:08,056 - root - Speed (points/s) = 40467.82572301574
+
+2025-01-09 12:28:08,058 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_PYNN.hdf5
+2025-01-09 12:28:08,059 - root - 
+
+2025-01-09 12:28:08,060 - root - ------------------------------------------------------------------------
+2025-01-09 12:28:08,060 - root - ---- Searching the 10 nearest neighbors within PYNN over municipios dataset using chebyshev distance. ----
+2025-01-09 12:28:08,060 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:28:08,061 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:29:23,298 - root - Index time= 75.23636452690698 seconds
+2025-01-09 12:29:23,301 - root - Search time = 0.002463639946654439 seconds
+
+2025-01-09 12:29:23,301 - root - Average time spent in searching a single point = 2.463639946654439e-05
+2025-01-09 12:29:23,301 - root - Speed (points/s) = 40590.34687101802
+
+2025-01-09 12:29:23,303 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_PYNN.hdf5
+2025-01-09 12:29:23,303 - root - 
+
+2025-01-09 12:29:23,305 - root - ------------------------------------------------------------------------
+2025-01-09 12:29:23,305 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over municipios dataset using euclidean distance. ----
+2025-01-09 12:29:23,305 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:29:23,305 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:29:23,306 - root - Building index using euclidean metric and brute algorithm
+2025-01-09 12:29:23,307 - root - Index time= 0.0002803090028464794 seconds
+2025-01-09 12:29:23,347 - root - Search time = 0.04037192417308688 seconds
+
+2025-01-09 12:29:23,347 - root - Average time spended in searching a single point = 0.0004037192417308688
+2025-01-09 12:29:23,347 - root - Speed (points/s) = 2476.968884893105
+
+2025-01-09 12:29:23,349 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2025-01-09 12:29:23,349 - root - 
+
+2025-01-09 12:29:23,349 - root - ------------------------------------------------------------------------
+2025-01-09 12:29:23,349 - root - ---- Searching the 10 nearest neighbors within GDASC over municipios dataset using manhattan distance. ----
+2025-01-09 12:29:23,350 - root - 
+2025-01-09 12:29:23,350 - root - ---- GDASC Parameters - tam_grupo=60 - n_centroids=30 - radius=3.25 - algorithm=kmedoids - implementation=fastkmedoids ----
+2025-01-09 12:29:23,350 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:29:23,350 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:29:23,446 - GDASC.gdasc_ - tree time=0.09482499002479017 seconds
+2025-01-09 12:29:30,301 - root - Search time = 6.854924540035427 seconds
+
+2025-01-09 12:29:30,301 - root - Average time spent in searching a single point = 0.06854924540035427
+2025-01-09 12:29:30,301 - root - Speed (points/s) = 14.588052635147344
+
+2025-01-09 12:29:30,303 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_GDASC_tg60_nc30_r3.25_kmedoids_fastkmedoids.hdf5
+2025-01-09 12:29:30,303 - root - 
+
+2025-01-09 12:29:30,304 - root - ------------------------------------------------------------------------
+2025-01-09 12:29:30,304 - root - ---- Searching the 10 nearest neighbors within PYNN over municipios dataset using euclidean distance. ----
+2025-01-09 12:29:30,304 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:29:30,304 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:30:45,880 - root - Index time= 75.57493624207564 seconds
+2025-01-09 12:30:45,883 - root - Search time = 0.0024564301129430532 seconds
+
+2025-01-09 12:30:45,883 - root - Average time spent in searching a single point = 2.456430112943053e-05
+2025-01-09 12:30:45,883 - root - Speed (points/s) = 40709.48303112513
+
+2025-01-09 12:30:45,885 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_PYNN.hdf5
+2025-01-09 12:30:45,885 - root - 
+
+2025-01-09 12:30:45,886 - root - ------------------------------------------------------------------------
+2025-01-09 12:30:45,886 - root -  Searching the 10 nearest neighbors within Exact - LinearScan algorithm over municipios dataset using euclidean distance. ----
+2025-01-09 12:30:45,886 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:30:45,887 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:30:45,888 - root - Index time= 1.8400605767965317e-06 seconds
+2025-01-09 12:30:45,963 - root - Search time = 0.07551385089755058 seconds
+
+2025-01-09 12:30:45,963 - root - Average time spended in searching a single point = 0.0007551385089755059
+2025-01-09 12:30:45,963 - root - Speed (points/s) = 1324.2603682822335
+
+2025-01-09 12:30:45,965 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_LinearScan.hdf5
+2025-01-09 12:30:45,965 - root - 
+
+2025-01-09 12:30:45,966 - root - ------------------------------------------------------------------------
+2025-01-09 12:30:45,966 - root - ---- Searching the 10 nearest neighbors within FLANN over municipios dataset using euclidean distance. ----
+2025-01-09 12:30:45,966 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:30:45,966 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:30:45,982 - root - Saving FLANN index at 'index_'
+2025-01-09 12:30:45,983 - root - Index time= 0.015660566044971347 seconds
+2025-01-09 12:30:46,060 - root - Search time = 0.07725329417735338 seconds
+
+2025-01-09 12:30:46,060 - root - Average time spent in searching a single point = 0.0007725329417735339
+2025-01-09 12:30:46,060 - root - Speed (points/s) = 1294.4431828424833
+
+2025-01-09 12:30:46,062 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_FLANN.hdf5
+2025-01-09 12:30:46,063 - root - 
+
+2025-01-09 12:30:46,063 - root - ------------------------------------------------------------------------
+2025-01-09 12:30:46,063 - root - ---- Searching the 10 nearest neighbors within GDASC over municipios dataset using cosine distance. ----
+2025-01-09 12:30:46,064 - root - 
+2025-01-09 12:30:46,064 - root - ---- GDASC Parameters - tam_grupo=60 - n_centroids=30 - radius=0.01 - algorithm=kmedoids - implementation=fastkmedoids ----
+2025-01-09 12:30:46,064 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:30:46,064 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:30:46,268 - GDASC.gdasc_ - tree time=0.2029194589704275 seconds
+2025-01-09 12:31:11,598 - root - Search time = 25.329795425990596 seconds
+
+2025-01-09 12:31:11,598 - root - Average time spent in searching a single point = 0.253297954259906
+2025-01-09 12:31:11,598 - root - Speed (points/s) = 3.9479197647759605
+
+2025-01-09 12:31:11,600 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_GDASC_tg60_nc30_r0.01_kmedoids_fastkmedoids.hdf5
+2025-01-09 12:31:11,601 - root - 
+
+2025-01-09 12:31:11,602 - root - ------------------------------------------------------------------------
+2025-01-09 12:31:11,602 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over municipios dataset using manhattan distance. ----
+2025-01-09 12:31:11,602 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:31:11,602 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:31:11,603 - root - Building index using manhattan metric and brute algorithm
+2025-01-09 12:31:11,603 - root - Index time= 0.0002882590051740408 seconds
+2025-01-09 12:31:11,634 - root - Search time = 0.03103015315718949 seconds
+
+2025-01-09 12:31:11,634 - root - Average time spended in searching a single point = 0.00031030153157189487
+2025-01-09 12:31:11,634 - root - Speed (points/s) = 3222.6718151673267
+
+2025-01-09 12:31:11,636 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2025-01-09 12:31:11,636 - root - 
+
+2025-01-09 12:31:11,637 - root - ------------------------------------------------------------------------
+2025-01-09 12:31:11,637 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over municipios dataset using cosine distance. ----
+2025-01-09 12:31:11,637 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:31:11,637 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:31:11,638 - root - Building index using cosine metric and brute algorithm
+2025-01-09 12:31:11,638 - root - Index time= 0.00020373892039060593 seconds
+2025-01-09 12:31:11,699 - root - Search time = 0.06089468114078045 seconds
+
+2025-01-09 12:31:11,699 - root - Average time spended in searching a single point = 0.0006089468114078045
+2025-01-09 12:31:11,699 - root - Speed (points/s) = 1642.1795487985762
+
+2025-01-09 12:31:11,701 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_auto.hdf5
+2025-01-09 12:31:11,701 - root - 
+
+2025-01-09 12:31:11,702 - root - ------------------------------------------------------------------------
+2025-01-09 12:31:11,702 - root - ---- Searching the 10 nearest neighbors within GDASC over municipios dataset using haversine distance. ----
+2025-01-09 12:31:11,702 - root - 
+2025-01-09 12:31:11,702 - root - ---- GDASC Parameters - tam_grupo=60 - n_centroids=30 - radius=0.05 - algorithm=kmedoids - implementation=fastkmedoids ----
+2025-01-09 12:31:11,702 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:31:11,702 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:31:11,838 - GDASC.gdasc_ - tree time=0.13510423805564642 seconds
+2025-01-09 12:31:22,911 - root - Search time = 11.072369515895844 seconds
+
+2025-01-09 12:31:22,911 - root - Average time spent in searching a single point = 0.11072369515895844
+2025-01-09 12:31:22,911 - root - Speed (points/s) = 9.031490491392727
+
+2025-01-09 12:31:22,913 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_GDASC_tg60_nc30_r0.05_kmedoids_fastkmedoids.hdf5
+2025-01-09 12:31:22,913 - root - 
+
+2025-01-09 12:31:22,914 - root - ------------------------------------------------------------------------
+2025-01-09 12:31:22,914 - root - ---- Searching the 10 nearest neighbors within PYNN over municipios dataset using cosine distance. ----
+2025-01-09 12:31:22,914 - root - ------------------------------------------------------------------------
+
+2025-01-09 12:31:22,914 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2025-01-09 12:32:39,822 - root - Index time= 76.90696608903818 seconds
+2025-01-09 12:32:39,882 - root - Search time = 0.05974889686331153 seconds
+
+2025-01-09 12:32:39,882 - root - Average time spent in searching a single point = 0.0005974889686331153
+2025-01-09 12:32:39,882 - root - Speed (points/s) = 1673.6710675809052
+
+2025-01-09 12:32:39,884 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_PYNN.hdf5
+2025-01-09 12:32:39,884 - root - 
+

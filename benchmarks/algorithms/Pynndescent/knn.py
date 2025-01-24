@@ -1,13 +1,20 @@
 from data.load_train_test_set import *
 from benchmarks.neighbors_utils import *
-from benchmarks.algorithms.Pynndescent.module import PYNN_nn_index, PYNN_nn_search
+from benchmarks.algorithms.Pynndescent.module import PYNN_nn_index, PYNN_nn_search, PYNN_accepted_distances
 from timeit import default_timer as timer
 
+# PYNN algorithm admits the following distances:
+# 'euclidean', 'l2', 'sqeuclidean', 'manhattan', 'taxicab', 'l1', 'chebyshev', 'linfinity', 'linfty', 'linf', 'minkowski', 'seuclidean', 'standardised_euclidean', 'wminkowski', 'weighted_minkowski', 'mahalanobis', 'canberra', 'cosine', 'dot', 'correlation', 'hellinger', 'haversine', 'braycurtis', 'spearmanr', 'kantorovich', 'wasserstein', 'tsss', 'true_angular', 'hamming', 'jaccard', 'dice', 'matching', 'kulsinski', 'rogerstanimoto', 'russellrao', 'sokalsneath', 'sokalmichener', 'yule'
 
 def PYNN(config_file):
 
     # Read config file containing experiment's parameters
     dataset, k, distance, method = read_config_file(config_file)
+
+    # Check if the distance and choosen is valid:
+    if distance not in PYNN_accepted_distances() :
+        print("The distance is not valid. Please, check the PYNN documentation and try again.")
+        exit(2)
 
     # Print information about the experiment in the log file
     logging.info('------------------------------------------------------------------------')
@@ -21,6 +28,11 @@ def PYNN(config_file):
     # Load the train and test sets to carry on the benchmarks
     # train_set, test_set = load_train_test(str(dataset))
     train_set, test_set = load_train_test_h5py(file_name)
+
+    # If distance is haversine, convert data to radians
+    if distance == 'haversine':
+        train_set = np.radians(train_set)
+        test_set = np.radians(test_set)
 
     # GENERATE INDEX AND CENTROIDS
     # AND FIND THE plotting FROM THE train_set OF THE ELEMENTS CONTAINED IN THE test_set, USING DISTANCE CHOOSEN

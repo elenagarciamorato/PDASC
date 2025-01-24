@@ -1,9 +1,7 @@
 from copy import deepcopy, copy
 
-import sklearn.metrics
 # import numpy as np
 from sklearn import preprocessing
-from sklearn.metrics.pairwise import pairwise_distances
 from timeit import default_timer as timer
 import logging
 from GDASC.utils import *
@@ -85,15 +83,10 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
                 fin = vector_length
             n_points[id_group] = fin - inicio
 
-            if ((fin - inicio) >= n_centroides):
+            if (fin - inicio) >= n_centroides:
                 if algorithm == 'kmedoids':
 
-                    if implementation == 'sklearnextra':
-
-                        print(f'implementation {algorithm} {implementation}')
-
-
-                    elif implementation == 'fastkmedoids':
+                    if implementation == 'fastkmedoids':
 
                         kmedoids = fast_kmedoids.KMedoids(n_clusters=n_centroides, method='fasterpam',
                                                           metric=metric).fit(vector[inicio:fin])
@@ -125,6 +118,11 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
                                 element = int(i % n_centroides)
                                 simplified_puntos_capa[id_layer - 1][id_lower_group][element] = np.nan
                                 duplicates += 1
+
+                    elif implementation == 'sklearnextra':
+
+                        print(f'implementation {algorithm} {implementation}')
+
 
                     cont_ptos += n_centroides
 
@@ -619,7 +617,8 @@ def recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vect
 
         # We take the top-layer prototypes, including its coordinates and distances to the query point
         coordinates_top_prototypes = np.vstack(puntos_capa[n_capas-1][:])
-        distances_top_prototypes = distance.cdist(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
+        distances_top_prototypes = get_distances(np.array(punto_buscado), coordinates_top_prototypes, metrica)
+        #distances_top_prototypes = distance.cdist(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
         #distances_top_prototypes = pairwise_distances(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
         #print(distances_top_prototypes)
 
@@ -675,7 +674,7 @@ def recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vect
 
             # Pad the array of close points with None objects until it reaches the size of k neighbors
             # To avoid index out of bounds error
-            return [np.empty(k_vecinos, dtype=int), np.empty([k_vecinos, vector_original.shape[1]], dtype=float), np.empty(k_vecinos, dtype=float)], len(distances_computed)
+            return np.empty(k_vecinos, dtype=int), np.empty([k_vecinos, vector_original.shape[1]], dtype=float), np.empty(k_vecinos, dtype=float), len(distances_computed)
 
         # If any neighbour have been found:
         else:
@@ -702,7 +701,8 @@ def recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vect
 
             # By acceding the original dataset, we obtain its coordinates and compute its distances to the query point
             coords_neighbours_without_d = vector_original[id_neighbours_without_d]
-            distances_neighbours_without_d = distance.cdist(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
+            distances_neighbours_without_d = get_distances(np.array(punto_buscado), coords_neighbours_without_d, metrica)
+            #distances_neighbours_without_d = distance.cdist(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
             # distances_neighbours_without_d = pairwise_distances(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
 
             # And add the number of distances computed at this step to the n_distances_computed counter
@@ -854,7 +854,7 @@ def recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testi
 
                 # We update the list of candidates everytime we visited a new top prototype
                 candidate_neighbours = insert_candidate_neighbour(candidate_neighbours, prototype_distance)
-                explore_centroid_pruning_alternative(vector_original, punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours)
+                explore_centroid_pruning(vector_original, punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours)
 
         # Once the complete index has been explored:
         # Get the number of total distances computed
@@ -945,3 +945,6 @@ def recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testi
 
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances
 
+# Clustering method accepted by GDASC
+def GDASC_accepted_algorithms():
+    return ['kmedoids', 'kmeans']
