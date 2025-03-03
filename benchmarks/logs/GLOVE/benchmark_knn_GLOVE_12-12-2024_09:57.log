@@ -1,0 +1,23 @@
+2024-12-12 09:57:58,771 - root - ------------------------------------------------------------------------
+2024-12-12 09:57:58,771 - root -                     GLOVE Dataset Benchmarking
+2024-12-12 09:57:58,771 - root - ------------------------------------------------------------------------
+2024-12-12 09:57:58,772 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-12-12 09:57:58,775 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-12-12 09:57:58,779 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_FLANN.hdf5
+2024-12-12 09:57:58,781 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-12-12 09:57:58,785 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_GDASC_tg1000_nc500_r12_kmedoids_fastkmedoids.hdf5
+2024-12-12 09:57:58,787 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-12-12 09:57:58,790 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_LinearScan.hdf5
+2024-12-12 09:57:58,792 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-12-12 09:57:58,796 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_PYNN.hdf5
+2024-12-12 09:57:58,798 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-12-12 09:57:58,802 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_GDASC_tg1000_nc500_r250_kmedoids_fastkmedoids.hdf5
+2024-12-12 09:57:58,804 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-12-12 09:57:58,814 - root - ------------------------------------------------------------------------
+  Method   Distance   k  radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+0  Exact  euclidean  10     NaN        auto                NaN       100.0    33.683028
+3  Exact  euclidean  10     NaN  LinearScan         1183514.00       100.0    44.709435
+1  FLANN  euclidean  10     NaN        None                NaN         9.7     0.510217
+5  GDASC  euclidean  10   250.0    kmedoids         1183514.00       100.0  4050.004907
+2  GDASC  euclidean  10    12.0    kmedoids         1182946.99       100.0  3178.977115
+4   PYNN  euclidean  10     NaN        None                NaN        72.7     0.023484

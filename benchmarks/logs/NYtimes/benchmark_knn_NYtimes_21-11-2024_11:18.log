@@ -1,0 +1,167 @@
+2024-11-21 11:18:05,910 - root - ------------------------------------------------------------------------
+2024-11-21 11:18:05,910 - root -                     NYtimes Dataset Benchmarking
+2024-11-21 11:18:05,911 - root - ------------------------------------------------------------------------
+2024-11-21 11:18:05,911 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_chebyshev_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:05,917 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:05,923 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_manhattan_FLANN.hdf5
+2024-11-21 11:18:05,927 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:05,936 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_cosine_Exact_auto.hdf5
+2024-11-21 11:18:05,942 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_cosine_Exact_auto.hdf5
+2024-11-21 11:18:05,948 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_euclidean_PYNN.hdf5
+2024-11-21 11:18:05,952 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:05,956 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_manhattan_Exact_LinearScan.hdf5
+2024-11-21 11:18:05,962 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:05,968 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_chebyshev_PYNN.hdf5
+2024-11-21 11:18:05,971 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:05,976 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_manhattan_FLANN.hdf5
+2024-11-21 11:18:05,978 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:05,983 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_cosine_Exact_LinearScan.hdf5
+2024-11-21 11:18:05,988 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_cosine_Exact_auto.hdf5
+2024-11-21 11:18:05,995 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_euclidean_FLANN.hdf5
+2024-11-21 11:18:05,998 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,003 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_cosine_Exact_LinearScan.hdf5
+2024-11-21 11:18:06,006 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,012 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_chebyshev_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,017 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,022 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_euclidean_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,025 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,029 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,031 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,035 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,038 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,043 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_euclidean_Exact_LinearScan.hdf5
+2024-11-21 11:18:06,047 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,054 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,057 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,062 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,066 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,073 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,076 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,082 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_manhattan_PYNN.hdf5
+2024-11-21 11:18:06,083 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,087 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_manhattan_Exact_LinearScan.hdf5
+2024-11-21 11:18:06,089 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,093 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_chebyshev_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,095 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,099 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_euclidean_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,103 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,110 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_euclidean_Exact_LinearScan.hdf5
+2024-11-21 11:18:06,113 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,117 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_cosine_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,121 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,125 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_cosine_PYNN.hdf5
+2024-11-21 11:18:06,127 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,132 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_chebyshev_Exact_LinearScan.hdf5
+2024-11-21 11:18:06,134 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,140 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,143 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,149 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_manhattan_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,152 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,157 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_euclidean_FLANN.hdf5
+2024-11-21 11:18:06,160 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,166 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_cosine_PYNN.hdf5
+2024-11-21 11:18:06,169 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,175 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_PYNN.hdf5
+2024-11-21 11:18:06,177 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,183 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_chebyshev_Exact_LinearScan.hdf5
+2024-11-21 11:18:06,186 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,193 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_FLANN.hdf5
+2024-11-21 11:18:06,196 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,202 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_chebyshev_PYNN.hdf5
+2024-11-21 11:18:06,204 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,208 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_cosine_Exact_LinearScan.hdf5
+2024-11-21 11:18:06,210 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,214 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,216 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,220 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,223 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,227 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_cosine_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,232 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,237 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_manhattan_FLANN.hdf5
+2024-11-21 11:18:06,239 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,244 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_manhattan_PYNN.hdf5
+2024-11-21 11:18:06,247 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,255 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_cosine_PYNN.hdf5
+2024-11-21 11:18:06,257 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,261 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_manhattan_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,266 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,272 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_manhattan_Exact_LinearScan.hdf5
+2024-11-21 11:18:06,275 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,279 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,282 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,287 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_cosine_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,290 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,294 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,298 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_cosine_Exact_auto.hdf5
+2024-11-21 11:18:06,302 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,304 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,308 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_manhattan_GDASC_tg1000_nc500_r30_kmedoids_fastkmedoids.hdf5
+2024-11-21 11:18:06,311 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,316 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_euclidean_PYNN.hdf5
+2024-11-21 11:18:06,318 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,325 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,329 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,333 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_LinearScan.hdf5
+2024-11-21 11:18:06,336 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_euclidean_Exact_auto.hdf5
+2024-11-21 11:18:06,340 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_manhattan_PYNN.hdf5
+2024-11-21 11:18:06,342 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_10_manhattan_Exact_auto.hdf5
+2024-11-21 11:18:06,347 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_chebyshev_Exact_LinearScan.hdf5
+2024-11-21 11:18:06,349 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_5_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,353 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_chebyshev_PYNN.hdf5
+2024-11-21 11:18:06,355 - root - Loading neighbors from ./benchmarks/NearestNeighbors/NYtimes/knn_NYtimes_15_chebyshev_Exact_auto.hdf5
+2024-11-21 11:18:06,371 - root - ------------------------------------------------------------------------
+   Method   Distance   k  radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+25  Exact  chebyshev  10     NaN  LinearScan           290000.0   78.800000    26.910543
+26  Exact  chebyshev  15     NaN        auto                NaN  100.000000    14.575608
+31  Exact  chebyshev  15     NaN  LinearScan           290000.0   76.533333    28.135453
+46  Exact  chebyshev   5     NaN        auto                NaN  100.000000     9.819560
+49  Exact  chebyshev  10     NaN        auto                NaN  100.000000    19.020869
+52  Exact  chebyshev   5     NaN  LinearScan           290000.0   82.800000    27.549633
+2   Exact     cosine  15     NaN        auto                NaN  100.000000    31.946985
+7   Exact     cosine  15     NaN  LinearScan           290000.0   99.333333    24.033189
+9   Exact     cosine  10     NaN  LinearScan           290000.0   98.200000    27.144894
+15  Exact     cosine   5     NaN        auto                NaN  100.000000    24.562376
+34  Exact     cosine   5     NaN  LinearScan           290000.0   97.200000    27.350200
+45  Exact     cosine  10     NaN        auto                NaN  100.000000    23.269896
+14  Exact  euclidean  15     NaN  LinearScan           290000.0   39.533333    21.249817
+22  Exact  euclidean   5     NaN  LinearScan           290000.0   49.600000    21.943638
+35  Exact  euclidean   5     NaN        auto                NaN  100.000000    21.287262
+36  Exact  euclidean  10     NaN        auto                NaN  100.000000    26.847353
+43  Exact  euclidean  15     NaN        auto                NaN  100.000000    15.693412
+50  Exact  euclidean  10     NaN  LinearScan           290000.0   43.600000    26.763833
+4   Exact  manhattan  15     NaN  LinearScan           290000.0   40.533333    23.376235
+12  Exact  manhattan   5     NaN        auto                NaN  100.000000    14.680056
+13  Exact  manhattan  10     NaN        auto                NaN  100.000000    15.823883
+16  Exact  manhattan  15     NaN        auto                NaN  100.000000    16.061158
+19  Exact  manhattan   5     NaN  LinearScan           290000.0   51.800000    27.719618
+42  Exact  manhattan  10     NaN  LinearScan           290000.0   43.000000    21.337963
+8   FLANN  euclidean   5     NaN        None                NaN   27.800000     0.378593
+28  FLANN  euclidean  15     NaN        None                NaN   17.333333     0.292342
+32  FLANN  euclidean  10     NaN        None                NaN   21.800000     0.303053
+1   FLANN  manhattan  15     NaN        None                NaN   13.066667     0.325537
+6   FLANN  manhattan  10     NaN        None                NaN   16.600000     0.197869
+38  FLANN  manhattan   5     NaN        None                NaN   25.000000     0.155098
+0   GDASC  chebyshev  10    30.0    kmedoids           290000.0   79.000000  1813.934977
+10  GDASC  chebyshev  15    30.0    kmedoids           290000.0   76.666667  1273.451946
+20  GDASC  chebyshev   5    30.0    kmedoids           290000.0   82.600000  1191.994181
+23  GDASC     cosine  10    30.0    kmedoids           290000.0   98.200000  1359.641105
+37  GDASC     cosine  15    30.0    kmedoids           290000.0   98.933333  1320.367842
+44  GDASC     cosine   5    30.0    kmedoids           290000.0   97.000000  1325.276646
+11  GDASC  euclidean   5    30.0    kmedoids           290000.0   50.200000  1097.741959
+17  GDASC  euclidean  10    30.0    kmedoids           290000.0   42.900000  1350.184090
+21  GDASC  euclidean  15    30.0    kmedoids           290000.0   40.200000   961.558140
+27  GDASC  manhattan   5    30.0    kmedoids           290000.0   52.000000  1399.876045
+41  GDASC  manhattan  15    30.0    kmedoids           290000.0   39.866667   963.826007
+47  GDASC  manhattan  10    30.0    kmedoids           290000.0   43.700000  1196.450984
+5    PYNN  chebyshev   5     NaN        None                NaN   40.200000     0.103296
+33   PYNN  chebyshev  10     NaN        None                NaN   38.300000     0.207769
+53   PYNN  chebyshev  15     NaN        None                NaN   37.733333     0.225253
+24   PYNN     cosine  10     NaN        None                NaN   59.100000     0.089532
+29   PYNN     cosine  15     NaN        None                NaN   68.333333     0.017631
+40   PYNN     cosine   5     NaN        None                NaN   50.800000     0.008557
+3    PYNN  euclidean   5     NaN        None                NaN   31.800000     0.032039
+30   PYNN  euclidean  10     NaN        None                NaN   29.600000     0.079567
+48   PYNN  euclidean  15     NaN        None                NaN   27.066667     0.076702
+18   PYNN  manhattan   5     NaN        None                NaN   34.000000     0.099315
+39   PYNN  manhattan  15     NaN        None                NaN   29.466667     0.048664
+51   PYNN  manhattan  10     NaN        None                NaN   28.600000     0.069503

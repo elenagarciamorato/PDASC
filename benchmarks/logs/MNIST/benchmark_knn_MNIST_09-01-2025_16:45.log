@@ -1,0 +1,53 @@
+2025-01-09 16:45:24,859 - root - ------------------------------------------------------------------------
+2025-01-09 16:45:24,859 - root -                     MNIST Dataset Benchmarking
+2025-01-09 16:45:24,859 - root - ------------------------------------------------------------------------
+2025-01-09 16:45:24,860 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2025-01-09 16:45:24,870 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2025-01-09 16:45:24,881 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_FLANN.hdf5
+2025-01-09 16:45:24,889 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2025-01-09 16:45:24,900 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_chebyshev_Exact_auto.hdf5
+2025-01-09 16:45:24,908 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_chebyshev_Exact_auto.hdf5
+2025-01-09 16:45:24,915 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2025-01-09 16:45:24,921 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2025-01-09 16:45:24,929 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_LinearScan.hdf5
+2025-01-09 16:45:24,934 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2025-01-09 16:45:24,942 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_GDASC_tg1000_nc500_r40000_kmedoids_fastkmedoids.hdf5
+2025-01-09 16:45:24,948 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_Exact_auto.hdf5
+2025-01-09 16:45:24,955 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_chebyshev_GDASC_tg1000_nc500_r265_kmedoids_fastkmedoids.hdf5
+2025-01-09 16:45:24,961 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_chebyshev_Exact_auto.hdf5
+2025-01-09 16:45:24,969 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_cosine_PYNN.hdf5
+2025-01-09 16:45:24,974 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_cosine_Exact_auto.hdf5
+2025-01-09 16:45:24,981 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_PYNN.hdf5
+2025-01-09 16:45:24,987 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_Exact_auto.hdf5
+2025-01-09 16:45:24,994 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_FLANN.hdf5
+2025-01-09 16:45:24,999 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_Exact_auto.hdf5
+2025-01-09 16:45:25,006 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_cosine_Exact_auto.hdf5
+2025-01-09 16:45:25,012 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_cosine_Exact_auto.hdf5
+2025-01-09 16:45:25,020 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_PYNN.hdf5
+2025-01-09 16:45:25,029 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2025-01-09 16:45:25,036 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r2850_kmedoids_fastkmedoids.hdf5
+2025-01-09 16:45:25,042 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2025-01-09 16:45:25,050 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_Exact_auto.hdf5
+2025-01-09 16:45:25,055 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_manhattan_Exact_auto.hdf5
+2025-01-09 16:45:25,062 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_cosine_GDASC_tg1000_nc500_r0.7_kmedoids_fastkmedoids.hdf5
+2025-01-09 16:45:25,067 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_cosine_Exact_auto.hdf5
+2025-01-09 16:45:25,076 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_chebyshev_PYNN.hdf5
+2025-01-09 16:45:25,084 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_chebyshev_Exact_auto.hdf5
+2025-01-09 16:45:25,099 - root - ------------------------------------------------------------------------
+   Method   Distance   k   radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+2   Exact  chebyshev  10      NaN        auto                NaN       100.0     4.677778
+10  Exact     cosine  10      NaN        auto                NaN       100.0    22.322796
+3   Exact  euclidean  10      NaN        auto                NaN       100.0     6.704604
+4   Exact  euclidean  10      NaN  LinearScan           59999.00       100.0     7.155501
+13  Exact  manhattan  10      NaN        auto                NaN       100.0     5.126455
+1   FLANN  euclidean  10      NaN        None                NaN        69.9     0.274942
+9   FLANN  manhattan  10      NaN        None                NaN        61.4     0.124377
+0   GDASC  euclidean  10  80000.0    kmedoids           59999.00       100.0   440.133555
+5   GDASC  manhattan  10  40000.0    kmedoids           44343.33        99.0   146.296143
+12  GDASC  euclidean  10   2850.0    kmedoids           40890.93        98.9   139.874962
+6   GDASC  chebyshev  10    265.0    kmedoids           59999.00        60.9   193.145442
+14  GDASC     cosine  10      0.7    kmedoids           43585.52       100.0   162.216240
+15   PYNN  chebyshev  10      NaN        None                NaN        60.7     4.234906
+7    PYNN     cosine  10      NaN        None                NaN        95.9     0.162070
+11   PYNN  euclidean  10      NaN        None                NaN        95.9     0.102235
+8    PYNN  manhattan  10      NaN        None                NaN        98.8     0.017338

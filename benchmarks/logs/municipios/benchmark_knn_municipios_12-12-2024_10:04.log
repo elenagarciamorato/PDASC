@@ -1,0 +1,23 @@
+2024-12-12 10:04:19,728 - root - ------------------------------------------------------------------------
+2024-12-12 10:04:19,728 - root -                     municipios Dataset Benchmarking
+2024-12-12 10:04:19,728 - root - ------------------------------------------------------------------------
+2024-12-12 10:04:19,729 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_PYNN.hdf5
+2024-12-12 10:04:19,731 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-12-12 10:04:19,734 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-12-12 10:04:19,736 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-12-12 10:04:19,739 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-12-12 10:04:19,741 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-12-12 10:04:19,744 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_FLANN.hdf5
+2024-12-12 10:04:19,746 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-12-12 10:04:19,749 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_LinearScan.hdf5
+2024-12-12 10:04:19,751 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-12-12 10:04:19,754 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r2.85_kmedoids_fastkmedoids.hdf5
+2024-12-12 10:04:19,756 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-12-12 10:04:19,765 - root - ------------------------------------------------------------------------
+  Method   Distance   k  radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+2  Exact  euclidean  10     NaN        auto                NaN       100.0     0.036788
+4  Exact  euclidean  10     NaN  LinearScan            8031.00       100.0     0.054109
+3  FLANN  euclidean  10     NaN        None                NaN       100.0     0.191648
+1  GDASC  euclidean  10   40.00    kmedoids            8031.00       100.0    60.622241
+5  GDASC  euclidean  10    2.85    kmedoids            2341.46       100.0     8.455630
+0   PYNN  euclidean  10     NaN        None                NaN       100.0     0.002534

@@ -1,0 +1,65 @@
+2025-01-09 15:04:18,233 - root - ------------------------------------------------------------------------
+2025-01-09 15:04:18,233 - root -                     municipios Dataset Benchmarking
+2025-01-09 15:04:18,233 - root - ------------------------------------------------------------------------
+2025-01-09 15:04:18,237 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_GDASC_tg60_nc30_r3.25_kmedoids_fastkmedoids.hdf5
+2025-01-09 15:04:18,241 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2025-01-09 15:04:18,245 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_auto.hdf5
+2025-01-09 15:04:18,248 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_auto.hdf5
+2025-01-09 15:04:18,251 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_PYNN.hdf5
+2025-01-09 15:04:18,254 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_Exact_auto.hdf5
+2025-01-09 15:04:18,257 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_LinearScan.hdf5
+2025-01-09 15:04:18,258 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2025-01-09 15:04:18,259 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_PYNN.hdf5
+2025-01-09 15:04:18,262 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_auto.hdf5
+2025-01-09 15:04:18,265 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_GDASC_tg60_nc30_r2.5_kmedoids_fastkmedoids.hdf5
+2025-01-09 15:04:18,267 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_auto.hdf5
+2025-01-09 15:04:18,270 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r2.5_kmedoids_fastkmedoids.hdf5
+2025-01-09 15:04:18,273 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2025-01-09 15:04:18,275 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_PYNN.hdf5
+2025-01-09 15:04:18,278 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2025-01-09 15:04:18,282 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2025-01-09 15:04:18,284 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2025-01-09 15:04:18,288 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_FLANN.hdf5
+2025-01-09 15:04:18,290 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2025-01-09 15:04:18,291 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2025-01-09 15:04:18,294 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2025-01-09 15:04:18,296 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2025-01-09 15:04:18,298 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2025-01-09 15:04:18,301 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_GDASC_tg60_nc30_r0.05_kmedoids_fastkmedoids.hdf5
+2025-01-09 15:04:18,303 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_Exact_auto.hdf5
+2025-01-09 15:04:18,305 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_GDASC_tg60_nc30_r0.01_kmedoids_fastkmedoids.hdf5
+2025-01-09 15:04:18,307 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_auto.hdf5
+2025-01-09 15:04:18,310 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_auto.hdf5
+2025-01-09 15:04:18,312 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_cosine_Exact_auto.hdf5
+2025-01-09 15:04:18,315 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_PYNN.hdf5
+2025-01-09 15:04:18,317 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_chebyshev_Exact_auto.hdf5
+2025-01-09 15:04:18,320 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_Exact_auto.hdf5
+2025-01-09 15:04:18,322 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_Exact_auto.hdf5
+2025-01-09 15:04:18,324 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_Exact_LinearScan.hdf5
+2025-01-09 15:04:18,326 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_haversine_Exact_auto.hdf5
+2025-01-09 15:04:18,328 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_PYNN.hdf5
+2025-01-09 15:04:18,330 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2025-01-09 15:04:18,332 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_FLANN.hdf5
+2025-01-09 15:04:18,335 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_manhattan_Exact_auto.hdf5
+2025-01-09 15:04:18,340 - root - ------------------------------------------------------------------------
+   Method   Distance   k  radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+1   Exact  chebyshev  10     NaN        auto                NaN       100.0     0.041411
+14  Exact     cosine  10     NaN        auto                NaN       100.0     0.060895
+3   Exact  euclidean  10     NaN  LinearScan            8031.00       100.0     0.075514
+11  Exact  euclidean  10     NaN        auto                NaN       100.0     0.040372
+16  Exact  haversine  10     NaN        auto                NaN       100.0     0.066665
+17  Exact  haversine  10     NaN  LinearScan            8031.00       100.0     0.098221
+8   Exact  manhattan  10     NaN        auto                NaN       100.0     0.031030
+9   FLANN  euclidean  10     NaN        None                NaN        99.6     0.077253
+19  FLANN  manhattan  10     NaN        None                NaN        93.9     0.217113
+10  GDASC  euclidean  10   40.00    kmedoids            8031.00       100.0    60.622241
+0   GDASC  manhattan  10    3.25    kmedoids            2046.76       100.0     6.854925
+5   GDASC  chebyshev  10    2.50    kmedoids            2317.61       100.0     7.734235
+6   GDASC  euclidean  10    2.50    kmedoids            1886.78       100.0     6.409784
+12  GDASC  haversine  10    0.05    kmedoids            2425.07       100.0    11.072370
+13  GDASC     cosine  10    0.01    kmedoids            6923.64       100.0    25.329795
+15   PYNN  chebyshev  10     NaN        None                NaN       100.0     0.002464
+4    PYNN     cosine  10     NaN        None                NaN        57.7     0.059749
+7    PYNN  euclidean  10     NaN        None                NaN       100.0     0.002456
+2    PYNN  haversine  10     NaN        None                NaN       100.0     0.002471
+18   PYNN  manhattan  10     NaN        None                NaN        99.7     0.002447

@@ -1,0 +1,262 @@
+2025-01-10 12:22:30,949 - root - ------------------------------------------------------------------------
+2025-01-10 12:22:30,949 - root -                     Experiments launcher for GLOVE Dataset
+2025-01-10 12:22:30,949 - root - ------------------------------------------------------------------------
+
+2025-01-10 12:22:30,949 - root - Gathering system architecture information...
+
+2025-01-10 12:22:30,950 - root - Platform: Linux-5.15.0-128-generic-x86_64-with-debian-bookworm-sid
+
+2025-01-10 12:22:32,242 - root - Processor: AMD EPYC 7451 24-Core Processor
+2025-01-10 12:22:32,242 - root - Processor Architecture: X86_64
+2025-01-10 12:22:32,247 - root - Processor Cores: 48
+2025-01-10 12:22:32,247 - root - Logical Processors: 96
+
+2025-01-10 12:22:32,247 - root - Python Version: 3.7.13 (default, Mar 29 2022, 02:18:16) 
+[GCC 7.5.0]
+
+2025-01-10 12:22:32,248 - root - Total RAM: 125.74 GB
+2025-01-10 12:22:32,248 - root - Available RAM: 123.41 GB
+2025-01-10 12:22:32,248 - root - Used RAM: 1.33 GB
+2025-01-10 12:22:32,248 - root - RAM Usage Percentage: 1.90%
+
+2025-01-10 12:22:32,248 - root - ------------------------------------------------------------------------
+
+2025-01-10 12:22:32,249 - root - ------------------------------------------------------------------------
+2025-01-10 12:22:32,249 - root - ---- Searching the 10 nearest neighbors within GDASC over GLOVE dataset using chebyshev distance. ----
+2025-01-10 12:22:32,249 - root - 
+2025-01-10 12:22:32,249 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=5.2 - algorithm=kmedoids - implementation=fastkmedoids ----
+2025-01-10 12:22:32,249 - root - ------------------------------------------------------------------------
+
+2025-01-10 12:22:32,250 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 13:06:17,488 - GDASC.gdasc_ - tree time=2624.76147669903 seconds
+2025-01-10 14:01:27,514 - root - Search time = 3310.0259284900967 seconds
+
+2025-01-10 14:01:27,515 - root - Average time spent in searching a single point = 33.100259284900964
+2025-01-10 14:01:27,515 - root - Speed (points/s) = 0.030211243706364577
+
+2025-01-10 14:01:27,518 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_chebyshev_GDASC_tg1000_nc500_r5.2_kmedoids_fastkmedoids.hdf5
+2025-01-10 14:01:27,518 - root - 
+
+2025-01-10 14:01:27,623 - root - ------------------------------------------------------------------------
+2025-01-10 14:01:27,623 - root - ---- Searching the 10 nearest neighbors within GDASC over GLOVE dataset using manhattan distance. ----
+2025-01-10 14:01:27,623 - root - 
+2025-01-10 14:01:27,623 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=105 - algorithm=kmedoids - implementation=fastkmedoids ----
+2025-01-10 14:01:27,623 - root - ------------------------------------------------------------------------
+
+2025-01-10 14:01:27,624 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 14:40:32,581 - GDASC.gdasc_ - tree time=2344.479367682012 seconds
+2025-01-10 15:32:08,179 - root - Search time = 3095.5967773259617 seconds
+
+2025-01-10 15:32:08,179 - root - Average time spent in searching a single point = 30.955967773259616
+2025-01-10 15:32:08,179 - root - Speed (points/s) = 0.03230394886454882
+
+2025-01-10 15:32:08,182 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_manhattan_GDASC_tg1000_nc500_r105_kmedoids_fastkmedoids.hdf5
+2025-01-10 15:32:08,182 - root - 
+
+2025-01-10 15:32:08,278 - root - ------------------------------------------------------------------------
+2025-01-10 15:32:08,278 - root - ---- Searching the 10 nearest neighbors within PYNN over GLOVE dataset using cosine distance. ----
+2025-01-10 15:32:08,278 - root - ------------------------------------------------------------------------
+
+2025-01-10 15:32:08,278 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 15:40:46,466 - root - Index time= 517.7124817280564 seconds
+2025-01-10 15:40:46,534 - root - Search time = 0.06725790002383292 seconds
+
+2025-01-10 15:40:46,534 - root - Average time spent in searching a single point = 0.0006725790002383292
+2025-01-10 15:40:46,534 - root - Speed (points/s) = 1486.8141878435824
+
+2025-01-10 15:40:46,536 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_cosine_PYNN.hdf5
+2025-01-10 15:40:46,537 - root - 
+
+2025-01-10 15:40:46,588 - root - ------------------------------------------------------------------------
+2025-01-10 15:40:46,588 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over GLOVE dataset using manhattan distance. ----
+2025-01-10 15:40:46,589 - root - ------------------------------------------------------------------------
+
+2025-01-10 15:40:46,589 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 15:40:47,125 - root - Building index using manhattan metric and brute algorithm
+2025-01-10 15:40:47,125 - root - Index time= 0.057782317977398634 seconds
+2025-01-10 15:41:24,580 - root - Search time = 37.45472410414368 seconds
+
+2025-01-10 15:41:24,581 - root - Average time spended in searching a single point = 0.3745472410414368
+2025-01-10 15:41:24,581 - root - Speed (points/s) = 2.6698901778570794
+
+2025-01-10 15:41:24,583 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_manhattan_Exact_auto.hdf5
+2025-01-10 15:41:24,584 - root - 
+
+2025-01-10 15:41:24,586 - root - ------------------------------------------------------------------------
+2025-01-10 15:41:24,586 - root - ---- Searching the 10 nearest neighbors within GDASC over GLOVE dataset using cosine distance. ----
+2025-01-10 15:41:24,586 - root - 
+2025-01-10 15:41:24,586 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=1 - algorithm=kmedoids - implementation=fastkmedoids ----
+2025-01-10 15:41:24,586 - root - ------------------------------------------------------------------------
+
+2025-01-10 15:41:24,586 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 16:28:58,792 - GDASC.gdasc_ - tree time=2853.7281138799153 seconds
+2025-01-10 17:11:55,472 - root - Search time = 2576.678205296863 seconds
+
+2025-01-10 17:11:55,473 - root - Average time spent in searching a single point = 25.76678205296863
+2025-01-10 17:11:55,473 - root - Speed (points/s) = 0.03880965802964086
+
+2025-01-10 17:11:55,476 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_cosine_GDASC_tg1000_nc500_r1_kmedoids_fastkmedoids.hdf5
+2025-01-10 17:11:55,476 - root - 
+
+2025-01-10 17:11:55,582 - root - ------------------------------------------------------------------------
+2025-01-10 17:11:55,582 - root - ---- Searching the 10 nearest neighbors within FLANN over GLOVE dataset using manhattan distance. ----
+2025-01-10 17:11:55,582 - root - ------------------------------------------------------------------------
+
+2025-01-10 17:11:55,583 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 17:13:19,518 - root - Saving FLANN index at 'index_'
+2025-01-10 17:13:19,570 - root - Index time= 83.49329942208715 seconds
+2025-01-10 17:13:20,189 - root - Search time = 0.6185165429487824 seconds
+
+2025-01-10 17:13:20,189 - root - Average time spent in searching a single point = 0.006185165429487824
+2025-01-10 17:13:20,189 - root - Speed (points/s) = 161.67716310908875
+
+2025-01-10 17:13:20,197 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_manhattan_FLANN.hdf5
+2025-01-10 17:13:20,198 - root - 
+
+2025-01-10 17:13:20,201 - root - ------------------------------------------------------------------------
+2025-01-10 17:13:20,201 - root - ---- Searching the 10 nearest neighbors within GDASC over GLOVE dataset using euclidean distance. ----
+2025-01-10 17:13:20,201 - root - 
+2025-01-10 17:13:20,201 - root - ---- GDASC Parameters - tam_grupo=1000 - n_centroids=500 - radius=13 - algorithm=kmedoids - implementation=fastkmedoids ----
+2025-01-10 17:13:20,201 - root - ------------------------------------------------------------------------
+
+2025-01-10 17:13:20,201 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 17:54:17,122 - GDASC.gdasc_ - tree time=2456.4536481539253 seconds
+2025-01-10 18:46:05,559 - root - Search time = 3108.435608157888 seconds
+
+2025-01-10 18:46:05,561 - root - Average time spent in searching a single point = 31.084356081578882
+2025-01-10 18:46:05,561 - root - Speed (points/s) = 0.03217052324891546
+
+2025-01-10 18:46:05,564 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_GDASC_tg1000_nc500_r13_kmedoids_fastkmedoids.hdf5
+2025-01-10 18:46:05,564 - root - 
+
+2025-01-10 18:46:05,659 - root - ------------------------------------------------------------------------
+2025-01-10 18:46:05,660 - root -  Searching the 10 nearest neighbors within Exact - LinearScan algorithm over GLOVE dataset using euclidean distance. ----
+2025-01-10 18:46:05,660 - root - ------------------------------------------------------------------------
+
+2025-01-10 18:46:05,660 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 18:46:06,128 - root - Index time= 3.5479897633194923e-05 seconds
+2025-01-10 18:46:37,798 - root - Search time = 31.66964029101655 seconds
+
+2025-01-10 18:46:37,798 - root - Average time spended in searching a single point = 0.3166964029101655
+2025-01-10 18:46:37,798 - root - Speed (points/s) = 3.1575982259693087
+
+2025-01-10 18:46:37,801 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_LinearScan.hdf5
+2025-01-10 18:46:37,802 - root - 
+
+2025-01-10 18:46:37,804 - root - ------------------------------------------------------------------------
+2025-01-10 18:46:37,804 - root - ---- Searching the 10 nearest neighbors within PYNN over GLOVE dataset using manhattan distance. ----
+2025-01-10 18:46:37,804 - root - ------------------------------------------------------------------------
+
+2025-01-10 18:46:37,804 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 18:55:58,885 - root - Index time= 560.61243310594 seconds
+2025-01-10 18:55:59,095 - root - Search time = 0.2093424149788916 seconds
+
+2025-01-10 18:55:59,095 - root - Average time spent in searching a single point = 0.002093424149788916
+2025-01-10 18:55:59,095 - root - Speed (points/s) = 477.6862825915292
+
+2025-01-10 18:55:59,097 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_manhattan_PYNN.hdf5
+2025-01-10 18:55:59,098 - root - 
+
+2025-01-10 18:55:59,145 - root - ------------------------------------------------------------------------
+2025-01-10 18:55:59,145 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over GLOVE dataset using cosine distance. ----
+2025-01-10 18:55:59,145 - root - ------------------------------------------------------------------------
+
+2025-01-10 18:55:59,146 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 18:55:59,637 - root - Building index using cosine metric and brute algorithm
+2025-01-10 18:55:59,637 - root - Index time= 0.056414816062897444 seconds
+2025-01-10 18:56:37,740 - root - Search time = 38.10191344702616 seconds
+
+2025-01-10 18:56:37,740 - root - Average time spended in searching a single point = 0.38101913447026164
+2025-01-10 18:56:37,740 - root - Speed (points/s) = 2.6245401071269545
+
+2025-01-10 18:56:37,742 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_cosine_Exact_auto.hdf5
+2025-01-10 18:56:37,743 - root - 
+
+2025-01-10 18:56:37,745 - root - ------------------------------------------------------------------------
+2025-01-10 18:56:37,745 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over GLOVE dataset using euclidean distance. ----
+2025-01-10 18:56:37,745 - root - ------------------------------------------------------------------------
+
+2025-01-10 18:56:37,745 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 18:56:38,234 - root - Building index using euclidean metric and brute algorithm
+2025-01-10 18:56:38,235 - root - Index time= 0.05635739699937403 seconds
+2025-01-10 18:56:59,694 - root - Search time = 21.459544169018045 seconds
+
+2025-01-10 18:56:59,695 - root - Average time spended in searching a single point = 0.21459544169018044
+2025-01-10 18:56:59,695 - root - Speed (points/s) = 4.659931227447681
+
+2025-01-10 18:56:59,697 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2025-01-10 18:56:59,698 - root - 
+
+2025-01-10 18:56:59,700 - root - ------------------------------------------------------------------------
+2025-01-10 18:56:59,700 - root - ---- Searching the 10 nearest neighbors within PYNN over GLOVE dataset using euclidean distance. ----
+2025-01-10 18:56:59,700 - root - ------------------------------------------------------------------------
+
+2025-01-10 18:56:59,700 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 19:05:55,771 - root - Index time= 535.6381527800113 seconds
+2025-01-10 19:05:55,795 - root - Search time = 0.023588312091305852 seconds
+
+2025-01-10 19:05:55,795 - root - Average time spent in searching a single point = 0.00023588312091305853
+2025-01-10 19:05:55,795 - root - Speed (points/s) = 4239.387693910403
+
+2025-01-10 19:05:55,797 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_PYNN.hdf5
+2025-01-10 19:05:55,798 - root - 
+
+2025-01-10 19:05:55,850 - root - ------------------------------------------------------------------------
+2025-01-10 19:05:55,850 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over GLOVE dataset using chebyshev distance. ----
+2025-01-10 19:05:55,850 - root - ------------------------------------------------------------------------
+
+2025-01-10 19:05:55,851 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 19:05:56,352 - root - Building index using chebyshev metric and brute algorithm
+2025-01-10 19:05:56,352 - root - Index time= 0.057222901144996285 seconds
+2025-01-10 19:06:34,084 - root - Search time = 37.732248031999916 seconds
+
+2025-01-10 19:06:34,084 - root - Average time spended in searching a single point = 0.37732248031999915
+2025-01-10 19:06:34,084 - root - Speed (points/s) = 2.6502529060869136
+
+2025-01-10 19:06:34,087 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_chebyshev_Exact_auto.hdf5
+2025-01-10 19:06:34,087 - root - 
+
+2025-01-10 19:06:34,089 - root - ------------------------------------------------------------------------
+2025-01-10 19:06:34,089 - root - ---- Searching the 10 nearest neighbors within PYNN over GLOVE dataset using chebyshev distance. ----
+2025-01-10 19:06:34,089 - root - ------------------------------------------------------------------------
+
+2025-01-10 19:06:34,089 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 19:14:45,664 - root - Index time= 491.1327722608112 seconds
+2025-01-10 19:14:45,767 - root - Search time = 0.10352534102275968 seconds
+
+2025-01-10 19:14:45,768 - root - Average time spent in searching a single point = 0.0010352534102275968
+2025-01-10 19:14:45,768 - root - Speed (points/s) = 965.9470716258288
+
+2025-01-10 19:14:45,770 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_chebyshev_PYNN.hdf5
+2025-01-10 19:14:45,770 - root - 
+
+2025-01-10 19:14:45,824 - root - ------------------------------------------------------------------------
+2025-01-10 19:14:45,824 - root - ---- Searching the 10 nearest neighbors within FLANN over GLOVE dataset using euclidean distance. ----
+2025-01-10 19:14:45,824 - root - ------------------------------------------------------------------------
+
+2025-01-10 19:14:45,824 - root - Loading train and test set from ./data/GLOVE_train_test_set.hdf5
+
+2025-01-10 19:16:13,426 - root - Saving FLANN index at 'index_'
+2025-01-10 19:16:13,508 - root - Index time= 87.227352789836 seconds
+2025-01-10 19:16:13,935 - root - Search time = 0.4268603620585054 seconds
+
+2025-01-10 19:16:13,935 - root - Average time spent in searching a single point = 0.004268603620585054
+2025-01-10 19:16:13,935 - root - Speed (points/s) = 234.2686482243437
+
+2025-01-10 19:16:13,941 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_FLANN.hdf5
+2025-01-10 19:16:13,941 - root - 
+

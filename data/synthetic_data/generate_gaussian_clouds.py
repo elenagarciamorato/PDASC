@@ -555,7 +555,7 @@ def pinta_vecinos(vecpuntos, punto, vecinos, npc, nclouds, tam_grupo):
     ax.legend(bbox_to_anchor=(-0.12, -0.18, 1.2, .10), loc='upper center', ncol=8, mode="expand",
               borderaxespad=0., fontsize='x-small')
     plt.title("K neighbours Gaussian clouds (overlap case)")
-    plt.savefig('D:/URJC_Investigacion/REVISTA/GENETICA/GDASC/logs/kneighbours/kneighbours_gaussian_neighbours_overlap.png', format='png')
+    plt.savefig('D:/URJC_Investigacion/REVISTA/GENETICA/PDASC/logs/kneighbours/kneighbours_gaussian_neighbours_overlap.png', format='png')
     return plt.show()
 
 
@@ -587,5 +587,5 @@ def pinta_grupos(vecpuntos, npc, nclouds, tam_grupo):
     ax.legend(bbox_to_anchor=(-0.12, -0.18, 1.2, .10), loc='upper center', ncol=8, mode="expand",
               borderaxespad=0., fontsize='x-small')
     plt.title("K neighbours Gaussian groups (overlap case)")
-    plt.savefig('D:/URJC_Investigacion/REVISTA/GENETICA/GDASC/logs/kneighbours/kneighbours_gaussian_groups_overlap.png', format='png')
+    plt.savefig('D:/URJC_Investigacion/REVISTA/GENETICA/PDASC/logs/kneighbours/kneighbours_gaussian_groups_overlap.png', format='png')
     return plt.show()

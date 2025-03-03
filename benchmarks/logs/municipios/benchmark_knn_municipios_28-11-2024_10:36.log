@@ -1,0 +1,35 @@
+2024-11-28 10:36:59,192 - root - ------------------------------------------------------------------------
+2024-11-28 10:36:59,192 - root -                     municipios Dataset Benchmarking
+2024-11-28 10:36:59,193 - root - ------------------------------------------------------------------------
+2024-11-28 10:36:59,195 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r2.85_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:36:59,200 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,206 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r0.65_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:36:59,210 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,216 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r40_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:36:59,220 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,227 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_PYNN.hdf5
+2024-11-28 10:36:59,230 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,237 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,241 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,247 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_LinearScan.hdf5
+2024-11-28 10:36:59,251 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,257 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_FLANN.hdf5
+2024-11-28 10:36:59,260 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,268 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r0.42_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:36:59,271 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,276 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r0.52_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:36:59,279 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,284 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r0.37_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:36:59,287 - root - Loading neighbors from ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:36:59,303 - root - ------------------------------------------------------------------------
+  Method   Distance   k  radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+4  Exact  euclidean  10     NaN        auto                NaN       100.0     0.089295
+5  Exact  euclidean  10     NaN  LinearScan            8031.00       100.0     0.077864
+6  FLANN  euclidean  10     NaN        None                NaN        99.6     0.537906
+2  GDASC  euclidean  10   40.00    kmedoids            8031.00       100.0    60.622241
+0  GDASC  euclidean  10    2.85    kmedoids            2416.48       100.0    17.478021
+1  GDASC  euclidean  10    0.65    kmedoids              90.20        37.5     0.528763
+8  GDASC  euclidean  10    0.52    kmedoids              46.70        18.1     0.224860
+7  GDASC  euclidean  10    0.42    kmedoids              40.18        12.7     0.163029
+9  GDASC  euclidean  10    0.37    kmedoids              38.28        11.5     0.146910
+3   PYNN  euclidean  10     NaN        None                NaN       100.0     0.004082

@@ -1,0 +1,26 @@
+2024-12-17 16:48:12,524 - root - ------------------------------------------------------------------------
+2024-12-17 16:48:12,524 - root -                     MNIST Dataset Benchmarking
+2024-12-17 16:48:12,524 - root - ------------------------------------------------------------------------
+2024-12-17 16:48:12,524 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r2834_kmedoids_fastkmedoids.hdf5
+2024-12-17 16:48:12,527 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-12-17 16:48:12,529 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_PYNN.hdf5
+2024-12-17 16:48:12,530 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-12-17 16:48:12,554 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r2835_kmedoids_fastkmedoids.hdf5
+2024-12-17 16:48:12,556 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-12-17 16:48:12,559 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_LinearScan.hdf5
+2024-12-17 16:48:12,561 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-12-17 16:48:12,563 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-12-17 16:48:12,565 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-12-17 16:48:12,568 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_FLANN.hdf5
+2024-12-17 16:48:12,569 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-12-17 16:48:12,571 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_GDASC_tg1000_nc500_r80000_kmedoids_fastkmedoids.hdf5
+2024-12-17 16:48:12,573 - root - Loading neighbors from ./benchmarks/NearestNeighbors/MNIST/knn_MNIST_10_euclidean_Exact_auto.hdf5
+2024-12-17 16:48:12,577 - root - ------------------------------------------------------------------------
+  Method   Distance   k   radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+3  Exact  euclidean  10      NaN  LinearScan           59999.00       100.0     2.928547
+4  Exact  euclidean  10      NaN        auto                NaN       100.0     6.211019
+5  FLANN  euclidean  10      NaN        None                NaN        69.3     0.330003
+6  GDASC  euclidean  10  80000.0    kmedoids           59999.00       100.0   440.133555
+2  GDASC  euclidean  10   2835.0    kmedoids           40385.29        98.8    37.327471
+0  GDASC  euclidean  10   2834.0    kmedoids           39841.25        99.0    93.874078
+1   PYNN  euclidean  10      NaN        None                NaN        96.7     0.014905

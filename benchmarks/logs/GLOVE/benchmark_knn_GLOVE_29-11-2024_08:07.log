@@ -1,0 +1,35 @@
+2024-11-29 08:07:28,564 - root - ------------------------------------------------------------------------
+2024-11-29 08:07:28,564 - root -                     GLOVE Dataset Benchmarking
+2024-11-29 08:07:28,564 - root - ------------------------------------------------------------------------
+2024-11-29 08:07:28,565 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_GDASC_tg1000_nc500_r7.9_kmedoids_fastkmedoids.hdf5
+2024-11-29 08:07:28,568 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,572 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_GDASC_tg1000_nc500_r6.3_kmedoids_fastkmedoids.hdf5
+2024-11-29 08:07:28,574 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,578 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_GDASC_tg1000_nc500_r12_kmedoids_fastkmedoids.hdf5
+2024-11-29 08:07:28,580 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,584 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_LinearScan.hdf5
+2024-11-29 08:07:28,586 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,589 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_GDASC_tg1000_nc500_r250_kmedoids_fastkmedoids.hdf5
+2024-11-29 08:07:28,591 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,595 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,597 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,600 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_PYNN.hdf5
+2024-11-29 08:07:28,602 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,606 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_GDASC_tg1000_nc500_r6.7_kmedoids_fastkmedoids.hdf5
+2024-11-29 08:07:28,608 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,611 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_FLANN.hdf5
+2024-11-29 08:07:28,613 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,617 - root - Loading neighbors, computed distances and search time from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_GDASC_tg1000_nc500_r7.2_kmedoids_fastkmedoids.hdf5
+2024-11-29 08:07:28,619 - root - Loading neighbors from ./benchmarks/NearestNeighbors/GLOVE/knn_GLOVE_10_euclidean_Exact_auto.hdf5
+2024-11-29 08:07:28,629 - root - ------------------------------------------------------------------------
+  Method   Distance   k  radius   Algorithm  Dist_Computed(Av)  Recall(Av)  Search_Time
+3  Exact  euclidean  10     NaN  LinearScan         1183514.00       100.0    44.709435
+5  Exact  euclidean  10     NaN        auto                NaN       100.0    33.683028
+8  FLANN  euclidean  10     NaN        None                NaN         9.7     0.510217
+4  GDASC  euclidean  10   250.0    kmedoids         1183514.00       100.0  4050.004907
+2  GDASC  euclidean  10    12.0    kmedoids         1182935.07       100.0  3962.609138
+0  GDASC  euclidean  10     7.9    kmedoids         1056033.34        92.3  2948.376635
+9  GDASC  euclidean  10     7.2    kmedoids          948112.64        86.6  1769.912723
+7  GDASC  euclidean  10     6.7    kmedoids          815095.41        77.2  1423.630603
+1  GDASC  euclidean  10     6.3    kmedoids          649901.97        62.0  1277.263373
+6   PYNN  euclidean  10     NaN        None                NaN        72.7     0.023484

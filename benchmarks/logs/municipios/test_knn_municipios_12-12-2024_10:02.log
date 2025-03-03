@@ -1,0 +1,102 @@
+2024-12-12 10:02:02,653 - root - ------------------------------------------------------------------------
+2024-12-12 10:02:02,653 - root -                     Experiments launcher for municipios Dataset
+2024-12-12 10:02:02,653 - root - ------------------------------------------------------------------------
+
+2024-12-12 10:02:02,653 - root - Gathering system architecture information...
+
+2024-12-12 10:02:02,654 - root - Platform: Linux-5.15.0-126-generic-x86_64-with-debian-bookworm-sid
+
+2024-12-12 10:02:03,945 - root - Processor: AMD EPYC 7451 24-Core Processor
+2024-12-12 10:02:03,945 - root - Processor Architecture: X86_64
+2024-12-12 10:02:03,950 - root - Processor Cores: 48
+2024-12-12 10:02:03,950 - root - Logical Processors: 96
+
+2024-12-12 10:02:03,950 - root - Python Version: 3.7.13 (default, Mar 29 2022, 02:18:16) 
+[GCC 7.5.0]
+
+2024-12-12 10:02:03,950 - root - Total RAM: 125.74 GB
+2024-12-12 10:02:03,951 - root - Available RAM: 123.35 GB
+2024-12-12 10:02:03,951 - root - Used RAM: 1.36 GB
+2024-12-12 10:02:03,951 - root - RAM Usage Percentage: 1.90%
+
+2024-12-12 10:02:03,951 - root - ------------------------------------------------------------------------
+
+2024-12-12 10:02:03,952 - root - ------------------------------------------------------------------------
+2024-12-12 10:02:03,952 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over municipios dataset using euclidean distance. ----
+2024-12-12 10:02:03,952 - root - ------------------------------------------------------------------------
+
+2024-12-12 10:02:03,953 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2024-12-12 10:02:03,957 - root - Building index using euclidean metric and kd_tree algorithm
+2024-12-12 10:02:03,957 - root - Index time= 0.0027029879856854677 seconds
+2024-12-12 10:02:03,994 - root - Search time = 0.036788061959668994 seconds
+
+2024-12-12 10:02:03,994 - root - Average time spended in searching a single point = 0.00036788061959668994
+2024-12-12 10:02:03,994 - root - Speed (points/s) = 2718.2731210366746
+
+2024-12-12 10:02:03,996 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_auto.hdf5
+2024-12-12 10:02:03,996 - root - 
+
+2024-12-12 10:02:03,996 - root - ------------------------------------------------------------------------
+2024-12-12 10:02:03,996 - root - ---- Searching the 10 nearest neighbors within PYNN over municipios dataset using euclidean distance. ----
+2024-12-12 10:02:03,996 - root - ------------------------------------------------------------------------
+
+2024-12-12 10:02:03,997 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2024-12-12 10:03:26,773 - root - Index time= 82.77569396188483 seconds
+2024-12-12 10:03:26,776 - root - Search time = 0.0025336688850075006 seconds
+
+2024-12-12 10:03:26,777 - root - Average time spent in searching a single point = 2.5336688850075006e-05
+2024-12-12 10:03:26,777 - root - Speed (points/s) = 39468.456431592465
+
+2024-12-12 10:03:26,778 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_PYNN.hdf5
+2024-12-12 10:03:26,779 - root - 
+
+2024-12-12 10:03:26,780 - root - ------------------------------------------------------------------------
+2024-12-12 10:03:26,780 - root - ---- Searching the 10 nearest neighbors within FLANN over municipios dataset using euclidean distance. ----
+2024-12-12 10:03:26,780 - root - ------------------------------------------------------------------------
+
+2024-12-12 10:03:26,780 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2024-12-12 10:03:26,797 - root - Saving FLANN index at 'index_'
+2024-12-12 10:03:26,797 - root - Index time= 0.015804871916770935 seconds
+2024-12-12 10:03:26,989 - root - Search time = 0.1916481100488454 seconds
+
+2024-12-12 10:03:26,989 - root - Average time spent in searching a single point = 0.0019164811004884542
+2024-12-12 10:03:26,989 - root - Speed (points/s) = 521.7896486143952
+
+2024-12-12 10:03:26,992 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_FLANN.hdf5
+2024-12-12 10:03:26,993 - root - 
+
+2024-12-12 10:03:26,994 - root - ------------------------------------------------------------------------
+2024-12-12 10:03:26,994 - root - ---- Searching the 10 nearest neighbors within GDASC over municipios dataset using euclidean distance. ----
+2024-12-12 10:03:26,994 - root - 
+2024-12-12 10:03:26,994 - root - ---- GDASC Parameters - tam_grupo=60 - n_centroids=30 - radius=2.85 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-12-12 10:03:26,994 - root - ------------------------------------------------------------------------
+
+2024-12-12 10:03:26,994 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2024-12-12 10:03:27,287 - GDASC.gdasc_ - tree time=0.29125657514669 seconds
+2024-12-12 10:03:35,744 - root - Search time = 8.45563001697883 seconds
+
+2024-12-12 10:03:35,744 - root - Average time spent in searching a single point = 0.0845563001697883
+2024-12-12 10:03:35,744 - root - Speed (points/s) = 11.826439874876371
+
+2024-12-12 10:03:35,746 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_GDASC_tg60_nc30_r2.85_kmedoids_fastkmedoids.hdf5
+2024-12-12 10:03:35,747 - root - 
+
+2024-12-12 10:03:35,748 - root - ------------------------------------------------------------------------
+2024-12-12 10:03:35,748 - root -  Searching the 10 nearest neighbors within Exact - LinearScan algorithm over municipios dataset using euclidean distance. ----
+2024-12-12 10:03:35,748 - root - ------------------------------------------------------------------------
+
+2024-12-12 10:03:35,748 - root - Loading train and test set from ./data/municipios_train_test_set.hdf5
+
+2024-12-12 10:03:35,749 - root - Index time= 1.0679941624403e-05 seconds
+2024-12-12 10:03:35,803 - root - Search time = 0.05410883901640773 seconds
+
+2024-12-12 10:03:35,804 - root - Average time spended in searching a single point = 0.0005410883901640773
+2024-12-12 10:03:35,804 - root - Speed (points/s) = 1848.126883108256
+
+2024-12-12 10:03:35,805 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/municipios/knn_municipios_10_euclidean_Exact_LinearScan.hdf5
+2024-12-12 10:03:35,805 - root - 
+

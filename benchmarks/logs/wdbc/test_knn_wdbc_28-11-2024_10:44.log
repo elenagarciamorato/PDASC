@@ -1,0 +1,187 @@
+2024-11-28 10:44:16,855 - root - ------------------------------------------------------------------------
+2024-11-28 10:44:16,855 - root -                     Experiments launcher for wdbc Dataset
+2024-11-28 10:44:16,856 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:44:16,856 - root - Gathering system architecture information...
+
+2024-11-28 10:44:16,856 - root - Platform: Linux-5.15.0-126-generic-x86_64-with-debian-bookworm-sid
+
+2024-11-28 10:44:18,150 - root - Processor: AMD EPYC 7451 24-Core Processor
+2024-11-28 10:44:18,150 - root - Processor Architecture: X86_64
+2024-11-28 10:44:18,157 - root - Processor Cores: 48
+2024-11-28 10:44:18,157 - root - Logical Processors: 96
+
+2024-11-28 10:44:18,157 - root - Python Version: 3.7.13 (default, Mar 29 2022, 02:18:16) 
+[GCC 7.5.0]
+
+2024-11-28 10:44:18,158 - root - Total RAM: 125.74 GB
+2024-11-28 10:44:18,158 - root - Available RAM: 120.39 GB
+2024-11-28 10:44:18,158 - root - Used RAM: 4.36 GB
+2024-11-28 10:44:18,158 - root - RAM Usage Percentage: 4.30%
+
+2024-11-28 10:44:18,158 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:44:18,159 - root - ------------------------------------------------------------------------
+2024-11-28 10:44:18,159 - root - ---- Searching the 10 nearest neighbors within GDASC over wdbc dataset using euclidean distance. ----
+2024-11-28 10:44:18,159 - root - 
+2024-11-28 10:44:18,160 - root - ---- GDASC Parameters - tam_grupo=70 - n_centroids=35 - radius=118 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-28 10:44:18,160 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:44:18,161 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-11-28 10:44:18,404 - GDASC.gdasc_ - tree time=0.24072745395824313 seconds
+2024-11-28 10:44:18,655 - root - Search time = 0.25035939598456025 seconds
+
+2024-11-28 10:44:18,655 - root - Average time spent in searching a single point = 0.0025035939598456024
+2024-11-28 10:44:18,655 - root - Speed (points/s) = 399.42579189704963
+
+2024-11-28 10:44:18,659 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_GDASC_tg70_nc35_r118_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:44:18,660 - root - 
+
+2024-11-28 10:44:18,660 - root - ------------------------------------------------------------------------
+2024-11-28 10:44:18,660 - root - ---- Searching the 10 nearest neighbors within GDASC over wdbc dataset using euclidean distance. ----
+2024-11-28 10:44:18,661 - root - 
+2024-11-28 10:44:18,661 - root - ---- GDASC Parameters - tam_grupo=70 - n_centroids=35 - radius=166 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-28 10:44:18,661 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:44:18,661 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-11-28 10:44:18,750 - GDASC.gdasc_ - tree time=0.0880030239932239 seconds
+2024-11-28 10:44:19,178 - root - Search time = 0.42734821094200015 seconds
+
+2024-11-28 10:44:19,178 - root - Average time spent in searching a single point = 0.004273482109420001
+2024-11-28 10:44:19,178 - root - Speed (points/s) = 234.00121362289272
+
+2024-11-28 10:44:19,180 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_GDASC_tg70_nc35_r166_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:44:19,180 - root - 
+
+2024-11-28 10:44:19,181 - root - ------------------------------------------------------------------------
+2024-11-28 10:44:19,181 - root - ---- Searching the 10 nearest neighbors within GDASC over wdbc dataset using euclidean distance. ----
+2024-11-28 10:44:19,181 - root - 
+2024-11-28 10:44:19,181 - root - ---- GDASC Parameters - tam_grupo=70 - n_centroids=35 - radius=243 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-28 10:44:19,181 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:44:19,181 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-11-28 10:44:19,240 - GDASC.gdasc_ - tree time=0.05736462399363518 seconds
+2024-11-28 10:44:19,937 - root - Search time = 0.6973091190448031 seconds
+
+2024-11-28 10:44:19,937 - root - Average time spent in searching a single point = 0.0069730911904480304
+2024-11-28 10:44:19,937 - root - Speed (points/s) = 143.40842141428365
+
+2024-11-28 10:44:19,941 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_GDASC_tg70_nc35_r243_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:44:19,941 - root - 
+
+2024-11-28 10:44:19,943 - root - ------------------------------------------------------------------------
+2024-11-28 10:44:19,943 - root - ---- Searching the 10 nearest neighbors within GDASC over wdbc dataset using euclidean distance. ----
+2024-11-28 10:44:19,943 - root - 
+2024-11-28 10:44:19,943 - root - ---- GDASC Parameters - tam_grupo=70 - n_centroids=35 - radius=2159 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-28 10:44:19,943 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:44:19,943 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-11-28 10:44:20,009 - GDASC.gdasc_ - tree time=0.06459697603713721 seconds
+2024-11-28 10:44:22,533 - root - Search time = 2.523480721982196 seconds
+
+2024-11-28 10:44:22,534 - root - Average time spent in searching a single point = 0.02523480721982196
+2024-11-28 10:44:22,534 - root - Speed (points/s) = 39.62780421855172
+
+2024-11-28 10:44:22,538 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_GDASC_tg70_nc35_r2159_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:44:22,539 - root - 
+
+2024-11-28 10:44:22,540 - root - ------------------------------------------------------------------------
+2024-11-28 10:44:22,540 - root -  Searching the 10 nearest neighbors within Exact - auto algorithm over wdbc dataset using euclidean distance. ----
+2024-11-28 10:44:22,540 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:44:22,541 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-11-28 10:44:22,544 - root - Building index using euclidean metric and kd_tree algorithm
+2024-11-28 10:44:22,544 - root - Index time= 0.0016645040595903993 seconds
+2024-11-28 10:44:22,600 - root - Search time = 0.056471068994142115 seconds
+
+2024-11-28 10:44:22,600 - root - Average time spended in searching a single point = 0.0005647106899414211
+2024-11-28 10:44:22,601 - root - Speed (points/s) = 1770.8182575820063
+
+2024-11-28 10:44:22,603 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_Exact_auto.hdf5
+2024-11-28 10:44:22,604 - root - 
+
+2024-11-28 10:44:22,605 - root - ------------------------------------------------------------------------
+2024-11-28 10:44:22,605 - root - ---- Searching the 10 nearest neighbors within FLANN over wdbc dataset using euclidean distance. ----
+2024-11-28 10:44:22,605 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:44:22,605 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-11-28 10:44:22,613 - root - Saving FLANN index at 'index_'
+2024-11-28 10:44:22,613 - root - Index time= 0.006813612999394536 seconds
+2024-11-28 10:44:22,855 - root - Search time = 0.24107701191678643 seconds
+
+2024-11-28 10:44:22,855 - root - Average time spent in searching a single point = 0.0024107701191678644
+2024-11-28 10:44:22,855 - root - Speed (points/s) = 414.8052077006721
+
+2024-11-28 10:44:22,865 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_FLANN.hdf5
+2024-11-28 10:44:22,867 - root - 
+
+2024-11-28 10:44:22,868 - root - ------------------------------------------------------------------------
+2024-11-28 10:44:22,868 - root - ---- Searching the 10 nearest neighbors within PYNN over wdbc dataset using euclidean distance. ----
+2024-11-28 10:44:22,868 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:44:22,868 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-11-28 10:47:08,043 - root - Index time= 165.173431449919 seconds
+2024-11-28 10:47:08,048 - root - Search time = 0.004535462940111756 seconds
+
+2024-11-28 10:47:08,048 - root - Average time spent in searching a single point = 4.535462940111756e-05
+2024-11-28 10:47:08,048 - root - Speed (points/s) = 22048.46590534283
+
+2024-11-28 10:47:08,052 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_PYNN.hdf5
+2024-11-28 10:47:08,052 - root - 
+
+2024-11-28 10:47:08,055 - root - ------------------------------------------------------------------------
+2024-11-28 10:47:08,055 - root - ---- Searching the 10 nearest neighbors within GDASC over wdbc dataset using euclidean distance. ----
+2024-11-28 10:47:08,055 - root - 
+2024-11-28 10:47:08,055 - root - ---- GDASC Parameters - tam_grupo=70 - n_centroids=35 - radius=92 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-28 10:47:08,055 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:47:08,056 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-11-28 10:47:08,075 - GDASC.gdasc_ - tree time=0.017500631045550108 seconds
+2024-11-28 10:47:08,248 - root - Search time = 0.17273688002023846 seconds
+
+2024-11-28 10:47:08,248 - root - Average time spent in searching a single point = 0.0017273688002023846
+2024-11-28 10:47:08,248 - root - Speed (points/s) = 578.9151684821658
+
+2024-11-28 10:47:08,250 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_GDASC_tg70_nc35_r92_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:47:08,251 - root - 
+
+2024-11-28 10:47:08,252 - root - ------------------------------------------------------------------------
+2024-11-28 10:47:08,252 - root -  Searching the 10 nearest neighbors within Exact - LinearScan algorithm over wdbc dataset using euclidean distance. ----
+2024-11-28 10:47:08,252 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:47:08,253 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-11-28 10:47:08,254 - root - Index time= 7.519964128732681e-06 seconds
+2024-11-28 10:47:08,262 - root - Search time = 0.007324050995521247 seconds
+
+2024-11-28 10:47:08,262 - root - Average time spended in searching a single point = 7.324050995521247e-05
+2024-11-28 10:47:08,262 - root - Speed (points/s) = 13653.64605750988
+
+2024-11-28 10:47:08,264 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_Exact_LinearScan.hdf5
+2024-11-28 10:47:08,265 - root - 
+
+2024-11-28 10:47:08,267 - root - ------------------------------------------------------------------------
+2024-11-28 10:47:08,267 - root - ---- Searching the 10 nearest neighbors within GDASC over wdbc dataset using euclidean distance. ----
+2024-11-28 10:47:08,267 - root - 
+2024-11-28 10:47:08,267 - root - ---- GDASC Parameters - tam_grupo=70 - n_centroids=35 - radius=5000 - algorithm=kmedoids - implementation=fastkmedoids ----
+2024-11-28 10:47:08,267 - root - ------------------------------------------------------------------------
+
+2024-11-28 10:47:08,267 - root - Loading train and test set from ./data/wdbc_train_test_set.hdf5
+
+2024-11-28 10:47:08,297 - GDASC.gdasc_ - tree time=0.028250818024389446 seconds
+2024-11-28 10:47:11,486 - root - Search time = 3.189618210075423 seconds
+
+2024-11-28 10:47:11,487 - root - Average time spent in searching a single point = 0.03189618210075423
+2024-11-28 10:47:11,487 - root - Speed (points/s) = 31.351714661058246
+
+2024-11-28 10:47:11,490 - root - Neighbors distances computed and search time stored at ./benchmarks/NearestNeighbors/wdbc/knn_wdbc_10_euclidean_GDASC_tg70_nc35_r5000_kmedoids_fastkmedoids.hdf5
+2024-11-28 10:47:11,490 - root - 
+
