@@ -217,7 +217,7 @@ def print_avgRecall_pointplot(datasets, distances, methods, avgRecall):
         dataset_avgRecall = avgRecall.loc[avgRecall['Dataset'] == dataset]
 
         # Point plot
-        # lineas gruesas y GDASC discontinuo
+        # lineas gruesas y PDASC discontinuo
         sns.set_context("paper", font_scale=1.3)
         ax = sns.pointplot(data=dataset_avgRecall, x="Distance", y="Recall",hue="Method", hue_order= methods, order=distances, palette=['#58a5e0', '#fca92d', '#b970e0'], markersize=4.5, linestyles=["-", "-", "--"])
         ax.margins(x=0.07)
@@ -248,7 +248,7 @@ def print_avgRecall_pointplot(datasets, distances, methods, avgRecall):
 def print_Recall_pointplot(dataset, results_dataset):
 
     # Drop from the df the entrys whose methods are Exact & replace PYNN by PyNN
-    results_dataset = results_dataset[results_dataset['Method'] != 'Exact'].replace("PYNN", "PyNN")
+    results_dataset = results_dataset[results_dataset['Method'] != 'Exact'].replace("PYNN", "PyNN").replace("PDASC", "PDASC")
 
     # Set resolution of the figure
     plt.rcParams['figure.dpi'] = 300
@@ -257,10 +257,10 @@ def print_Recall_pointplot(dataset, results_dataset):
 
     # reorder distances, putting manhattan, euclidean, chebyshev, cosine, and, if present, harversine
     distances = ['manhattan', 'euclidean', 'chebyshev', 'cosine'] if 'haversine' not in distances else ['manhattan', 'euclidean', 'chebyshev', 'cosine', 'haversine']
-    methods = ['FLANN', 'PyNN', 'GDASC']
+    methods = ['FLANN', 'PyNN', 'PDASC']
 
     # Point plot
-    # lineas gruesas y GDASC discontinuo
+    # lineas gruesas y PDASC discontinuo
     sns.set_context("paper", font_scale=1.3)
     ax = sns.pointplot(data=results_dataset, x="Distance", y="Recall(Av)", hue="Method", hue_order=methods,
                        order=distances, palette=['#58a5e0', '#fca92d', '#b970e0'], markersize=4.5,
@@ -279,7 +279,7 @@ def print_Recall_pointplot(dataset, results_dataset):
     '''
 
     ax.set_ylim(0, 105)
-    ax.set_ylabel('Average Recall')
+    ax.set_ylabel('Recall')
 
     # Show graph and save it into a file
     plt.savefig("./benchmarks/figures/fig_" + dataset + "_Recall.png")

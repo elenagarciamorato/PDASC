@@ -86,7 +86,7 @@ def compare(dataset_name, d, method1, method2, knn, file_name1=None, file_name2=
 def get_recall(dataset, distance, method, k, baseline, algorithm=None, implementation=None, r=None, tg=None, nc=None):
 
     # Set logging info
-    logging.basicConfig(filename='./benchmarks/logs/' + dataset + '/' + dataset + "_tg" + str(tg) + "_nc" + str(nc) + "_r" + str(r) + "_GDASC_" + str(algorithm) + "_" + str(implementation) +'_recall.log',
+    logging.basicConfig(filename='./benchmarks/logs/' + dataset + '/' + dataset + "_tg" + str(tg) + "_nc" + str(nc) + "_r" + str(r) + "_PDASC_" + str(algorithm) + "_" + str(implementation) +'_recall.log',
                         filemode='w', format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO, force=True)
     logging.info('------------------------------------------------------------------------')
     logging.info('                            %s Dataset RECALLS', dataset)
@@ -97,7 +97,7 @@ def get_recall(dataset, distance, method, k, baseline, algorithm=None, implement
     logging.info('Distance: %s ', distance)
     logging.info('Method: %s', method)
     logging.info('k: %s', k)
-    logging.info('GDASC params: tg=%s, nc=%s, r=%s, algorithm=%s, implementation=%s\n', tg, nc, r, algorithm, implementation)
+    logging.info('PDASC params: tg=%s, nc=%s, r=%s, algorithm=%s, implementation=%s\n', tg, nc, r, algorithm, implementation)
 
     # From a chosen dataset, calculate recall for each benchmarks  (k-dataset-distance-method combination)
 
@@ -107,7 +107,7 @@ def get_recall(dataset, distance, method, k, baseline, algorithm=None, implement
     file_name_le = "./benchmarks/NearestNeighbors/" + dataset + "/knn_" + dataset + "_" + str(
         k) + "_" + distance + "_" + baseline + "_auto.hdf5"
 
-    if method == 'GDASC':
+    if method == 'PDASC':
         file_name = "./benchmarks/NearestNeighbors/" + dataset + "/knn_" + dataset + "_" + str(
             k) + "_" + distance + "_" + method + "_tg" + str(tg) + "_nc" + str(nc) + "_r" + str(r) + "_" + str(algorithm) + "_" + str(implementation) + ".hdf5"
 
@@ -145,10 +145,10 @@ def get_recall_new(dataset, k, distance, indices, coords, distances):
 
     return rec
 
-def get_avgRecall(datasets, distances, methods, knn, gdasc_algorithm, gdasc_implementation, baseline):
+def get_avgRecall(datasets, distances, methods, knn, pdasc_algorithm, pdasc_implementation, baseline):
 
     # Once we have obtained the recall for each experiment (each k-dataset-distance-method combination)
-    recalls = get_recall(datasets, distances, methods, knn, gdasc_algorithm, gdasc_implementation, baseline)
+    recalls = get_recall(datasets, distances, methods, knn, pdasc_algorithm, pdasc_implementation, baseline)
 
     # Obtain mean Average Points for each dataset-distance-method combination
     avgRecall = recalls.groupby(['Dataset', 'Distance', 'Method'])['Recall'].mean().reset_index()

@@ -13,16 +13,16 @@ apt-get update
 apt-get install -y cmake pkg-config liblz4-dev
 
 # If the repository benchmarks/algorithms/FLANN/flann already exists, remove it
-rm -rf GDASC/benchmarks/algorithms/FLANN/flann
+rm -rf PDASC/benchmarks/algorithms/FLANN/flann
 
 # Install the FLANN library (substitute the URL with the desired one to make an installation outside the project)
 git clone https://github.com/mariusmuja/flann benchmarks/algorithms/FLANN/flann
 
 # Create a build directory for FLANN
-mkdir GDASC/benchmarks/algorithms/FLANN/flann/build
+mkdir PDASC/benchmarks/algorithms/FLANN/flann/build
 
 # Then change the directory to the FLANN build directory
-cd GDASC/benchmarks/algorithms/FLANN/flann/build
+cd PDASC/benchmarks/algorithms/FLANN/flann/build
 
 # Configure the build with CMake
 cmake ..

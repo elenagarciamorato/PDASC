@@ -31,8 +31,8 @@ def explore_experiments(dataset, optional_filters=None):
                 # by '_' and '.' characters, except if the '.' is between two digits
                 parts = re.split(r'[_]|(?<!\d)\.(?!\d)', file)
 
-                # If the method is GDASC
-                if parts[4] == 'GDASC':
+                # If the method is PDASC
+                if parts[4] == 'PDASC':
                     # We store the information about the experiment associated with the file
                     results.append({
                         'Method': parts[4],

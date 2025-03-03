@@ -1,7 +1,7 @@
 from benchmarks.algorithms.Exact.knn import Exact
 from benchmarks.algorithms.FLANN.knn import FLANN
 from benchmarks.algorithms.Pynndescent.knn import PYNN
-from benchmarks.algorithms.GDASC.knn import GDASC
+from benchmarks.algorithms.PDASC.knn import PDASC
 import re
 import argparse
 import os
@@ -28,8 +28,8 @@ def experiment(config_file):
     if method == 'Exact':
         Exact(config_file)
 
-    elif method == 'GDASC':
-        GDASC(config_file)
+    elif method == 'PDASC':
+        PDASC(config_file)
 
     elif method == 'FLANN':
         FLANN(config_file)

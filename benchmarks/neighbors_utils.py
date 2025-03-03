@@ -168,7 +168,7 @@ def read_config_file(config_file):
         exact_algorithm = config.get('method', 'algorithm')
         parameters = [dataset, k, distance, method, exact_algorithm]
 
-    elif method == 'GDASC':
+    elif method == 'PDASC':
         tam_grupo = config.getint('method', 'tg')
         n_centroides = config.getint('method', 'nc')
         radio = config.get('method', 'r')
@@ -180,7 +180,7 @@ def read_config_file(config_file):
         parameters = [dataset, k, distance, method, tam_grupo, n_centroides, radio, algorithm, implementation]
 
     elif method == 'FLANN':
-        ncentroids = config.getint('method', 'ncentroids')  # At GDASC, ncentroids = tam_grupo*n_centroides = 8*16 = 128
+        ncentroids = config.getint('method', 'ncentroids')  # At PDASC, ncentroids = tam_grupo*n_centroides = 8*16 = 128
         algorithm = config.get('method','algorithm')  # Possible values: linear, kdtree, kmeans, composite, autotuned - default: kdtree
 
         parameters = [dataset, k, distance, method, ncentroids, algorithm]
