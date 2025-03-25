@@ -5,6 +5,8 @@ from sklearn import preprocessing
 from timeit import default_timer as timer
 import logging
 from PDASC.utils import *
+import h5py
+import json
 # from sys import getsizeof
 import concurrent.futures
 
@@ -126,6 +128,8 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
                         element = int(i % n_centroides)
                         simplified_puntos_capa[id_layer - 1][id_lower_group][element] = np.nan
                         duplicates += 1
+
+                cont_ptos += n_centroides
 
             # Else (the group has less points than centroids)
             else:
@@ -910,3 +914,92 @@ def recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testi
 # Clustering method accepted by PDASC
 def PDASC_accepted_algorithms():
     return ['kmedoids', 'kmeans']
+
+def store_PDASC_index(dataset, distance_function, grupos_capa, puntos_capa, labels_capa):
+    """
+    Store the index build by PDASC in a file.
+
+    Parameters:
+        dataset : str
+            The name of the dataset used to build the index.
+        distance_function : str
+            The distance function to be uses for calculating distances.
+        grupos_capa : list
+            Number of points in each group at each layer.
+        puntos_capa : list
+            Cluster centroids at each layer.
+        labels_capa : list
+            Labels assigned to each point at each layer.
+    """
+    # Ruta del archivo HDF5
+    file_path = f'benchmarks/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
+
+    # Store the parameters in an hdf5 file
+    with h5py.File(file_path, 'w') as f:
+
+        f.flush()
+        f.create_dataset('distance_function', data=distance_function)
+        for i, grupo in enumerate(grupos_capa):
+            f.create_dataset(f'grupos_capa_{i}', data=np.array(grupo))
+        for i, punto in enumerate(puntos_capa):
+            f.create_dataset(f'puntos_capa_{i}', data=np.array(punto))
+        for i, label in enumerate(labels_capa):
+            for j, sub_label in enumerate(label):
+                f.create_dataset(f'labels_capa_{i}_{j}', data=np.array(sub_label))
+        f.close()
+
+    print(f"Index stored in benchmarks/logs/{dataset}/{dataset}_{distance_function}_index.hdf5")
+
+def load_PDASC_index(dataset, distance_function):
+    """
+    Load the index build by PDASC from a file.
+
+    Parameters:
+        dataset : str
+            The name of the dataset used to build the index.
+        distance_function : str
+            The distance function to be uses for calculating distances.
+
+    Returns:
+        str: The distance function used for calculating distances.
+        list: The number of points in each group at each layer.
+        list: The cluster centroids at each layer.
+        list: The labels assigned to each point at each layer.
+    """
+    # Ruta del archivo HDF5
+    file_path = f'benchmarks/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
+
+    # Diccionarios para almacenar los datos
+    grupos_capa = []
+    puntos_capa = []
+    labels_capa = []
+
+    # Abrir el archivo en modo lectura
+    with h5py.File(file_path, 'r') as f:
+        # Cargar la función de distancia
+        distance_function = f['distance_function'][()]
+
+        # Cargar grupos_capa
+        i = 0
+        while f.get(f'grupos_capa_{i}') is not None:
+            grupos_capa.append(f[f'grupos_capa_{i}'][:])
+            i += 1
+
+        # Cargar puntos_capa
+        i = 0
+        while f.get(f'puntos_capa_{i}') is not None:
+            puntos_capa.append(f[f'puntos_capa_{i}'][:])
+            i += 1
+
+        # Cargar labels_capa
+        i = 0
+        while f.get(f'labels_capa_{i}_0') is not None:  # Asumimos que hay al menos un sub-label por capa
+            labels = []
+            j = 0
+            while f.get(f'labels_capa_{i}_{j}') is not None:
+                labels.append(f[f'labels_capa_{i}_{j}'][:])
+                j += 1
+            labels_capa.append(labels)
+            i += 1
+
+    return distance_function, grupos_capa, puntos_capa, labels_capa
