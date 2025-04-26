@@ -1,7 +1,7 @@
 import PDASC.pdasc_ as pdasc
 from timeit import default_timer as timer
 import data.load_train_test_set as lts
-from PDASC.pdasc_ import PDASC_accepted_algorithms
+from PDASC.pdasc_ import PDASC_accepted_algorithms, store_PDASC_index
 from benchmarks.neighbors_utils import *
 
 
@@ -48,6 +48,9 @@ def PDASC(config_file):
 
     # By using the updated implementation
     n_capas, grupos_capa, puntos_capa, labels_capa, promoted_points = pdasc.create_tree(vector_training, tam_grupo, n_centroides, distance, algorithm, implementation)
+
+    # Store the index built by PDASC in a file
+    store_PDASC_index(dataset, distance, grupos_capa, puntos_capa, labels_capa)
 
     # Print number of layers and a brief comment
     # print(f'Number of layers = {n_capas}')

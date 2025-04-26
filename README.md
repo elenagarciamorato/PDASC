@@ -9,7 +9,7 @@ It constitutes a reliable ANN search method for large, high-dimensional datasets
 
 <!-- * For further detail, please refer to the associated publication. -->
 
-![PDASC](benchmarks/figures/fig_multilayer_structure.png)
+![PDASC](benchmarks/figures/PDASC_MSA.png)
 
 
 ## Summary of features
@@ -103,6 +103,28 @@ The script expects two arguments:
 
 - To benchmark experiments for a dataset with optional filters:<br />
 `python3 -m benchmarks.performance_benchmark NYtimes chebyshev PDASC`
+
+#### CDFs Generation
+The `dataset_analysis.py` script allows generating Cumulative Distribution Functions (CDFs) to analyze the distribution of distances in a dataset. 
+
+#### Usage:
+The script expects two arguments:
+- Dataset: The name of the dataset whose CDFs want to be generated.
+- Distance Functions: The distance functions to be used for the CDF generation.
+
+Additionally, its behavior depends on the option provided:
+- **Using the `-d` argument**: When the `-d` argument is used, the script generates CDFs based on a random sample of elements from the specified dataset. 
+<!-- * This approach is useful for analyzing the distance distribution in a representative subset of the dataset. -->
+`python3 -m data.dataset_analysis -d <dataset_name> -f [<distance_function1>,<distance_function2>,...] `
+- **Using the `-p` argument**: When the `-p` argument is used, the script generates CDFs based on the prototypes that compose a specific layer of the previously generated PDASC index. 
+<!-- * This approach is helpful for evaluating the distance distribution among selected prototypes, providing insights into the structure of the index. -->
+`python3 -m data.dataset_analysis -p <dataset_name> -f [<distance_function1>,<distance_function2>,...] `
+
+#### Examples:
+- To generate CDFs using a random sample of elements from the dataset:
+`python3 -m data.dataset_analysis -d NYtimes -f euclidean manhattan chebyshev cosine`
+- To generate CDFs using the prototypes composing one layer of PDASC index:
+`python3 -m data.dataset_analysis -p NYtimes -f euclidean manhattan chebyshev cosine`
 
 ## References
 
