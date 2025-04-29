@@ -18,7 +18,7 @@ import kmedoids as fast_kmedoids  # k-medoids fast_k-medoids (PAM) implementatio
 
 logger = logging.getLogger(__name__)
 
-
+#### MSA Algorithm ####
 def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, implementation):
     """
     Constructs a hierarchical tree structure using the clustering algorithm provided.
@@ -185,7 +185,100 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
 
     return n_layers, grupos_capa, simplified_puntos_capa, labels_capa, promoted_points
 
+# Clustering method accepted by PDASC
+def PDASC_accepted_algorithms():
+    return ['kmedoids', 'kmeans']
 
+def store_PDASC_index(dataset, distance_function, grupos_capa, puntos_capa, labels_capa):
+    """
+    Store the index build by PDASC in a file.
+
+    Parameters:
+        dataset : str
+            The name of the dataset used to build the index.
+        distance_function : str
+            The distance function to be uses for calculating distances.
+        grupos_capa : list
+            Number of points in each group at each layer.
+        puntos_capa : list
+            Cluster centroids at each layer.
+        labels_capa : list
+            Labels assigned to each point at each layer.
+    """
+    # Ruta del archivo HDF5
+    file_path = f'benchmarks/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
+
+    # Store the parameters in an hdf5 file
+    with h5py.File(file_path, 'w') as f:
+
+        f.flush()
+        f.create_dataset('distance_function', data=distance_function)
+        for i, grupo in enumerate(grupos_capa):
+            f.create_dataset(f'grupos_capa_{i}', data=np.array(grupo))
+        for i, punto in enumerate(puntos_capa):
+            f.create_dataset(f'puntos_capa_{i}', data=np.array(punto))
+        for i, label in enumerate(labels_capa):
+            for j, sub_label in enumerate(label):
+                f.create_dataset(f'labels_capa_{i}_{j}', data=np.array(sub_label))
+        f.close()
+
+    print(f"Index stored in benchmarks/logs/{dataset}/{dataset}_{distance_function}_index.hdf5")
+
+def load_PDASC_index(dataset, distance_function):
+    """
+    Load the index build by PDASC from a file.
+
+    Parameters:
+        dataset : str
+            The name of the dataset used to build the index.
+        distance_function : str
+            The distance function to be uses for calculating distances.
+
+    Returns:
+        str: The distance function used for calculating distances.
+        list: The number of points in each group at each layer.
+        list: The cluster centroids at each layer.
+        list: The labels assigned to each point at each layer.
+    """
+    # Ruta del archivo HDF5
+    file_path = f'benchmarks/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
+
+    # Diccionarios para almacenar los datos
+    grupos_capa = []
+    puntos_capa = []
+    labels_capa = []
+
+    # Abrir el archivo en modo lectura
+    with h5py.File(file_path, 'r') as f:
+        # Cargar la función de distancia
+        distance_function = f['distance_function'][()]
+
+        # Cargar grupos_capa
+        i = 0
+        while f.get(f'grupos_capa_{i}') is not None:
+            grupos_capa.append(f[f'grupos_capa_{i}'][:])
+            i += 1
+
+        # Cargar puntos_capa
+        i = 0
+        while f.get(f'puntos_capa_{i}') is not None:
+            puntos_capa.append(f[f'puntos_capa_{i}'][:])
+            i += 1
+
+        # Cargar labels_capa
+        i = 0
+        while f.get(f'labels_capa_{i}_0') is not None:  # Asumimos que hay al menos un sub-label por capa
+            labels = []
+            j = 0
+            while f.get(f'labels_capa_{i}_{j}') is not None:
+                labels.append(f[f'labels_capa_{i}_{j}'][:])
+                j += 1
+            labels_capa.append(labels)
+            i += 1
+
+    return distance_function, grupos_capa, puntos_capa, labels_capa
+
+#### NSA Algorithm ####
 def knn_search(n_capas, n_centroides, seq_buscada, vector_original, vecinos, centroides_examinados,
                n, metrica, grupos_capa, puntos_capa, labels_capa):
     """
@@ -911,95 +1004,198 @@ def recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testi
 
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances
 
-# Clustering method accepted by PDASC
-def PDASC_accepted_algorithms():
-    return ['kmedoids', 'kmeans']
-
-def store_PDASC_index(dataset, distance_function, grupos_capa, puntos_capa, labels_capa):
+def recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, vector_original, k_vecinos, metrica,
+                           grupos_capa, puntos_capa, labels_capa, promoted_points, CDF_values, dataset):
     """
-    Store the index build by PDASC in a file.
+    Performs an approximate k-nearest neighbors (A-KNN) search using a hierarchical tree structure
+    and a search radius.
+
+    It is prepared to manage the new version of explore_centroid_optimised() that may return a list of
+    candidate neighbours whose distance to the query point is known or must be computed, depending on the situation.
+
 
     Parameters:
-        dataset : str
-            The name of the dataset used to build the index.
-        distance_function : str
-            The distance function to be uses for calculating distances.
-        grupos_capa : list
-            Number of points in each group at each layer.
-        puntos_capa : list
-            Cluster centroids at each layer.
-        labels_capa : list
-            Labels assigned to each point at each layer.
-    """
-    # Ruta del archivo HDF5
-    file_path = f'benchmarks/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
-
-    # Store the parameters in an hdf5 file
-    with h5py.File(file_path, 'w') as f:
-
-        f.flush()
-        f.create_dataset('distance_function', data=distance_function)
-        for i, grupo in enumerate(grupos_capa):
-            f.create_dataset(f'grupos_capa_{i}', data=np.array(grupo))
-        for i, punto in enumerate(puntos_capa):
-            f.create_dataset(f'puntos_capa_{i}', data=np.array(punto))
-        for i, label in enumerate(labels_capa):
-            for j, sub_label in enumerate(label):
-                f.create_dataset(f'labels_capa_{i}_{j}', data=np.array(sub_label))
-        f.close()
-
-    print(f"Index stored in benchmarks/logs/{dataset}/{dataset}_{distance_function}_index.hdf5")
-
-def load_PDASC_index(dataset, distance_function):
-    """
-    Load the index build by PDASC from a file.
-
-    Parameters:
-        dataset : str
-            The name of the dataset used to build the index.
-        distance_function : str
-            The distance function to be uses for calculating distances.
+    n_capas : int
+        Number of layers in the hierarchical tree.
+    n_centroides : int
+        Number of centroids in each group.
+    punto_buscado : numpy.ndarray
+        The query point for which the nearest neighbors are to be found.
+    vector_original : numpy.ndarray
+        The original dataset of points.
+    k_vecinos : int
+        Number of nearest neighbors to find.
+    metrica : str
+        The distance metric to use for calculating distances.
+    grupos_capa : list
+        Number of points in each group at each layer.
+    puntos_capa : list
+        Cluster centroids at each layer.
+    labels_capa : list
+        Labels assigned to each point at each layer.
+    promoted_points: list
+        List of boolean arrays to track which points from the original dataset have been promoted as prototypes
+    radio : float
+        Search radius for the approximate search.
 
     Returns:
-        str: The distance function used for calculating distances.
-        list: The number of points in each group at each layer.
-        list: The cluster centroids at each layer.
-        list: The labels assigned to each point at each layer.
-    """
-    # Ruta del archivo HDF5
-    file_path = f'benchmarks/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
+    list: A list containing three elements:
+        - numpy.ndarray: Indices of the k nearest neighbors.
+        - numpy.ndarray: Coordinates of the k nearest neighbors.
+        - numpy.ndarray: Distances to the k nearest neighbors.
+"""
+    # Update the metric name for compatibility with scipy
+    if metrica == 'manhattan':
+        metrica = 'cityblock'  # scipy cdist requires 'cityblock' instead of 'manhattan'
 
-    # Diccionarios para almacenar los datos
-    grupos_capa = []
-    puntos_capa = []
-    labels_capa = []
 
-    # Abrir el archivo en modo lectura
-    with h5py.File(file_path, 'r') as f:
-        # Cargar la función de distancia
-        distance_function = f['distance_function'][()]
+    # Creamos las estructuras para almacenar los futuros vecinos
+    indices_vecinos = np.empty([len(vector_testing), k_vecinos], dtype=int)
+    coords_vecinos = np.empty([len(vector_testing), k_vecinos, vector_testing.shape[1]], dtype=float)
+    dists_vecinos = np.empty([len(vector_testing), k_vecinos], dtype=float)
 
-        # Cargar grupos_capa
-        i = 0
-        while f.get(f'grupos_capa_{i}') is not None:
-            grupos_capa.append(f[f'grupos_capa_{i}'][:])
-            i += 1
+    # Y el número de distancias calculadas en cada ejecución
+    n_distances = np.empty([len(vector_testing)], dtype=int)
 
-        # Cargar puntos_capa
-        i = 0
-        while f.get(f'puntos_capa_{i}') is not None:
-            puntos_capa.append(f[f'puntos_capa_{i}'][:])
-            i += 1
 
-        # Cargar labels_capa
-        i = 0
-        while f.get(f'labels_capa_{i}_0') is not None:  # Asumimos que hay al menos un sub-label por capa
-            labels = []
-            j = 0
-            while f.get(f'labels_capa_{i}_{j}') is not None:
-                labels.append(f[f'labels_capa_{i}_{j}'][:])
-                j += 1
-            labels_capa.append(labels)
-            i += 1
+    # For every point in the testing set, find its k nearest neighbors
+    for punto in range(len(vector_testing)):
 
-    return distance_function, grupos_capa, puntos_capa, labels_capa
+        #print(f"Punto: {punto}")
+
+        # We obtain the min and max radius to be used regarding the CDF of a dataset
+        min_radius= CDF_values[0]
+        max_radius= CDF_values[1]
+
+        # Create an array of k_vecinos * 2 elements where the value of them are the initial radius
+        # candidates = np.full(int(k_vecinos * 10), initial_radius, dtype=float)
+
+        # Establish the query point
+        punto_buscado = vector_testing[punto].reshape(1, -1)
+        #print("El punto de query es: ", punto_buscado)
+
+        # (At the first level, current layer=n_capas-1 and current_group = grupos_capa[n_layer].size[0]-1 = 0)
+        inheritage = [0]
+
+        # At the first lever, the radius to be used is the biggest one
+        first_layer_radius = max_radius
+        # print(first_layer_radius)
+
+        # We take the top-layer prototypes, including its coordinates and distances to the query point
+        coordinates_top_prototypes = np.vstack(puntos_capa[n_capas-1][:])
+        distances_top_prototypes = get_distances(np.array(punto_buscado), coordinates_top_prototypes, metrica)
+
+        #distances_top_prototypes = distance.cdist(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
+        #distances_top_prototypes = pairwise_distances(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
+        #print(distances_top_prototypes)
+
+        # We store the distances computed on the distances_computed lists
+        distances_computed = distances_top_prototypes.tolist()
+        n_distances_computed = len(distances_top_prototypes)
+
+        # We would only explore those prototypes which meets the condition / are within a radius (dist<radius)
+        explorable_prototypes = np.where(distances_top_prototypes <= first_layer_radius)[0]
+        # Without parallelization
+        neighbours = []
+
+        for prototype_id in explorable_prototypes:
+            prototype_coords = coordinates_top_prototypes[prototype_id]
+            prototype_distance = distances_top_prototypes[prototype_id]
+            #aux_neighbors, aux_n_distances = explore_centroid_CDFradius1(punto_buscado, n_capas, inheritage, prototype_id, prototype_coords, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
+            aux_neighbors, aux_n_distances = explore_centroid_CDFradius2(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
+            neighbours.extend(aux_neighbors)
+            n_distances_computed += aux_n_distances
+
+
+        # Once the complete index has been explored:
+        #print(neighbours)
+
+        # If no neighbours have been found:
+        if not neighbours:
+
+            #print("No neighbours have been found for this query point")
+
+            # Pad the array of close points with None objects until it reaches the size of k neighbors
+            # To avoid index out of bounds error
+            return np.empty(k_vecinos, dtype=int), np.empty([k_vecinos, vector_original.shape[1]], dtype=float), np.empty(k_vecinos, dtype=float), len(distances_computed)
+
+        # If any neighbour have been found:
+        else:
+
+            # print(f'{len(neighbours)} neighbours have been found for this query point')
+
+            # The neighbours whose distance is already computed are those which are stored as tuples
+            neighbours_with_d = [n for n in neighbours if isinstance(n, tuple)]
+            # print(f'There are {len(neighbours_with_d)} which distance is already computed')
+
+            # Separate tuple\_neighbours into two sublists: one for the ids and one for the distances to the query point
+            id_neighbours_with_d = [n[0] for n in neighbours_with_d]
+            distances_neighbours_with_d = [n[1] for n in neighbours_with_d]
+
+            # By acceding the original dataset, we obtain its coordinates
+            coords_neighbours_with_d = vector_original[id_neighbours_with_d]
+
+            # For control, print the distances already computed
+            # print(f'The distances computed until now are {len(distances_computed)}')
+
+            # The neighbours whose distance is not computed yet are those which are not tuples
+            id_neighbours_without_d = [n for n in neighbours if not isinstance(n, tuple)]
+            # print(f'There are {len(id_neighbours_without_d)} which distance is not computed yet')
+
+            # By acceding the original dataset, we obtain its coordinates and compute its distances to the query point
+            coords_neighbours_without_d = vector_original[id_neighbours_without_d]
+            distances_neighbours_without_d = get_distances(np.array(punto_buscado), coords_neighbours_without_d, metrica)
+            #distances_neighbours_without_d = distance.cdist(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
+            # distances_neighbours_without_d = pairwise_distances(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
+
+            # And add the number of distances computed at this step to the n_distances_computed counter
+            n_distances_computed += len(distances_neighbours_without_d)
+
+            # We concatenate the neighbours whose distance is already computed and the neighbours whose distance is not computed yet
+            neighbours_ids = np.concatenate((id_neighbours_with_d, id_neighbours_without_d))
+            neighbours_coords = np.concatenate((coords_neighbours_with_d, coords_neighbours_without_d))
+            neighbours_dists = np.concatenate((distances_neighbours_with_d, distances_neighbours_without_d))
+
+            # And we store the info about each neighbour together into a single structure
+            neighbours = np.empty((len(neighbours_ids), 3), object)
+
+            neighbours[:, 0] = neighbours_ids
+            neighbours[:, 1] = list(neighbours_coords)
+            neighbours[:, 2] = neighbours_dists
+
+            neighbours = np.vstack(neighbours)
+
+            # To be able to find the k nearest
+
+            # Create the structures to store the data related to the neighbors
+            indices_k_vecinos = np.empty(k_vecinos, dtype=int)
+            coords_k_vecinos = np.empty([k_vecinos, vector_original.shape[1]], dtype=float)
+            dists_k_vecinos = np.empty(k_vecinos, dtype=float)
+
+            # Drop the neighbors whose distance does not meet the condition (dist<radius)
+            neighbours = neighbours[neighbours[:, 2] <= min_radius]
+
+            # Sort them according to their distance to the query point
+            sorted_neighbours = neighbours[neighbours[:, 2].argsort()]
+
+            # Select the minimum value between k_vecinos and the number of neighbours founded
+            minimum = min(k_vecinos, sorted_neighbours.shape[0])
+
+            # Select the k closest points as neighbors (using vectorised operations and avoiding the loop
+            indices_k_vecinos[:minimum] = sorted_neighbours[:minimum, 0]
+            coords_k_vecinos[:minimum, :] = np.vstack(sorted_neighbours[:minimum, 1])
+            dists_k_vecinos[:minimum] = sorted_neighbours[:minimum, 2]
+
+            # Print them
+            # print(f"The neighbours are: {indices_k_vecinos} with distances {dists_k_vecinos}")
+
+            # And return the results
+            # print(f"The search process computes a total of {n_distances_computed} distances")
+
+            indices_vecinos[punto] = indices_k_vecinos
+            coords_vecinos[punto] = coords_k_vecinos
+            dists_vecinos[punto] = dists_k_vecinos
+            n_distances[punto] = n_distances_computed
+
+    return indices_vecinos, coords_vecinos, dists_vecinos, n_distances
+

@@ -1,3 +1,5 @@
+from matplotlib.pyplot import minorticks_on
+
 from data.load_train_test_set import *
 from benchmarks.algorithms.Exact.module import Exact_nn_search
 import matplotlib.pyplot as plt
@@ -425,34 +427,48 @@ def neighbours_dists_cdf_plot(dataset, distances_dict, k, pdasc_index=None):
         plt.subplot((len(distances_dict) + 1) // 2, 2, i + 1)
 
         # Plot the cumulative distribution function of pairwise distances estimated through the KDE curve
-        kde = sns.kdeplot(kth_neighbour, cumulative=True, label=distance_metric)
+        kde = sns.kdeplot(kth_neighbour, cumulative=True, label=distance_metric, linewidth=2)
+
 
         kde_x = kde.get_lines()[-1].get_data()[0]
         kde_y = kde.get_lines()[-1].get_data()[1]
 
         # Define percentiles to be used
-        percentiles = [0.7, 0.8, 0.9, 0.95, 1]
+        percentiles = [0.7, 0.8, 0.9, 1]
 
         for p in percentiles:
             # Calculate the x-coordinate for the given percentile using interpolation
             kde_percentile_x = np.interp(p, kde_y, kde_x)
 
             # Draw the horizontal line precisely to the KDE curve intersection
-            plt.plot([0, kde_percentile_x], [p, p], color='r', linestyle='--')
+            plt.plot([0, kde_percentile_x], [p, p], color='r', linestyle='--',alpha=0.5)
 
             # Annotate the percentile on the y-axis at the intersection point
-            plt.text(0, p, str(int(p*100)) + "%", color='r', ha='left', va='bottom')
+            plt.text(0, p, str(int(p*100)) + "%", color='black', ha='left', va='bottom')
 
             # Calculate the y-coordinate of the KDE at the intersection point
             kde_percentile_y = np.interp(kde_percentile_x, kde_x, kde_y)
 
             # Draw the vertical line from the bottom to the KDE curve
-            plt.plot([kde_percentile_x, kde_percentile_x], [0, kde_percentile_y], color='r', linestyle='--')
+            plt.plot([kde_percentile_x, kde_percentile_x], [0, kde_percentile_y], color='r', linestyle='--', alpha=0.5, marker='.')
 
             # Annotate the KDE value on the x-axis at the intersection point
-            plt.text(kde_percentile_x, p, f'{kde_percentile_x:.2f}', color='black', ha='left', va='bottom', bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3'))
+            # plt.text(kde_percentile_x, p, f'{kde_percentile_x:.2f}', color='black', ha='left', va='bottom', bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3'))
 
-        plt.title(f'{distance_metric} Distance')
+            # Increase minor ticks
+            import matplotlib.ticker as ticker
+
+            # Get the current axis
+            ax = plt.gca()
+
+            # Set the number of intervals between major ticks
+            ax.xaxis.set_minor_locator(ticker.AutoMinorLocator(n=6))  # n=6 gives 5 minor ticks between each major
+
+            # Optional: customize appearance of minor ticks
+            #ax.tick_params(axis='x', which='minor', length=4, color='gray')  # shorter gray minor ticks
+
+
+        plt.title(f'{distance_metric} distance')
         plt.ylabel('Probability')
         plt.xlim(left=0)
 
@@ -507,7 +523,7 @@ if __name__ == "__main__":
 
     # Set some initial parameters for the analysis
     # distance_metrics = ['euclidean', 'manhattan', 'chebyshev', 'cosine']
-    k_neighbours = 10
+    k_neighbours = 12
     datasets_size = {
         "wdbc": 1000,
         "municipios": 8130,

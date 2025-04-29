@@ -104,7 +104,7 @@ The script expects two arguments:
 - To benchmark experiments for a dataset with optional filters:<br />
 `python3 -m benchmarks.performance_benchmark NYtimes chebyshev PDASC`
 
-#### CDFs Generation
+### CDFs Generation
 The `dataset_analysis.py` script allows generating Cumulative Distribution Functions (CDFs) to analyze the distribution of distances in a dataset. 
 
 #### Usage:
