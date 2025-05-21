@@ -1094,12 +1094,12 @@ def explore_centroid_CDFradius2(punto_buscado, current_layer, inheritage, curren
                 distances_computed += 1
 
         # We update the max_radius to be used according to the furthest prototype distance
-        #furthest_associated_prototype = np.max(associated_prototypes_layer_down[:, 3])
-        nearest_associated_prototype = np.min(associated_prototypes_layer_down[:, 3])
+        furthest_associated_prototype = np.max(associated_prototypes_layer_down[:, 3])
+        #nearest_associated_prototype = np.min(associated_prototypes_layer_down[:, 3])
 
         # We update the radius to be used in this layer radius = max(elbow_CDF_Value, furthest_child_prototype_distance)
-        # radius = np.maximum(min_radius, furthest_associated_prototype)
-        radius = np.maximum(min_radius, nearest_associated_prototype)
+        radius = np.minimum(min_radius, furthest_associated_prototype)
+        # radius = np.maximum(min_radius, nearest_associated_prototype)
         #print(min_radius)
         #print(furthest_associated_prototype)
         #print(f'Radius value at this layer: {radius}')

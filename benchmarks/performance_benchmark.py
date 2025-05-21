@@ -3,6 +3,7 @@ from benchmarks.plotting.draw_benchmark_plots import print_Recall_pointplot
 import argparse
 import datetime
 import logging
+from pandas.api.types import CategoricalDtype
 
 
 # Load the performance of the k-nn experiments regarding the selected dataset
@@ -47,9 +48,6 @@ def explore_experiments(dataset, optional_filters=None):
                         'Search_Time': np.round(search_time, 8)
                     })
 
-                    if parts[3]=='manhattan':
-                        print((indices, coords, distances))
-
                 # If the method is other
                 else:
                     # We store the information about the experiment associated with the file
@@ -67,7 +65,38 @@ def explore_experiments(dataset, optional_filters=None):
                         'Search_Time': np.round(search_time, 8)
                     })
 
-        formatted_results = pd.DataFrame(results).assign(k=lambda df: df['k'].astype(int)).sort_values(by=['Method', 'radius', 'Distance', 'k'], ascending=[True, False, True, True])
+        # Primero convierte la lista de dicts a DataFrame
+        df = pd.DataFrame(results)
+
+        # Define el orden personalizado de distancias
+        custom_order = ['euclidean', 'manhattan', 'chebyshev', 'cosine']
+
+        # Distancias adicionales (no incluidas explícitamente en custom_order)
+        other_distances = sorted(set(df['Distance']) - set(custom_order))
+
+        # Crea el tipo categórico ordenado
+        distance_type = CategoricalDtype(categories=custom_order + other_distances, ordered=True)
+
+        # Aplica el tipo al DataFrame y continúa con el flujo
+        formatted_results = (
+            df
+            .assign(k=lambda d: d['k'].astype(int),
+                    Distance=lambda d: d['Distance'].astype(distance_type))
+            .sort_values(by=['Method', 'Distance', 'radius', 'k'], ascending=[True, True, True, True])
+        )
+
+        # Selección de columnas
+        excel_results = formatted_results[['Distance', 'radius', 'Dist_Computed(Av)', 'Recall(Av)', 'Search_Time']]
+
+        # Orden final
+        excel_results = excel_results.sort_values(by=['Distance', 'radius'])
+
+        # Reemplazo de decimales con comas
+        for col in ['Dist_Computed(Av)', 'Recall(Av)', 'Search_Time', 'radius']:
+            excel_results[col] = excel_results[col].astype(str).str.replace('.', ',', regex=False)
+
+        # Almacenar en un csv
+        excel_results.to_csv("./benchmarks/NearestNeighbors/" + dataset + "/benchmark_knn_" + dataset + ".csv", index=False, sep=';')
 
         # Log the results
         logging.info('------------------------------------------------------------------------\n' + formatted_results.to_string())

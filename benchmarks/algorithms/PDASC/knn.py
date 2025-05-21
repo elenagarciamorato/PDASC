@@ -10,8 +10,6 @@ def PDASC(config_file):
     # Read config file containing experiment's parameters
     dataset, k, distance, method, tam_grupo, n_centroides, radius, algorithm, implementation = read_config_file(config_file)
 
-    CDFvalues = {'municipios': (1.3, 15.3), 'MNIST': (2650, 2850), 'GLOVE': (6.9, 14.2), 'NYtimes': (1.29, 1.38)}.get(dataset)
-
     # Check if the method choosen are valid:
     if algorithm not in PDASC_accepted_algorithms():
         print("The algorithm choosen is not valid. Please, check the PDASC documentation and try again.")
@@ -63,7 +61,7 @@ def PDASC(config_file):
 
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
-    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, CDFvalues, dataset)
+    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(radius), dataset)
 
     end_time_s = timer()
 

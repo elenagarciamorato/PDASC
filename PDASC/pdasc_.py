@@ -1005,7 +1005,7 @@ def recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testi
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances
 
 def recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, vector_original, k_vecinos, metrica,
-                           grupos_capa, puntos_capa, labels_capa, promoted_points, CDF_values, dataset):
+                           grupos_capa, puntos_capa, labels_capa, promoted_points, radius, dataset):
     """
     Performs an approximate k-nearest neighbors (A-KNN) search using a hierarchical tree structure
     and a search radius.
@@ -1063,9 +1063,8 @@ def recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, 
 
         #print(f"Punto: {punto}")
 
-        # We obtain the min and max radius to be used regarding the CDF of a dataset
-        min_radius= CDF_values[0]
-        max_radius= CDF_values[1]
+        # We obtain the min radius to be used regarding the CDF of a dataset
+        min_radius = radius
 
         # Create an array of k_vecinos * 2 elements where the value of them are the initial radius
         # candidates = np.full(int(k_vecinos * 10), initial_radius, dtype=float)
@@ -1078,21 +1077,27 @@ def recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, 
         inheritage = [0]
 
         # At the first lever, the radius to be used is the biggest one
-        first_layer_radius = max_radius
+        # first_layer_radius = max_radius
         # print(first_layer_radius)
 
         # We take the top-layer prototypes, including its coordinates and distances to the query point
         coordinates_top_prototypes = np.vstack(puntos_capa[n_capas-1][:])
         distances_top_prototypes = get_distances(np.array(punto_buscado), coordinates_top_prototypes, metrica)
-
+        #print(distances_top_prototypes)
+        #exit(0)
         #distances_top_prototypes = distance.cdist(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
         #distances_top_prototypes = pairwise_distances(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
         #print(distances_top_prototypes)
+
+        # At the first lever, the radius to be used is the biggest one
+        # first_layer_radius = max_radius
+        # print(first_layer_radius)
 
         # We store the distances computed on the distances_computed lists
         distances_computed = distances_top_prototypes.tolist()
         n_distances_computed = len(distances_top_prototypes)
 
+        """ # At the top layer
         # We would only explore those prototypes which meets the condition / are within a radius (dist<radius)
         explorable_prototypes = np.where(distances_top_prototypes <= first_layer_radius)[0]
         # Without parallelization
@@ -1105,7 +1110,16 @@ def recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, 
             aux_neighbors, aux_n_distances = explore_centroid_CDFradius2(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
             neighbours.extend(aux_neighbors)
             n_distances_computed += aux_n_distances
-
+        """
+        # At the top layer, we explore every prototype
+        neighbours = []
+        for prototype_id in range(len(distances_top_prototypes)):
+            #prototype_coords = coordinates_top_prototypes[prototype_id]
+            prototype_distance = distances_top_prototypes[prototype_id]
+            #aux_neighbors, aux_n_distances = explore_centroid_CDFradius1(punto_buscado, n_capas, inheritage, prototype_id, prototype_coords, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
+            aux_neighbors, aux_n_distances = explore_centroid_CDFradius2(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
+            neighbours.extend(aux_neighbors)
+            n_distances_computed += aux_n_distances
 
         # Once the complete index has been explored:
         #print(neighbours)
@@ -1144,7 +1158,10 @@ def recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, 
 
             # By acceding the original dataset, we obtain its coordinates and compute its distances to the query point
             coords_neighbours_without_d = vector_original[id_neighbours_without_d]
-            distances_neighbours_without_d = get_distances(np.array(punto_buscado), coords_neighbours_without_d, metrica)
+            if len(coords_neighbours_without_d) > 0:
+                distances_neighbours_without_d = get_distances(np.array(punto_buscado), coords_neighbours_without_d, metrica)
+            else:
+                distances_neighbours_without_d = np.empty(0)
             #distances_neighbours_without_d = distance.cdist(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
             # distances_neighbours_without_d = pairwise_distances(np.array(punto_buscado), coords_neighbours_without_d, metric=metrica)[0]
 
@@ -1183,8 +1200,15 @@ def recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, 
 
             # Select the k closest points as neighbors (using vectorised operations and avoiding the loop
             indices_k_vecinos[:minimum] = sorted_neighbours[:minimum, 0]
-            coords_k_vecinos[:minimum, :] = np.vstack(sorted_neighbours[:minimum, 1])
-            dists_k_vecinos[:minimum] = sorted_neighbours[:minimum, 2]
+
+            if minimum==0:
+                # fill every element in the arry with a vector_original.shape[1] vector of None
+                coords_k_vecinos = np.full([k_vecinos, vector_original.shape[1]], None)
+                dists_k_vecinos = np.full(k_vecinos, None)
+            else:
+
+                coords_k_vecinos[:minimum, :] = np.vstack(sorted_neighbours[:minimum, 1])
+                dists_k_vecinos[:minimum] = sorted_neighbours[:minimum, 2]
 
             # Print them
             # print(f"The neighbours are: {indices_k_vecinos} with distances {dists_k_vecinos}")

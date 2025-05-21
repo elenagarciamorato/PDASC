@@ -1,5 +1,6 @@
 from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import pairwise_distances
+from sklearn.metrics.pairwise import cosine_distances
 import numpy as np
 import logging
 
@@ -30,8 +31,9 @@ def Exact_nn_index(train_set, metric, exact_algorithm):
 
     if exact_algorithm == 'auto':
     # Based on the metric that is going to be used, choose an exact algorithm that supports it
-        if metric == 'cosine' or 'haverstine':
+        if metric == 'cosine' or metric == 'haversine':
             exact_algorithm = 'brute'
+            print("Using brute force algorithm")
         else:
             exact_algorithm = 'kd_tree'
 
@@ -65,10 +67,13 @@ def LinearScan_nn_search(train_set, test_set, k, metric, same_set=None):
     if metric == 'manhattan':
         metric = 'cityblock'  # scipy cdist requires 'cityblock' instead of 'manhattan'
 
-
     # Calculate the pairwise distances between the elements of two samples
-    # distances = cdist(test_set, train_set, metric)
-    distances = pairwise_distances(test_set, train_set, metric=metric)
+
+    if metric == 'cosine':
+        distances = cosine_distances(test_set, train_set)
+    else:
+        # distances = cdist(test_set, train_set, metric)
+        distances = pairwise_distances(test_set, train_set, metric=metric)
 
     # For every point in the testing set, take the k elements with the smallest distances (k-nn)
     for i in range(len(test_set)):
@@ -98,8 +103,11 @@ def Exact_nn_search(vector_training, vector_testing, k, metric, tree_index, same
 
     # Build the arrays to store the indices, coordinates and distances of the k nearest neighbors
     indices_vecinos = np.empty([len(vector_testing), k], dtype=int)
-    coords_vecinos = np.empty([len(vector_testing), k, vector_testing.shape[1]], dtype=float)
-    dists_vecinos = np.empty([len(vector_testing), k], dtype=float)
+    coords_vecinos = np.empty([len(vector_testing), k, vector_testing.shape[1]], dtype=vector_testing.dtype)
+    dists_vecinos = np.empty([len(vector_testing), k], dtype=vector_testing.dtype)
+
+    # Print a sentence indicating if you are using a float64 or float 32 precision
+    print(f'Using {coords_vecinos.dtype} precision')
 
     # And number of distances computed
     n_distances_vecinos = np.empty(len(vector_testing))
