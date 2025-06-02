@@ -96,7 +96,7 @@ def explore_experiments(dataset, optional_filters=None):
             excel_results[col] = excel_results[col].astype(str).str.replace('.', ',', regex=False)
 
         # Almacenar en un csv
-        excel_results.to_csv("./benchmarks/NearestNeighbors/" + dataset + "/benchmark_knn_" + dataset + ".csv", index=False, sep=';')
+        excel_results.to_csv(f'./benchmarks/NearestNeighbors/{dataset}/benchmark_results_{formatted_results.iloc[0]["k"]}nn_{dataset}.csv', index=False, sep=';')
 
         # Log the results
         logging.info('------------------------------------------------------------------------\n' + formatted_results.to_string())

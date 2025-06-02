@@ -253,8 +253,6 @@ def get_distances(point1, point2, metric):
     """
     if metric == 'haversine':
         return pairwise_distances(point1, point2, metric=metric)[0]
-    elif metric == 'manhattan':
-        return distance.cdist(point1, point2, metric='cityblock')[0]
     else:
         return distance.cdist(point1, point2, metric=metric)[0]
 
@@ -687,7 +685,7 @@ def insert_candidate_neighbour(candidates_array, distance):
     return candidates_array
 
 
-def explore_centroid_dynamicradius(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, dynamic_radius_list):
+def explore_centroid_dynamicradius_layer(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, dynamic_radius_list):
     """
     Explores the hierarchical tree structure to find centroids within a given radius.
 
@@ -809,12 +807,11 @@ def explore_centroid_dynamicradius(punto_buscado, current_layer, inheritage, cur
 
     for i in range(len(explorable_prototypes)):
         centroid = explorable_prototypes[i]
-        neighbours, distances_computed = explore_centroid_dynamicradius(punto_buscado, current_layer-1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, dynamic_radius_list)
+        neighbours, distances_computed = explore_centroid_dynamicradius_layer(punto_buscado, current_layer-1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, dynamic_radius_list)
 
     return neighbours, distances_computed
 
-
-def explore_centroid_pruning(vector_original, punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours):
+def explore_centroid_classical_pruning(vector_original, punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours):
 
     # Rather than identify all the points that are neighbors of the query point and, at the end of the index exploration,
     # obtain the distance for all of them, we will compute the distance for each point when reaching it
@@ -906,7 +903,7 @@ def explore_centroid_pruning(vector_original, punto_buscado, current_layer, inhe
 
     for i in range(len(explorable_prototypes)):
         centroid = explorable_prototypes[i]
-        explore_centroid_pruning(vector_original, punto_buscado, current_layer - 1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours)
+        explore_centroid_classical_pruning(vector_original, punto_buscado, current_layer - 1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours)
 
 def explore_centroid_CDFradius1(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_coords, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius):
     """
@@ -1018,13 +1015,17 @@ def explore_centroid_CDFradius1(punto_buscado, current_layer, inheritage, curren
 
     return neighbours, distances_computed
 
-def explore_centroid_CDFradius2(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius):
+def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius):
     """
 
     Esta funcion filtra los prototipos a explorar en funcion a su distancia con el punto de query,
-    tal y como como venia sucediendo hasta ahora. Aunque permite ajustar el radio en base al prototipo mas lejano al punto de query
-    mapeado por el prototipo actual (nunca siendo el radio menor al valor del codo de la CDF) y que reduce significativamente el numero de
-    distancias computadas, no permite explotar del todo la caracteristica inherente al indice de PDASC que hace que los puntos de capas inferiores estén mas cercanos
+    tal y como como venia sucediendo hasta ahora, pero permite ajustar el radio dinamicamente en cada grupo
+    en base al máximo de dos valores:
+    (i) El prototipo hijo mapeado por el prototipo actual mas lejano al punto de query
+    (ii) El valor del radio minimo proporcionado por el usuario
+    De tal forma que el radio de búsqueda utilizado nunca sea menor al valor r_min proporcionado por el usuario
+    Esta estrategia reduce significativamente el numero de distancias computadas,  aunque no permite explotar del todo
+    la caracteristica inherente al indice de PDASC que hace que los puntos de capas inferiores esten mas cercanos
     a su prototipo que los de capas superiores
     """
 
@@ -1109,7 +1110,7 @@ def explore_centroid_CDFradius2(punto_buscado, current_layer, inheritage, curren
 
     for i in range(len(explorable_prototypes)):
         centroid = explorable_prototypes[i]
-        neighbours, distances_computed = explore_centroid_CDFradius2(punto_buscado, current_layer-1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius)
+        neighbours, distances_computed = explore_centroid_dynamicradius_minradius(punto_buscado, current_layer-1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius)
 
     return neighbours, distances_computed
 

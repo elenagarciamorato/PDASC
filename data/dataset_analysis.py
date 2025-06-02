@@ -18,6 +18,67 @@ import PDASC.pdasc_ as pdasc
 
 from fitter import Fitter, get_common_distributions, get_distributions
 
+# Load a random sample of the dataset
+def load_random_sample(dataset, sample_size):
+    # Load the random sample of the dataset
+    file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
+    vector_training, vector_testing = load_train_test_h5py(file_name)
+
+    # We take a sample of n random elements from the dataset
+    np.random.seed(42)  # Fijar la semilla para reproducibilidad
+    sample = vector_training[np.random.choice(len(vector_training), sample_size, replace=True)]
+
+    return sample
+
+def load_PDASC_sample(dataset, sample_size, distance_function):
+
+    # Load the PDASC index
+    distance, grupos_capa, puntos_capa, labels_capa = pdasc.load_PDASC_index(dataset, distance_function)
+
+    # Reconstruct the puntos_capa from the labels_capa
+    for i in range(len(grupos_capa) - 2, -1, -1):
+        for j in range(len(grupos_capa[i])):
+            puntos = puntos_capa[i][j]
+            # print(f'Layer {i}, Group {j}: {len(puntos)} points')
+
+            for k in range(len(puntos)):
+                if np.all(np.isnan(puntos[k])):
+                    label_punto = labels_capa[i + 1][j // 2][k]
+                    # print(f"Label of that point: {label_punto}")
+                    puntos_capa[i][j][k] = puntos_capa[i + 1][j // 2][label_punto]
+
+    # print(grupos_capa)
+
+    # Regarding the sample_size, we identify the layer whose points we will analyse
+    # Initialize variables to store the index and the closest sum
+    closest_index = -1
+    closest_sum = 0
+
+    # Regarding the sample_size, we identify the layer whose points we will analyse
+    if sample_size >= np.sum(grupos_capa[0]):
+        closest_index = 1
+    else:
+        # Explore the size of each layer to identify the closest one
+
+        # Iterate over the elements of grupos_capa
+        for i, subarray in enumerate(grupos_capa):
+            current_sum = np.sum(subarray)
+            if sample_size >= current_sum > closest_sum:
+                closest_sum = current_sum
+                closest_index = i
+
+    # Print the result
+    print(
+        f"The dataset has {len(grupos_capa)} layers, and the layer with the number of elements closest to {sample_size} without exceeding it is: {closest_index}")
+    # print(f"The sum of the subelements of this element is: {closest_sum}")
+
+    # We take all the points from the desired layer
+    # (Lets take into account that the layer of puntos_capa equivalent to lablels_capa is one below)
+    puntos_capa_concatenado = np.vstack(puntos_capa[closest_index - 1])
+    print(f"Number of points in the layer {closest_index}: {len(puntos_capa_concatenado)}")
+
+    # These prototypes will constitute the sample to be analysed
+    return puntos_capa_concatenado
 
 # Perform a descriptive analysis of a given dataset. It includes the analysis of the dataset's dimensions and distances
 def descriptive_analysis(dataset, distances):
@@ -162,10 +223,6 @@ def distances_analysis(vector_training, distance_metrics):
 # Obtain the distance between every element in a random sample of the dataset and the other elements
 def get_distances_pairwise(set, distance_function):
 
-    # If the distance is 'haversine', we convert data to radians
-    if distance_function == 'haversine':
-        set = np.radians(set)
-
     # if sample elements are of type float64, convert them to float32
     if set.dtype == np.float64:
         set = set.astype(np.float32)
@@ -175,19 +232,17 @@ def get_distances_pairwise(set, distance_function):
 
     return dists
 
-# Obtain the distance between every element in a random sample of the dataset and its k-th nearest neighbour
-def get_distances_kth_nn(set, k, distance_metric):
 
-    # If the distance is 'haversine', we convert data to radians
-    if distance_metric == 'haversine':
-        set = np.radians(set)
+# Get the distance between every element in a random sample of the dataset and its k-th nearest neighbour in the given complete dataset
+def get_distances_kth_nn(subset, complete_set, k, distance_metric):
 
     # if sample elements are of type float64, convert them to float32
-    if set.dtype == np.float64:
-        set = set.astype(np.float32)
+    if subset.dtype == np.float64:
+        subset = subset.astype(np.float32)
+        complete_set = complete_set.astype(np.float32)
 
     # Calculate the distances between every element on the dataset and their knn using Linear Scan
-    indices, coords, dists, n_dist = Exact_nn_search(set, set, k, distance_metric, None, True)
+    indices, coords, dists, n_dist = Exact_nn_search(complete_set, subset, k, distance_metric, None, False)
 
     # Get the the distance to the k-th nearest neighbour of each element
     kth_nn_dists = dists[:, k -1]
@@ -706,14 +761,14 @@ def neighbours_dists_cdf_plot_solapado(dataset, distances_dict_random, distances
                 panel_grid_major=element_line(color="#e5e5e5"),
                 panel_grid_minor=element_line(color="#f5f5f5"),
                 legend_title=element_blank(),
-                plot_title=element_text(ha='center'),
+                plot_title=element_text(ha='center', family='Arial'),
                 axis_ticks_major_x=element_line(),
                 axis_ticks_major_y=element_line(),
                 axis_ticks_minor_x=element_line(color='gray', size=0.5),
                 axis_ticks_minor_y=element_line(color='gray', size=0.5),
-                axis_text_x=element_text(size=10),
-                axis_text_y=element_text(size=10),
-                strip_text_x=element_text(size=11, weight='bold', margin={'t': 10}),
+                axis_text_x=element_text(size=10, family='Arial'),
+                axis_text_y=element_text(size=10, family='Arial'),
+                strip_text_x=element_text(size=11, weight='bold', margin={'t': 10}, family='Arial'),
             ) +
             scale_y_continuous(limits=(0, 1))
         )
@@ -774,14 +829,9 @@ if __name__ == "__main__":
     # If the user choose to use both the random sample of the dataset and the PDASC index:
     if args.dataset and args.pdasc:
 
-
-        # RANDOM SAMPLE CDF
-        # Load the random sample of the dataset
-        file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
-        vector_training, vector_testing = load_train_test_h5py(file_name)
-
-        # We take a sample of n random elements from the dataset
-        sample = vector_training[np.random.choice(len(vector_training), sample_size, replace=True)]
+        # Load a random sample of the dataset
+        sample = load_random_sample(dataset, sample_size)
+        complete_dataset = load_random_sample(dataset, datasets_size[dataset])
 
         # Perform the descriptive analysis of that sample
         # dataset_analysis(sample, distance_metrics)
@@ -792,8 +842,8 @@ if __name__ == "__main__":
 
         # Get the distances between the elements composing a set of elements and its k-th nearest neighbour
         # for each distance metric and store them into a dictionary
-        distances_kth_nn_random = {distance_function: get_distances_kth_nn(sample, k_neighbours, distance_function) for
-                            distance_function in distance_functions}
+        distances_kth_nn_random = {distance_function: get_distances_kth_nn(sample, complete_dataset, k_neighbours, distance_function) for
+                                   distance_function in distance_functions}
 
         # PDASC PROTOTYPES CDF
 
@@ -801,46 +851,8 @@ if __name__ == "__main__":
 
         for distance_function in distance_functions:
 
-            # Load the PDASC index
-            distance, grupos_capa, puntos_capa, labels_capa = pdasc.load_PDASC_index(dataset, distance_function)
-
-            # Reconstruct the puntos_capa from the labels_capa
-            for i in range(len(grupos_capa) - 2, -1, -1):
-                for j in range(len(grupos_capa[i])):
-                    puntos = puntos_capa[i][j]
-                    # print(f'Layer {i}, Group {j}: {len(puntos)} points')
-
-                    for k in range(len(puntos)):
-                        if np.all(np.isnan(puntos[k])):
-                            label_punto = labels_capa[i + 1][j // 2][k]
-                            # print(f"Label of that point: {label_punto}")
-                            puntos_capa[i][j][k] = puntos_capa[i + 1][j // 2][label_punto]
-
-            # print(puntos_capa)
-
-            # Regarding the sample_size, we identify the layer whose points we will analyse
-            # Initialize variables to store the index and the closest sum
-            closest_index = -1
-            closest_sum = 0
-
-            # Iterate over the elements of grupos_capa
-            for i, subarray in enumerate(grupos_capa):
-                current_sum = np.sum(subarray)
-                if sample_size >= current_sum > closest_sum:
-                    closest_sum = current_sum
-                    closest_index = i
-
-            # Print the result
-            print(f"The dataset has {len(grupos_capa)} layers, and the layer with the number of elements closest to {sample_size} without exceeding it is: {closest_index}")
-            # print(f"The sum of the subelements of this element is: {closest_sum}")
-
-            # We take all the points from the desired layer
-            # (Lets take into account that the layer of puntos_capa equivalent to lablels_capa is one below)
-            puntos_capa_concatenado = np.vstack(puntos_capa[closest_index - 1])
-            print(f"Number of points in the layer {closest_index}: {len(puntos_capa_concatenado)}")
-
-            # These prototypes will constitute the sample to be analysed
-            sample = puntos_capa_concatenado
+            sample = load_PDASC_sample(dataset, sample_size, distance_function)
+            complete_dataset = load_PDASC_sample(dataset, datasets_size[dataset], distance_function)
 
 
             # Perform the descriptive analysis of the dataset
@@ -852,7 +864,7 @@ if __name__ == "__main__":
 
             # Get the distances between the prototypes composing a a layer of the PDASC index and its k-th nearest neighbour
             # for a distance metric and store them into a dictionary
-            distances_kth_nn_pdasc[distance_function] = get_distances_kth_nn(sample, k_neighbours, distance_function)
+            distances_kth_nn_pdasc[distance_function] = get_distances_kth_nn(sample, complete_dataset, k_neighbours, distance_function)
 
     # If the user choose to use the prototypes points of a PDASC index already generated:
     elif args.pdasc:
@@ -862,48 +874,8 @@ if __name__ == "__main__":
 
         for distance_function in distance_functions:
 
-            # Load the PDASC index
-            distance, grupos_capa, puntos_capa, labels_capa = pdasc.load_PDASC_index(dataset, distance_function)
-
-
-            # Reconstruct the puntos_capa from the labels_capa
-            for i in range(len(grupos_capa) - 2, -1, -1):
-                for j in range(len(grupos_capa[i])):
-                    puntos = puntos_capa[i][j]
-                    #print(f'Layer {i}, Group {j}: {len(puntos)} points')
-
-                    for k in range(len(puntos)):
-                        if np.all(np.isnan(puntos[k])):
-                            label_punto = labels_capa[i+1][j//2][k]
-                            #print(f"Label of that point: {label_punto}")
-                            puntos_capa[i][j][k] = puntos_capa[i+1][j//2][label_punto]
-
-            #print(puntos_capa)
-
-            # Regarding the sample_size, we identify the layer whose points we will analyse
-            # Initialize variables to store the index and the closest sum
-            closest_index = -1
-            closest_sum = 0
-
-            # Iterate over the elements of grupos_capa
-            for i, subarray in enumerate(grupos_capa):
-                current_sum = np.sum(subarray)
-                if sample_size >= current_sum > closest_sum:
-                    closest_sum = current_sum
-                    closest_index = i
-
-            # Print the result
-            print(f"The dataset has {len(grupos_capa)} layers, and the layer with the number of elements closest to {sample_size} without exceeding it is: {closest_index}")
-            # print(f"The sum of the subelements of this element is: {closest_sum}")
-
-            # We take all the points from the desired layer
-            # (Lets take into account that the layer of puntos_capa equivalent to lablels_capa is one below)
-            puntos_capa_concatenado = np.vstack(puntos_capa[closest_index-1])
-            print(f"Number of points in the layer {closest_index}: {len(puntos_capa_concatenado)}")
-
-            # These prototypes will constitute the sample to be analysed
-            sample = puntos_capa_concatenado
-
+            sample = load_PDASC_sample(dataset, sample_size, distance_function)
+            complete_dataset = load_PDASC_sample(dataset, datasets_size[dataset], distance_function)
 
             # Perform the descriptive analysis of the dataset
             # dataset_analysis(set_to_analyse, distance_metrics)
@@ -912,22 +884,17 @@ if __name__ == "__main__":
             # for a distance function and store them into a dictionary
             # distances_between_elements[distance_function] = get_distances_pairwise(sample, distance_function)
 
-            # Get the distances between the prototypes composing a a layer of the PDASC index and its k-th nearest neighbour
+
+            # Get the distances between the prototypes composing a a layer of the PDASC index and its k-th nearest neighbour of within the given dataset
             # for a distance metric and store them into a dictionary
-            distances_kth_nn[distance_function] = get_distances_kth_nn(sample, k_neighbours, distance_function)
+            distances_kth_nn[distance_function] = get_distances_kth_nn(sample, complete_dataset, k_neighbours, distance_function)
+
 
     # If the user choose to use a random sample of the dataset
     elif args.dataset:
 
-        file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
-        vector_training, vector_testing = load_train_test_h5py(file_name)
-
-        # We take a sample of n random elements from the dataset
-        sample = vector_training[np.random.choice(len(vector_training), sample_size, replace=True)]
-
-        #if sample elements are of type float64, convert them to float32
-        if sample.dtype == np.float64:
-            sample = sample.astype(np.float32)
+        sample = load_random_sample(dataset, sample_size)
+        complete_dataset = load_random_sample(dataset, datasets_size[dataset])
 
         # Perform the descriptive analysis of that sample
         # dataset_analysis(sample, distance_metrics)
@@ -938,7 +905,8 @@ if __name__ == "__main__":
 
         # Get the distances between the elements composing a set of elements and its k-th nearest neighbour
         # for each distance metric and store them into a dictionary
-        distances_kth_nn = {distance_function: get_distances_kth_nn(sample, k_neighbours, distance_function) for distance_function in distance_functions}
+        distances_kth_nn = {distance_function: get_distances_kth_nn(sample, complete_dataset, k_neighbours, distance_function) for distance_function in distance_functions}
+
 
 
     # print(f"-- Probability Functions--")
@@ -959,9 +927,10 @@ if __name__ == "__main__":
     #neighbours_dists_cdf_plot(dataset, distances_kth_nn, k_neighbours, args.pdasc)
 
     # Plot the CDF of the distances for the k-th neighbour for a sample of the dataset and the PDASC index
-    neighbours_dists_cdf_plot_complete(dataset, distances_kth_nn_random, distances_kth_nn_pdasc, k_neighbours)
+    #neighbours_dists_cdf_plot_complete(dataset, distances_kth_nn_random, distances_kth_nn_pdasc, k_neighbours)
 
-    # neighbours_dists_cdf_plot_solapado(dataset, distances_kth_nn_random, distances_kth_nn_pdasc, k_neighbours)
+    # Plot the CDF of the distances for the k-th neighbour for a sample of the dataset and the PDASC index
+    neighbours_dists_cdf_plot_solapado(dataset, distances_kth_nn_random, distances_kth_nn_pdasc, k_neighbours)
 
 
     exit(0)

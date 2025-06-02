@@ -1,6 +1,7 @@
 from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import pairwise_distances
 from sklearn.metrics.pairwise import cosine_distances
+from sklearn.preprocessing import normalize
 import numpy as np
 import logging
 
@@ -64,16 +65,17 @@ def LinearScan_nn_search(train_set, test_set, k, metric, same_set=None):
     """
 
     # Update the metric name for compatibility with scipy
+    # Update the metric name for compatibility with scipy
     if metric == 'manhattan':
-        metric = 'cityblock'  # scipy cdist requires 'cityblock' instead of 'manhattan'
+        metric = 'cityblock'
 
-    # Calculate the pairwise distances between the elements of two samples
+        # Calculate the pairwise distances between the elements of two samples
 
-    if metric == 'cosine':
-        distances = cosine_distances(test_set, train_set)
-    else:
+    # if metric == 'cosine':
+    #    distances = cosine_distances(test_set, train_set)
+    #else:
         # distances = cdist(test_set, train_set, metric)
-        distances = pairwise_distances(test_set, train_set, metric=metric)
+    distances = pairwise_distances(test_set, train_set, metric=metric)
 
     # For every point in the testing set, take the k elements with the smallest distances (k-nn)
     for i in range(len(test_set)):
@@ -100,6 +102,11 @@ def LinearScan_nn_search(train_set, test_set, k, metric, same_set=None):
 
 # Find the k nearest neighbors of the elements constituting the test set through an exact method
 def Exact_nn_search(vector_training, vector_testing, k, metric, tree_index, same_set=None):
+
+    # If distance is cosine, normalize the vectors
+    if metric == 'cosine':
+        vector_training = normalize(vector_training, axis=1, norm='l2')
+        vector_testing = normalize(vector_testing, axis=1, norm='l2')
 
     # Build the arrays to store the indices, coordinates and distances of the k nearest neighbors
     indices_vecinos = np.empty([len(vector_testing), k], dtype=int)

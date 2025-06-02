@@ -3,6 +3,7 @@ from timeit import default_timer as timer
 import data.load_train_test_set as lts
 from PDASC.pdasc_ import PDASC_accepted_algorithms, store_PDASC_index
 from benchmarks.neighbors_utils import *
+from sklearn.preprocessing import normalize
 
 
 def PDASC(config_file):
@@ -37,6 +38,11 @@ def PDASC(config_file):
         vector_training = np.radians(vector_training)
         vector_testing = np.radians(vector_testing)
 
+    # If distance is cosine, normalize the vectors
+    elif distance == 'cosine':
+        vector_training = normalize(vector_training, axis=1, norm='l2')
+        vector_testing = normalize(vector_testing, axis=1, norm='l2')
+
     # Read train and test set from original file
     # vector_training, vector_testing = lts.load_train_test(str(dataset))
 
@@ -60,8 +66,8 @@ def PDASC(config_file):
     start_time_s = timer()
 
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
-    # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
-    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(radius), dataset)
+    # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_classical_pruning(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
+    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(radius), dataset)
 
     end_time_s = timer()
 

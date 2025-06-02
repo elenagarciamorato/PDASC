@@ -1,6 +1,7 @@
 import os, sys, argparse
 from PDASC.pdasc_ import *
 from benchmarks.neighbors_utils import read_config_file
+from sklearn.preprocessing import normalize
 
 import data.load_train_test_set as lts
 
@@ -31,6 +32,14 @@ def PDASC_index_genenator(dataset, optional_filters=None):
         #Load train and test datasets
         file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
         vector_training, vector_testing = lts.load_train_test_h5py(file_name)
+
+        # If distance is haversine, convert data to radians
+        if distance == 'haversine':
+            vector_training = np.radians(vector_training)
+
+        # If distance is cosine, normalize the vectors
+        if distance == 'cosine':
+            vector_training = normalize(vector_training, axis=1, norm='l2')
 
         # And generate the index
         n_capas, grupos_capa, puntos_capa, labels_capa, promoted_points = create_tree(vector_training, tam_grupo, n_centroides, distance, algorithm, implementation)

@@ -713,8 +713,8 @@ def recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vect
 
         for prototype_id in explorable_prototypes:
             prototype_distance = distances_top_prototypes[prototype_id]
-            aux_neighbors, aux_n_distances = explore_centroid_dynamicradius( punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, dynamic_radius_list)
-            # aux_neighbors, aux_distances = explore_centroid_dynamicradius(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, [], 0, dynamic_radius_list)
+            aux_neighbors, aux_n_distances = explore_centroid_dynamicradius_layer( punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, dynamic_radius_list)
+            # aux_neighbors, aux_distances = explore_centroid_dynamicradius_layer(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, [], 0, dynamic_radius_list)
             neighbours.extend(aux_neighbors)
             n_distances_computed += aux_n_distances
 
@@ -811,8 +811,8 @@ def recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vect
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances
 
 
-## Under development: Recursive approximate k-nearest neighbors search with pruning
-def recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testing, vector_original, k_vecinos, metrica,
+
+def recursive_approximate_knn_search_classical_pruning(n_capas, n_centroides, vector_testing, vector_original, k_vecinos, metrica,
                            grupos_capa, puntos_capa, labels_capa, promoted_points, initial_radius, dataset):
     """
     Performs an approximate k-nearest neighbors (A-KNN) search using a hierarchical tree structure
@@ -913,7 +913,7 @@ def recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testi
 
                 # We update the list of candidates everytime we visited a new top prototype
                 candidate_neighbours = insert_candidate_neighbour(candidate_neighbours, prototype_distance)
-                explore_centroid_pruning(vector_original, punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours)
+                explore_centroid_classical_pruning(vector_original, punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours)
 
         # Once the complete index has been explored:
         # Get the number of total distances computed
@@ -1004,46 +1004,30 @@ def recursive_approximate_knn_search_pruning(n_capas, n_centroides, vector_testi
 
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances
 
-def recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, vector_original, k_vecinos, metrica,
+
+def recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vector_testing, vector_original, k_vecinos, metrica,
                            grupos_capa, puntos_capa, labels_capa, promoted_points, radius, dataset):
     """
-    Performs an approximate k-nearest neighbors (A-KNN) search using a hierarchical tree structure
-    and a search radius.
-
-    It is prepared to manage the new version of explore_centroid_optimised() that may return a list of
-    candidate neighbours whose distance to the query point is known or must be computed, depending on the situation.
+    Realiza una búsqueda aproximada de los k vecinos más cercanos (A-KNN search) utilizando un índice de PDASC previamente construido
+    y un radio dado.
 
 
-    Parameters:
-    n_capas : int
-        Number of layers in the hierarchical tree.
-    n_centroides : int
-        Number of centroids in each group.
-    punto_buscado : numpy.ndarray
-        The query point for which the nearest neighbors are to be found.
-    vector_original : numpy.ndarray
-        The original dataset of points.
-    k_vecinos : int
-        Number of nearest neighbors to find.
-    metrica : str
-        The distance metric to use for calculating distances.
-    grupos_capa : list
-        Number of points in each group at each layer.
-    puntos_capa : list
-        Cluster centroids at each layer.
-    labels_capa : list
-        Labels assigned to each point at each layer.
-    promoted_points: list
-        List of boolean arrays to track which points from the original dataset have been promoted as prototypes
-    radio : float
-        Search radius for the approximate search.
+    ### Parámetros:
+    - **n_capas** (*int*): Número de capas en la estructura jerárquica.
+    - **n_centroides** (*int*): Número de centroides en cada grupo.
+    - **vector_testing** (*numpy.ndarray*): Conjunto de puntos de prueba para los cuales se buscan los vecinos más cercanos.
+    - **vector_original** (*numpy.ndarray*): Conjunto de datos original.
+    - **k_vecinos** (*int*): Número de vecinos más cercanos a encontrar.
+    - **metrica** (*str*): Métrica de distancia a utilizar (por ejemplo, 'euclidean', 'manhattan').
+    - **grupos_capa** (*list*): Número de puntos en cada grupo en cada capa.
+    - **puntos_capa** (*list*): Centroides de los clústeres en cada capa.
+    - **labels_capa** (*list*): Etiquetas asignadas a cada punto en cada capa.
+    - **promoted_points** (*list*): Lista de puntos promovidos como prototipos en la estructura jerárquica.
+    - **radius** (*float*): Radio de búsqueda basado en la CDF.
+    - **dataset** (*str*): Nombre del conjunto de datos utilizado.
 
-    Returns:
-    list: A list containing three elements:
-        - numpy.ndarray: Indices of the k nearest neighbors.
-        - numpy.ndarray: Coordinates of the k nearest neighbors.
-        - numpy.ndarray: Distances to the k nearest neighbors.
 """
+
     # Update the metric name for compatibility with scipy
     if metrica == 'manhattan':
         metrica = 'cityblock'  # scipy cdist requires 'cityblock' instead of 'manhattan'
@@ -1117,7 +1101,7 @@ def recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, 
             #prototype_coords = coordinates_top_prototypes[prototype_id]
             prototype_distance = distances_top_prototypes[prototype_id]
             #aux_neighbors, aux_n_distances = explore_centroid_CDFradius1(punto_buscado, n_capas, inheritage, prototype_id, prototype_coords, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
-            aux_neighbors, aux_n_distances = explore_centroid_CDFradius2(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
+            aux_neighbors, aux_n_distances = explore_centroid_dynamicradius_minradius(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
             neighbours.extend(aux_neighbors)
             n_distances_computed += aux_n_distances
 
@@ -1158,6 +1142,7 @@ def recursive_approximate_knn_search_CDF(n_capas, n_centroides, vector_testing, 
 
             # By acceding the original dataset, we obtain its coordinates and compute its distances to the query point
             coords_neighbours_without_d = vector_original[id_neighbours_without_d]
+
             if len(coords_neighbours_without_d) > 0:
                 distances_neighbours_without_d = get_distances(np.array(punto_buscado), coords_neighbours_without_d, metrica)
             else:
