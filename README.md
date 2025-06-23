@@ -104,27 +104,66 @@ The script expects two arguments:
 - To benchmark experiments for a dataset with optional filters:<br />
 `python3 -m benchmarks.performance_benchmark NYtimes chebyshev PDASC`
 
-### CDFs Generation
-The `dataset_analysis.py` script allows generating Cumulative Distribution Functions (CDFs) to analyze the distribution of distances in a dataset. 
+### Distances Distribution's Generation
+The `distances_distribution_generator.py` script allows generating different Distribution Functions to analyze the distribution of distances in a dataset. 
+These distributions are generate both from a random sample of elements from the dataset and from the prototypes that compose a specific layer of the previously generated PDASC index.
 
 #### Usage:
-The script expects two arguments:
-- Dataset: The name of the dataset whose CDFs want to be generated.
-- Distance Functions: The distance functions to be used for the CDF generation.
+The script should be launched as follows:
+`python3 -m data.distances_distribution_generator -<Distribution_Functions> "('dataset_name', 'distance_function')" -size <size>`
 
-Additionally, its behavior depends on the option provided:
-- **Using the `-d` argument**: When the `-d` argument is used, the script generates CDFs based on a random sample of elements from the specified dataset. 
-<!-- * This approach is useful for analyzing the distance distribution in a representative subset of the dataset. -->
-`python3 -m data.dataset_analysis -d <dataset_name> -f [<distance_function1>,<distance_function2>,...] `
-- **Using the `-p` argument**: When the `-p` argument is used, the script generates CDFs based on the prototypes that compose a specific layer of the previously generated PDASC index. 
-<!-- * This approach is helpful for evaluating the distance distribution among selected prototypes, providing insights into the structure of the index. -->
-`python3 -m data.dataset_analysis -p <dataset_name> -f [<distance_function1>,<distance_function2>,...] `
+The script expects two arguments:
+- The Distribution Function(s) to be generated.
+  - `-pdfsNN`: Perform kNN Distances CDF analysis with a tuple or a set of tuples.
+  - `-pdfsPW`: Perform Pairwise Distances PDF analysis with a tuple or a set of tuples.
+  - `-cdfsNN`: Perform kNN Distances CDF analysis with a tuple or set of tuples.
+  - `-cdfsPW`: Perform Pairwise Distances CDF analysis with a tuple or a set of tuples.
+  - `-cdfsNN_SS`: Perform kNN Distances CDF analysis for with varying sample sizes of a single dataset and distance function.
+  - `-cdfsPW_SS`: Perform Pairwise Distances CDF analysis with varying sample sizes.
+  
+- `-size`: Sample size to use, as a percentage of the dataset (integer, e.g., `10` for 10%)
+
+**Note:** The arguments for the `-pdfsNN`, `-pdfsPW`, `-cdfsNN`,  `-cdfsPW`, `-cdfsNN_SS` and `-cdfsPW_SS` parameters must be provided as Python tuples, e.g., `("dataset_name", "distance_function")`.
 
 #### Examples:
-- To generate CDFs using a random sample of elements from the dataset:
-`python3 -m data.dataset_analysis -d NYtimes -f euclidean manhattan chebyshev cosine`
-- To generate CDFs using the prototypes composing one layer of PDASC index:
-`python3 -m data.dataset_analysis -p NYtimes -f euclidean manhattan chebyshev cosine`
+- kNN Distances PDF Analysis (`-pdfsNN`)
+`python3 -m data.distances_distribution_generator -pdfsNN "('municipios', 'haversine')"  -size 10`
+
+- Pairwise Distances PDF Analysis (`-pdfsPW`)
+`python3 -m data.distances_distribution_generator -pdfsPW "('municipios', 'haversine')"  -size 10`
+
+- kNN Distances CDF Analysis (`-cdfsNN`)
+`python3 -m data.distances_distribution_generator -cdfsNN "('municipios', 'haversine')"  -size 10`
+
+- Pairwise Distances CDF Analysis (`-cdfsPW`)
+`python3 -m data.distances_distribution_generator -cdfsPW "('municipios', 'haversine')"  -size 10`
+
+- kNN-CDF Analysis for different sample sizes(`-cdfsNN_SS`)
+`python3 -m data.distances_distribution_generator -cdfsNN_SS "('municipios', 'haversine')" `
+
+- Pairwise Distances CDF Analysis for different sample sizes (`-cdfsPW_SS`)
+`python3 -m data.distances_distribution_generator -pdfsNN_SS "('municipios', 'haversine')" `
+
+### Distances Distribution's Evaluation
+The `distances_distribution_evaluation.py` script provides statistical analysis tools to compare distributions of pairwise distances in datasets using the Kolmogorov-Smirnov (KS) test and the Wasserstein distance. 
+It is useful for evaluating how similar or different two distributions (a random sample of elements from the dataset and from the prototypes that compose a specific layer of the previously generated PDASC index) are.
+
+#### Usage:
+The script should be launched as follows:
+`python3 -m data.distances_distribution_evaluation  -dataset <dataset_name> -dist <distance_function> -size <size>`
+
+The script expects three arguments:
+- Dataset: The name of the dataset to process
+- Distance Function: The distance function to be used for the analysis.
+- `-size`: Sample size to use, as a percentage of the dataset (integer, e.g., `10` for 10%)
+
+#### Example
+`python3 -m data.distances_distribution_generator -dataset MNIST -dist euclidean -size 10`
+
+#### Output
+- Prints the KS statistic and its interpretation.
+- Prints the p-value and its statistical significance.
+- Prints the Wasserstein distance.
 
 ## References
 

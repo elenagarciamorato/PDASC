@@ -1,10 +1,77 @@
-from data.dataset_analysis import load_random_sample, load_PDASC_sample, get_distances_kth_nn, get_distances_pairwise
+from fitter import Fitter
+from fitter import get_common_distributions
+from matplotlib import pyplot as plt
+
+from data.dataset_analysis import load_random_sample, load_PDASC_sample, compute_distances_kth_nn, compute_distances_pairwise
 import argparse
 import os
 import numpy as np
 import pandas as pd
 from plotnine import *
 
+# Function to get the k-th nearest neighbour distances for a random sample and PDASC index prototypes
+def get_nn_distances(dataset, distance_function, k_neighbours, sample_size, dataset_size):
+
+    # Load a random sample of points from the dataset and compute the k-th nearest neighbour distances
+    random_sample = load_random_sample(dataset, sample_size)
+    random_complete = load_random_sample(dataset, dataset_size)
+
+    # If the distance is 'haversine', we convert data to radians
+    if distance_function == 'haversine':
+        random_sample= np.radians(random_sample)
+        random_complete = np.radians(random_complete)
+        print("Converting data to radians for haversine distance")
+
+    random_dists = np.sort(compute_distances_kth_nn(random_sample, random_complete, k_neighbours, distance_function))
+
+    # Save the random distances to a CSV file
+    pd.DataFrame(random_dists).to_csv(
+        f'./data/dataset_analysis/{dataset}/{dataset}_{k_neighbours}th_nn_{distance_function}_{sample_size}_random.csv',
+        index=False)
+
+    # Load a random sample of prototypes from PDASC index and compute the k-th nearest neighbour distances
+    pdasc_sample = load_PDASC_sample(dataset, sample_size, distance_function)
+    pdasc_complete = load_PDASC_sample(dataset, dataset_size, distance_function)
+    pdasc_dists = np.sort(compute_distances_kth_nn(pdasc_sample, pdasc_complete, k_neighbours, distance_function))
+
+    # Save the distances to a CSV file
+    pd.DataFrame(pdasc_dists).to_csv(
+        f'./data/dataset_analysis/{dataset}/{dataset}_{k_neighbours}th_nn_{distance_function}_{sample_size}_PDASC.csv',
+        index=False)
+
+    return random_dists, pdasc_dists
+
+# Function to get the pairwise distances for a random sample and PDASC index prototypes
+def get_pairwise_distances(dataset, distance_function, sample_size, dataset_size):
+
+    # Load a random sample of points from the dataset and compute the pairwise distances
+    random_sample = load_random_sample(dataset, sample_size)
+    # random_complete = load_random_sample(dataset, dataset_size)
+
+    # If the distance is 'haversine', we convert data to radians
+    if distance_function == 'haversine':
+        random_sample= np.radians(random_sample)
+        # random_complete = np.radians(random_complete)
+        print("Converting data to radians for haversine distance")
+
+    random_dists = np.sort(compute_distances_pairwise(random_sample, distance_function).flatten())
+
+    # Save the random distances to a CSV file
+    pd.DataFrame(random_dists).to_csv(
+        f'./data/dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_random.csv',
+        index=False)
+
+    # Load a random sample of prototypes from PDASC index and compute the pairwise distances
+    pdasc_sample = load_PDASC_sample(dataset, sample_size, distance_function)
+    # pdasc_complete = load_PDASC_sample(dataset, dataset_size, distance_function)
+    pdasc_dists = np.sort(compute_distances_pairwise(pdasc_sample, distance_function).flatten())
+
+    # Save the distances to a CSV file
+    pd.DataFrame(pdasc_dists).to_csv(
+        f'./data/dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_PDASC.csv',
+        index=False)
+
+    return random_dists, pdasc_dists
 
 def plot_cdfs_nn_complete(datasets, sample_size):
 
@@ -25,12 +92,12 @@ def plot_cdfs_nn_complete(datasets, sample_size):
         # Load a random sample of points from the dataset and compute the k-th nearest neighbour distances
         random_sample = load_random_sample(dataset, sample_size)
         random_complete = load_random_sample(dataset, datasets_size[dataset])
-        random_dists = np.sort(get_distances_kth_nn(random_sample, random_complete, k_neighbours, distance_function))
+        random_dists = np.sort(compute_distances_kth_nn(random_sample, random_complete, k_neighbours, distance_function))
 
         # Load a random sample of prototypes from PDASC index and compute the k-th nearest neighbour distances
         pdasc_sample = load_PDASC_sample(dataset, sample_size, distance_function)
         pdasc_complete = load_PDASC_sample(dataset, datasets_size[dataset], distance_function)
-        pdasc_dists = np.sort(get_distances_kth_nn(pdasc_sample, pdasc_complete, k_neighbours, distance_function))
+        pdasc_dists = np.sort(compute_distances_kth_nn(pdasc_sample, pdasc_complete, k_neighbours, distance_function))
 
 
         rand_cdf = np.arange(1, len(random_dists) + 1) / len(random_dists)
@@ -120,68 +187,99 @@ def plot_cdfs_nn_complete(datasets, sample_size):
     filename = f'SISAP_{k_neighbours}thnn_cdf_comparision_overlap.png'
     p.save(os.path.join(out_path, filename), dpi=300)
 
-def compute_nn_distances(dataset, distance_function, k_neighbours, sample_size, dataset_size):
+# Plotting CDFs of distances to the k-th nearest neighbours for a random sample of elements and PDASC index prototypes
+# For all dataset/distance combinations
+def neighbours_dists_cdf_plot_solapado(dataset, distances_dict_random, distances_dict_pdasc, k):
+    print(f"\n-- Comparison between CDF of the distances to the {k}th nearest neighbors for a random sample of elements and PDASC index prototypes from the {dataset} dataset --")
 
-    # Load a random sample of points from the dataset and compute the k-th nearest neighbour distances
-    random_sample = load_random_sample(dataset, sample_size)
-    random_complete = load_random_sample(dataset, dataset_size)
+    ordered_metrics = ['euclidean', 'manhattan', 'chebyshev', 'cosine', 'haversine']
+    all_data = []
 
-    # If the distance is 'haversine', we convert data to radians
-    if distance_function == 'haversine':
-        random_sample= np.radians(random_sample)
-        random_complete = np.radians(random_complete)
-        print("Converting data to radians for haversine distance")
+    for distance_metric in ordered_metrics:
+        if distance_metric not in distances_dict_random:
+            continue  # skip if not applicable
 
-    random_dists = np.sort(get_distances_kth_nn(random_sample, random_complete, k_neighbours, distance_function))
+        rand_dists = np.sort(distances_dict_random[distance_metric])
+        pdasc_dists = np.sort(distances_dict_pdasc[distance_metric])
 
-    # Save the random distances to a CSV file
-    pd.DataFrame(random_dists).to_csv(
-        f'./data/dataset_analysis/{dataset}/{dataset}_{k_neighbours}th_nn_{distance_function}_{sample_size}_random.csv',
-        index=False)
+        rand_cdf = np.arange(1, len(rand_dists)+1) / len(rand_dists)
+        pdasc_cdf = np.arange(1, len(pdasc_dists)+1) / len(pdasc_dists)
 
-    # Load a random sample of prototypes from PDASC index and compute the k-th nearest neighbour distances
-    pdasc_sample = load_PDASC_sample(dataset, sample_size, distance_function)
-    pdasc_complete = load_PDASC_sample(dataset, dataset_size, distance_function)
-    pdasc_dists = np.sort(get_distances_kth_nn(pdasc_sample, pdasc_complete, k_neighbours, distance_function))
+        df_rand = pd.DataFrame({
+            'distance': rand_dists,
+            'cdf': rand_cdf,
+            'metric': distance_metric,
+            'method': 'Random'
+        })
 
-    # Save the distances to a CSV file
-    pd.DataFrame(pdasc_dists).to_csv(
-        f'./data/dataset_analysis/{dataset}/{dataset}_{k_neighbours}th_nn_{distance_function}_{sample_size}_PDASC.csv',
-        index=False)
+        df_pdasc = pd.DataFrame({
+            'distance': pdasc_dists,
+            'cdf': pdasc_cdf,
+            'metric': distance_metric,
+            'method': 'PDASC'
+        })
 
-    return random_dists, pdasc_dists
+        all_data.append(df_rand)
+        all_data.append(df_pdasc)
 
-def compute_pairwise_distances(dataset, distance_function, sample_size, dataset_size):
+    df_all = pd.concat(all_data)
 
-    # Load a random sample of points from the dataset and compute the pairwise distances
-    random_sample = load_random_sample(dataset, sample_size)
-    random_complete = load_random_sample(dataset, dataset_size)
+    # Orden personalizado
+    df_all['metric'] = pd.Categorical(df_all['metric'], categories=ordered_metrics, ordered=True)
 
-    # If the distance is 'haversine', we convert data to radians
-    if distance_function == 'haversine':
-        random_sample= np.radians(random_sample)
-        random_complete = np.radians(random_complete)
-        print("Converting data to radians for haversine distance")
+    # Etiquetas personalizadas de las métricas
+    metric_labels = {
+        'euclidean': 'Euclidean Distance',
+        'manhattan': 'Manhattan Distance',
+        'chebyshev': 'Chebyshev Distance',
+        'cosine': 'Cosine Distance',
+        'haversine': 'Haversine Distance'
+    }
 
-    random_dists = np.sort(get_distances_pairwise(random_sample, distance_function).flatten())
+    # Colores personalizados
+    custom_colors = {
+        'Random': '#4C78A8',  # azul suave
+        'PDASC': '#F58518'    # naranja suave
+    }
 
-    # Save the random distances to a CSV file
-    pd.DataFrame(random_dists).to_csv(
-        f'./data/dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_random.csv',
-        index=False)
+    p = (
+            ggplot(df_all, aes(x='distance', y='cdf', fill='method')) +
+            geom_area(alpha=0.4, position='identity') +
+            geom_line(aes(color='method'), size=1.1) +
+            scale_fill_manual(values=custom_colors) +
+            scale_color_manual(values=custom_colors) +
+            facet_wrap('~ metric', ncol=2, labeller=metric_labels, scales='free_x') +
+            labs(
+                title=f'Cumulative Distribution Function of {k}th Neighbour Distances for {dataset} Dataset (Random vs PDASC)',
+                x='',
+                y='Probability'
+            ) +
+            theme_minimal(base_size=13) +
+            theme(
+                figure_size=(12, 9),
+                legend_position='bottom',
+                panel_background=element_rect(fill='white', color='black'),
+                plot_background=element_rect(fill='white', color='white'),
+                panel_grid_major=element_line(color="#e5e5e5"),
+                panel_grid_minor=element_line(color="#f5f5f5"),
+                legend_title=element_blank(),
+                plot_title=element_text(ha='center', family='Arial'),
+                axis_ticks_major_x=element_line(),
+                axis_ticks_major_y=element_line(),
+                axis_ticks_minor_x=element_line(color='gray', size=0.5),
+                axis_ticks_minor_y=element_line(color='gray', size=0.5),
+                axis_text_x=element_text(size=10, family='Arial'),
+                axis_text_y=element_text(size=10, family='Arial'),
+                strip_text_x=element_text(size=11, weight='bold', margin={'t': 10}, family='Arial'),
+            ) +
+            scale_y_continuous(limits=(0, 1))
+        )
+    out_path = f'./data/dataset_analysis/{dataset}'
+    os.makedirs(out_path, exist_ok=True)
+    filename = f'{dataset}_neighbours_cdf_comparision_overlap_{len(rand_dists)}.png'
+    p.save(os.path.join(out_path, filename), dpi=300)
 
-    # Load a random sample of prototypes from PDASC index and compute the pairwise distances
-    pdasc_sample = load_PDASC_sample(dataset, sample_size, distance_function)
-    pdasc_complete = load_PDASC_sample(dataset, dataset_size, distance_function)
-    pdasc_dists = np.sort(get_distances_pairwise(pdasc_sample, distance_function).flatten())
-
-    # Save the distances to a CSV file
-    pd.DataFrame(pdasc_dists).to_csv(
-        f'./data/dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_PDASC.csv',
-        index=False)
-
-    return random_dists, pdasc_dists
-# As the previous function but for individual plots
+# Plotting CDFs for k-th nearest neighbour distances in a dataset
 def plot_cdfs_nn_dataset(dataset, distance_function, sample_size):
 
     k_neighbours = 10
@@ -207,7 +305,7 @@ def plot_cdfs_nn_dataset(dataset, distance_function, sample_size):
     if not(os.path.exists(PDASC_path)) or not(os.path.exists(random_path)):
         # Compute the distances and save them to CSV files
         # print(f"\nComputing distances for {dataset} with {distance_function} distance function and sample size {sample_size}")
-        random_dists, pdasc_dists = compute_nn_distances(dataset, distance_function, k_neighbours, sample_size, dataset_size)
+        random_dists, pdasc_dists = get_nn_distances(dataset, distance_function, k_neighbours, sample_size, dataset_size)
 
     else:
         # Load the distances from the CSV files
@@ -220,12 +318,11 @@ def plot_cdfs_nn_dataset(dataset, distance_function, sample_size):
     rand_cdf = np.arange(1, len(random_dists) + 1) / len(random_dists)
     pdasc_cdf = np.arange(1, len(pdasc_dists) + 1) / len(pdasc_dists)
 
-    # Define the percentiles to calculate
-    percentiles = (0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
 
-    # Define the percentiles in a logarithmic scale
-    # percentiles = (0.700, 0.732, 0.765, 0.801, 0.837, 0.876, 0.916, 0.957, 1.000)
-    percentiles = (0.8, 0.829, 0.859, 0.89, 0.922, 0.954, 0.987, 1.0)
+    # Define the percentiles to calculate in a logarithmic scale
+    # percentiles = (0.8, 0.829, 0.859, 0.89, 0.922, 0.954, 0.987, 1.0)
+    # Secuencia extendida con 6 valores más 0.647, 0.67, 0.694, 0.719, 0.745, 0.772, 0.8, 0.829, 0.859, 0.89, 0.922, 0.954, 0.987, 1.0
+    percentiles = (0.647, 0.67, 0.694, 0.719, 0.745, 0.772, 0.8, 0.829, 0.859, 0.89, 0.922, 0.954, 0.987, 1.0)
 
     # Obtener los valores de las distancias en los percentiles
     # rand_percentile_values = np.percentile(random_dists, [p * 100 for p in percentiles])
@@ -291,7 +388,7 @@ def plot_cdfs_nn_dataset(dataset, distance_function, sample_size):
             theme_minimal(base_size=13) +
             theme(
                 figure_size=(8, 6),
-                legend_position='None',
+                legend_position="none",
                 panel_background=element_rect(fill='white', color='black'),
                 plot_background=element_rect(fill='white', color='white'),
                 panel_grid_major=element_line(color="#e5e5e5"),
@@ -313,6 +410,7 @@ def plot_cdfs_nn_dataset(dataset, distance_function, sample_size):
     filename = f'{dataset}_{distance_function}_{k_neighbours}th_nn_comparision_overlap_{len(random_dists)}.png'
     p.save(os.path.join(out_path, filename), dpi=300)
 
+# Plotting CDFs for pairwise distances in a dataset
 def plot_cdfs_pairwise_dataset(dataset, distance_function, sample_size):
 
     datasets_size = {
@@ -337,7 +435,7 @@ def plot_cdfs_pairwise_dataset(dataset, distance_function, sample_size):
     if not(os.path.exists(PDASC_path)) or not(os.path.exists(random_path)):
         # Compute the distances and save them to CSV files
         # print(f"\nComputing distances for {dataset} with {distance_function} distance function and sample size {sample_size}")
-        random_dists, pdasc_dists = compute_pairwise_distances(dataset, distance_function, sample_size, dataset_size)
+        random_dists, pdasc_dists = get_pairwise_distances(dataset, distance_function, sample_size, dataset_size)
 
     else:
         # If it exists, load the distances from the CSV files
@@ -350,17 +448,19 @@ def plot_cdfs_pairwise_dataset(dataset, distance_function, sample_size):
     rand_cdf = np.arange(1, len(random_dists) + 1) / len(random_dists)
     pdasc_cdf = np.arange(1, len(pdasc_dists) + 1) / len(pdasc_dists)
 
-    # Define the percentiles to calculate
-    percentiles = (0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
+    # Define the percentiles to calculate in a logarithmic scale
+    #percentiles = (0.647, 0.67, 0.694, 0.719, 0.745, 0.772, 0.8, 0.829, 0.859, 0.89, 0.922, 0.954, 0.987, 1.0)
+    #rand_percentile_values = np.percentile(rand_dists, [p * 100 for p in percentiles])
+    #pdasc_percentile_values = np.percentile(pdasc_dists, [p * 100 for p in percentiles])
 
-    # Define the percentiles in a logarithmic scale
-    # percentiles = (0.700, 0.732, 0.765, 0.801, 0.837, 0.876, 0.916, 0.957, 1.000)
-    #Secuencia extendida con 4 valores más z 0.694, 0.719, 0.745, 0.772, 0.8, 0.829, 0.859, 0.89, 0.922, 0.954, 0.987, 1.0
-    percentiles = (0.8, 0.829, 0.859, 0.89, 0.922, 0.954, 0.987, 1.0)
+    # Define the percentiles to calculate in a logarithmic scale from 15 to 100
+    #percentiles = (1, 14.83, 27.49, 38.28, 47.49, 55.35, 62.05, 67.77, 72.65, 76.82, 80.37, 83.4, 85.99, 88.19, 90.07, 91.68, 93.05, 94.22, 95.22, 96.07, 96.79, 97.41, 97.94, 98.39, 98.78, 99.1, 99.38, 99.62, 99.83, 100.0)
 
+    # Define the percentiles to calculate in an heuristic way
+    percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
     # Obtener los valores de las distancias en los percentiles
-    # rand_percentile_values = np.percentile(random_dists, [p * 100 for p in percentiles])
-    pdasc_percentile_values = np.percentile(pdasc_dists, [p * 100 for p in percentiles])
+    # rand_percentile_values = np.percentile(random_dists, percentiles)
+    pdasc_percentile_values = np.percentile(pdasc_dists, percentiles)
 
     # Seleccionar decimales según la métrica
     if distance_function in ['euclidean', 'manhattan']:
@@ -380,7 +480,7 @@ def plot_cdfs_pairwise_dataset(dataset, distance_function, sample_size):
     # Crear DataFrame con los percentiles y sus valores
     df_points = pd.DataFrame({
         'distance': pdasc_percentile_values,
-        'cdf': percentiles
+        'cdf': [p / 100 for p in percentiles]
     })
 
     # Crear líneas verticales y horizontales desde df_points
@@ -406,11 +506,13 @@ def plot_cdfs_pairwise_dataset(dataset, distance_function, sample_size):
 
             # Líneas y puntos
             geom_segment(data=df_vlines, mapping=aes(x='distance', xend='xend', y='y', yend='yend'),
-                         linetype='dashed', color='#3b3b3b', inherit_aes=False) +
+                        linetype='dashed', color='black', inherit_aes=False) +
             geom_segment(data=df_hlines, mapping=aes(x='x', xend='xend', y='cdf', yend='yend'),
-                         linetype='dashed', color='#3b3b3b', inherit_aes=False) +
+                        linetype='dashed', color='black', inherit_aes=False) +
             geom_point(data=df_points, mapping=aes(x='distance', y='cdf'),
-                       color='#3b3b3b', size=1.8, inherit_aes=False) +
+                        color='black', size=1.8, inherit_aes=False) +
+
+            # color='#3b3b3b' = grey
 
             # Ejes y tema
             labs(
@@ -422,7 +524,7 @@ def plot_cdfs_pairwise_dataset(dataset, distance_function, sample_size):
             theme_minimal(base_size=13) +
             theme(
                 figure_size=(8, 6),
-                legend_position='None',
+                legend_position="none",
                 panel_background=element_rect(fill='white', color='black'),
                 plot_background=element_rect(fill='white', color='white'),
                 panel_grid_major=element_line(color="#e5e5e5"),
@@ -444,7 +546,126 @@ def plot_cdfs_pairwise_dataset(dataset, distance_function, sample_size):
     filename = f'{dataset}_{distance_function}_pairwise_comparision_overlap_{sample_size}.png'
     p.save(os.path.join(out_path, filename), dpi=300)
 
+# Plotting PDFs for pairwise distances in a dataset
+def plot_pdfs_pairwise_dataset(dataset, distance_function, sample_size):
 
+    datasets_size = {
+        "wdbc": 1000,
+        "municipios": 8031,
+        "MNIST": 59999,
+        "NYtimes": 290000,
+        "GLOVE": 1183514
+    }
+
+    print(f"Processing dataset: {dataset} with distance function: {distance_function}")
+
+    sample_size = int(datasets_size[dataset] * (sample_size / 100))
+    dataset_size = datasets_size[dataset]
+
+    # Paths for the PDASC and random distances
+    PDASC_path = f'./data/dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_PDASC.csv'
+    random_path = f'./data/dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_random.csv'
+
+    # If the paths do not exist, compute the distances
+    if not (os.path.exists(PDASC_path)) or not (os.path.exists(random_path)):
+        # Compute the distances and save them to CSV files
+        random_dists, pdasc_dists = get_pairwise_distances(dataset, distance_function, sample_size,
+                                                               dataset_size)
+    else:
+        # If it exists, load the distances from the CSV files
+        random_dists = pd.read_csv(random_path).values.flatten()
+        pdasc_dists = pd.read_csv(PDASC_path).values.flatten()
+
+    # Combine distances into a DataFrame
+    df_all = pd.concat([
+        pd.DataFrame({'distance': random_dists, 'method': 'Random'}),
+        pd.DataFrame({'distance': pdasc_dists, 'method': 'PDASC'})
+    ])
+
+    # Colors
+    custom_colors = {'Random': '#4C78A8', 'PDASC': '#F58518'}
+
+    # Create the plot
+    p = (
+            ggplot(df_all, aes(x='distance', fill='method')) +
+            geom_density(alpha=0.5) +
+            scale_fill_manual(values=custom_colors) +
+            labs(
+                title=f'Probability Density Function of Pairwise Distances',
+                x=f'{distance_function.capitalize()} Distance',
+                y='Density'
+            ) +
+            theme_minimal(base_size=13) +
+            theme(
+                figure_size=(8, 6),
+                legend_position="none",
+                panel_background=element_rect(fill='white', color='black'),
+                plot_background=element_rect(fill='white', color='white'),
+                panel_grid_major=element_line(color="#e5e5e5"),
+                panel_grid_minor=element_line(color="#f5f5f5"),
+                legend_title=element_blank(),
+                plot_title=element_text(ha='center'),
+                axis_ticks_major_x=element_line(),
+                axis_ticks_major_y=element_line(),
+                axis_text_x=element_text(size=10),
+                axis_text_y=element_text(size=10, margin={'r': 5}),
+                axis_title_x=element_text(margin={'t': 20}),
+                axis_title_y=element_text(margin={'r': 20}),
+            )
+    )
+
+    # Save the plot
+    out_path = f'./data/dataset_analysis/{dataset}'
+    os.makedirs(out_path, exist_ok=True)
+    filename = f'{dataset}_{distance_function}_pairwise_pdf_comparision_{sample_size}.png'
+    p.save(os.path.join(out_path, filename), dpi=300)
+
+# Plot the probability density function (PDF) of the pairwise distances between the elements composing the dataset
+# And fit the data to a distribution
+def elements_dists_fitting_pdf_plot(dataset, distances_dict):
+    # Print info about the fit
+    print(f"-- Fitting the data to a distribution for {dataset} dataset--")
+
+    # Create a figure for the plots
+    plt.figure(figsize=(15, 10))
+
+    # Iterate over each distance metric and its corresponding distances
+    for i, (distance_metric, distances) in enumerate(distances_dict.items()):
+        # Flatten the distances matrix to get a 1-d array containing all the pairwise distances
+        distances = distances.flatten()
+
+        # Create a subplot for each distance metric
+        plt.subplot((len(distances_dict) + 1) // 2, 2, i + 1)
+
+        # Fit the data to a distribution
+        f = Fitter(distances, distributions=get_common_distributions(), timeout=120)
+        f.fit()
+        f.summary()
+
+        # Print the best fitting distribution
+        best_dist = f.get_best(method='sumsquare_error')
+        print(f'\nThe best fitting distribution for {distance_metric} is {best_dist}')
+
+        # Plot the data distribution and the best fitting distribution
+        plt.title(f'{distance_metric} Distance')
+        plt.ylabel('Frequency')
+
+        # Force x-axis to start at 0
+        plt.xlim(left=0)
+
+    # Add the main title
+    plt.suptitle(f'Pairwise distances Distribution and Best Fitting Distribution \n (normalised) for {dataset} dataset')
+
+    # Adjust layout and save the plot
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    plt.savefig(f'./data/dataset_analysis/{dataset}/{dataset}_{distance_metric}_pdf_fitted.png')
+    #plt.show()
+
+    # Clear and close the plot
+    plt.clf()
+    plt.close()
+
+# Plotting CDFs of pairwise distances for different sample sizes in a dataset
 def plot_cdfs_nn_samplesize_dataset(dataset, distance_function):
 
     k_neighbours = 10
@@ -479,11 +700,11 @@ def plot_cdfs_nn_samplesize_dataset(dataset, distance_function):
 
         # Load a random sample of points from the dataset and compute the k-th nearest neighbour distances
         random_sample = load_random_sample(dataset, sample_size)
-        random_dists = np.sort(get_distances_kth_nn(random_sample, random_complete, k_neighbours, distance_function))
+        random_dists = np.sort(compute_distances_kth_nn(random_sample, random_complete, k_neighbours, distance_function))
 
         # Load a random sample of prototypes from PDASC index and compute the k-th nearest neighbour distances
         pdasc_sample=load_PDASC_sample(dataset, sample_size, distance_function)
-        pdasc_dists = np.sort(get_distances_kth_nn(pdasc_sample, pdasc_complete, k_neighbours, distance_function))
+        pdasc_dists = np.sort(compute_distances_kth_nn(pdasc_sample, pdasc_complete, k_neighbours, distance_function))
 
 
         rand_cdf = np.arange(1, len(random_dists) + 1) / len(random_dists)
@@ -536,7 +757,7 @@ def plot_cdfs_nn_samplesize_dataset(dataset, distance_function):
             theme_minimal(base_size=13) +
             theme(
                 figure_size=(12, 9),
-                legend_position='bottom',
+                legend_position="none",
                 panel_background=element_rect(fill='white', color='black'),
                 plot_background=element_rect(fill='white', color='white'),
                 legend_title=element_blank(),
@@ -557,6 +778,7 @@ def plot_cdfs_nn_samplesize_dataset(dataset, distance_function):
     filename = f'SISAP_{k_neighbours}thnn_cdf_comparision_{dataset}.png'
     p.save(os.path.join(out_path, filename), dpi=300)
 
+# Plotting CDFs of k-NN distances for different sample sizes in a dataset
 def plot_cdfs_pairwise_samplesize_dataset(dataset, distance_function):
 
     datasets_size = {
@@ -587,11 +809,11 @@ def plot_cdfs_pairwise_samplesize_dataset(dataset, distance_function):
 
         # Load a random sample of points from the dataset and compute the k-th nearest neighbour distances
         random_sample=load_random_sample(dataset, sample_size)
-        random_dists = np.sort(get_distances_pairwise(random_sample, distance_function).flatten())
+        random_dists = np.sort(compute_distances_pairwise(random_sample, distance_function).flatten())
 
         # Load a random sample of prototypes from PDASC index and compute the k-th nearest neighbour distances
         pdasc_sample = load_PDASC_sample(dataset, sample_size, distance_function)
-        pdasc_dists = np.sort(get_distances_pairwise(pdasc_sample, distance_function).flatten())
+        pdasc_dists = np.sort(compute_distances_pairwise(pdasc_sample, distance_function).flatten())
 
 
         rand_cdf = np.arange(1, len(random_dists) + 1) / len(random_dists)
@@ -644,7 +866,7 @@ def plot_cdfs_pairwise_samplesize_dataset(dataset, distance_function):
             theme_minimal(base_size=13) +
             theme(
                 figure_size=(12, 9),
-                legend_position='none',
+                legend_position="none",
                 panel_background=element_rect(fill='white', color='black'),
                 plot_background=element_rect(fill='white', color='white'),
                 legend_title=element_blank(),
@@ -666,7 +888,6 @@ def plot_cdfs_pairwise_samplesize_dataset(dataset, distance_function):
     p.save(os.path.join(out_path, filename), dpi=300)
 
 
-
 if __name__ == "__main__":
 
     # Parse the arguments
@@ -680,6 +901,8 @@ if __name__ == "__main__":
                         type=eval, nargs='+')
     parser.add_argument("-cdfsPW_SS", help="Perform Pairwise Distances CDF analysis with varying sample sizes",
                         type=eval)
+    parser.add_argument("-pdfsPW", help="Perform Pairwise Distances PDF analysis with a tuple or a set of tuples",
+                        type=eval, nargs='+')
     parser.add_argument("-size", help="Indicate the size of the sample to be used.", type=int)
 
     args = parser.parse_args()
@@ -740,6 +963,18 @@ if __name__ == "__main__":
 
         else:
             print("Error: The argument for --cdfPW_SS must be a tuple")
+            exit(1)
+
+    elif args.pdfsPW:
+        if len(args.pdfsPW) == 1:
+            print(f"Received a single tuple: {args.pdfsPW}")
+            dataset=args.pdfsPW[0][0]
+            distance_function = args.pdfsPW[0][1]
+            sample_size = args.size
+            plot_pdfs_pairwise_dataset(dataset, distance_function, sample_size)
+
+        else:
+            print("Error: The argument for --pdfsPW must be a tuple")
             exit(1)
 
     exit(0)

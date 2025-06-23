@@ -91,9 +91,17 @@ def explore_experiments(dataset, optional_filters=None):
         # Orden final
         excel_results = excel_results.sort_values(by=['Distance', 'radius'])
 
+        # Añadir una columna de percentiles
+        percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
+        excel_results['Percentil'] = percentiles
+
         # Reemplazo de decimales con comas
         for col in ['Dist_Computed(Av)', 'Recall(Av)', 'Search_Time', 'radius']:
             excel_results[col] = excel_results[col].astype(str).str.replace('.', ',', regex=False)
+
+        # Añade una columna más al dataset con el percentil correpondiente a cada radio
+        # Al radio mas alto le corresponde el ultimo percentil de la lista y al
+        # radio mas bajo el primer percentil de la lista
 
         # Almacenar en un csv
         excel_results.to_csv(f'./benchmarks/NearestNeighbors/{dataset}/benchmark_results_{formatted_results.iloc[0]["k"]}nn_{dataset}.csv', index=False, sep=';')

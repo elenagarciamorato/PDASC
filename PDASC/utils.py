@@ -1029,6 +1029,13 @@ def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inher
     a su prototipo que los de capas superiores
     """
 
+    """
+    # Pruebas 02/06
+    capa_corte = len(grupos_capa) # capa_corte = len(grupos_capa) - 1
+    if current_layer == capa_corte:
+        min_radius = 1.0421
+        print(f'Using a minimum radius of {min_radius} for the {capa_corte} layer')
+    """
     # Calculate the group onto the layer which the centroid belongs to
     prototype_group = inheritage[-1]
 
@@ -1095,12 +1102,14 @@ def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inher
                 distances_computed += 1
 
         # We update the max_radius to be used according to the furthest prototype distance
-        furthest_associated_prototype = np.max(associated_prototypes_layer_down[:, 3])
-        #nearest_associated_prototype = np.min(associated_prototypes_layer_down[:, 3])
+        #furthest_associated_prototype = np.max(associated_prototypes_layer_down[:, 3])
+        nearest_associated_prototype = np.min(associated_prototypes_layer_down[:, 3])
 
         # We update the radius to be used in this layer radius = max(elbow_CDF_Value, furthest_child_prototype_distance)
-        radius = np.minimum(min_radius, furthest_associated_prototype)
-        # radius = np.maximum(min_radius, nearest_associated_prototype)
+        # Asi estaba antes:
+        # radius = np.minimum(min_radius, furthest_associated_prototype)
+        # Asi es segun la definición del paper:
+        radius = np.maximum(min_radius, nearest_associated_prototype)
         #print(min_radius)
         #print(furthest_associated_prototype)
         #print(f'Radius value at this layer: {radius}')
