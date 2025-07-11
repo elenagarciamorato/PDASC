@@ -92,8 +92,8 @@ def explore_experiments(dataset, optional_filters=None):
         excel_results = excel_results.sort_values(by=['Distance', 'radius'])
 
         # Añadir una columna de percentiles
-        percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
-        excel_results['Percentil'] = percentiles
+        #percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
+        #excel_results['Percentil'] = percentiles
 
         # Reemplazo de decimales con comas
         for col in ['Dist_Computed(Av)', 'Recall(Av)', 'Search_Time', 'radius']:
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     # Print the results
     print(df.to_string())
 
-    print_Recall_pointplot(args.dataset, df)  # pointplot
+    # print_Recall_pointplot(args.dataset, df)  # pointplot
 
     exit(0)
 

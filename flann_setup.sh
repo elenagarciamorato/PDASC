@@ -19,10 +19,10 @@ rm -rf PDASC/benchmarks/algorithms/FLANN/flann
 git clone https://github.com/mariusmuja/flann benchmarks/algorithms/FLANN/flann
 
 # Create a build directory for FLANN
-mkdir PDASC/benchmarks/algorithms/FLANN/flann/build
+mkdir benchmarks/algorithms/FLANN/flann/build
 
 # Then change the directory to the FLANN build directory
-cd PDASC/benchmarks/algorithms/FLANN/flann/build
+cd benchmarks/algorithms/FLANN/flann/build
 
 # Configure the build with CMake
 cmake ..

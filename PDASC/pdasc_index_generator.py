@@ -44,16 +44,19 @@ def PDASC_index_genenator(dataset, optional_filters=None):
         # And generate the index
         n_capas, grupos_capa, puntos_capa, labels_capa, promoted_points = create_tree(vector_training, tam_grupo, n_centroides, distance, algorithm, implementation)
 
-        #print(f"Number of layers: {n_capas}")
-        #print(f"Groups in each layer: {grupos_capa}")
+        print(f"Number of layers: {n_capas}")
+        for i in range(len(grupos_capa)):
+            print(f"Layer {i}: {len(grupos_capa[i])} groups")
+        print(f"Groups in each layer: {grupos_capa}")
         #print(f"Points in each layer: {puntos_capa}")
         #print(f"Labels in each layer: {labels_capa}")
+        print(labels_capa[8])
 
         #print(len(puntos_capa[len(puntos_capa)-1][0]))
         #print(grupos_capa)
 
         # Store the index built by PDASC in a file
-        store_PDASC_index(dataset, distance, grupos_capa, puntos_capa, labels_capa)
+        #store_PDASC_index(dataset, distance, grupos_capa, puntos_capa, labels_capa)
 
 if __name__ == "__main__":
 

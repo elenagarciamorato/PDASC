@@ -1040,7 +1040,7 @@ def recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vecto
 
     # Y el número de distancias calculadas en cada ejecución
     n_distances = np.empty([len(vector_testing)], dtype=int)
-
+    print(grupos_capa)
 
     # For every point in the testing set, find its k nearest neighbors
     for punto in range(len(vector_testing)):
@@ -1067,6 +1067,8 @@ def recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vecto
         # We take the top-layer prototypes, including its coordinates and distances to the query point
         coordinates_top_prototypes = np.vstack(puntos_capa[n_capas-1][:])
         distances_top_prototypes = get_distances(np.array(punto_buscado), coordinates_top_prototypes, metrica)
+        #print(coordinates_top_prototypes)
+        #print(distances_top_prototypes)
         #print(distances_top_prototypes)
         #exit(0)
         #distances_top_prototypes = distance.cdist(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
@@ -1206,5 +1208,6 @@ def recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vecto
             dists_vecinos[punto] = dists_k_vecinos
             n_distances[punto] = n_distances_computed
 
+    print(indices_vecinos, coords_vecinos, dists_vecinos, n_distances)
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances
 

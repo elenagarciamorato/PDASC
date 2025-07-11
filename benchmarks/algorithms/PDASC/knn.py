@@ -1,6 +1,7 @@
-import PDASC.pdasc_ as pdasc
+#import PDASC.pdasc_ as pdasc
 from timeit import default_timer as timer
 import data.load_train_test_set as lts
+from PDASC import pdasc_distributed_
 from PDASC.pdasc_ import PDASC_accepted_algorithms, store_PDASC_index
 from benchmarks.neighbors_utils import *
 from sklearn.preprocessing import normalize
@@ -53,10 +54,13 @@ def PDASC(config_file):
     # 2nd - We build the tree
 
     # By using the updated implementation
-    n_capas, grupos_capa, puntos_capa, labels_capa, promoted_points = pdasc.create_tree(vector_training, tam_grupo, n_centroides, distance, algorithm, implementation)
+    # n_capas, grupos_capa, puntos_capa, labels_capa, promoted_points = pdasc.create_tree(vector_training, tam_grupo, n_centroides, distance, algorithm, implementation)
 
-    # Store the index built by PDASC in a file
-    store_PDASC_index(dataset, distance, grupos_capa, puntos_capa, labels_capa)
+    # And store the index built by PDASC in a file
+    # store_PDASC_index(dataset, distance, grupos_capa, puntos_capa, labels_capa)
+
+    # By using the distributed implementation
+    index = pdasc_distributed_.create_tree(vector_training, tam_grupo, n_centroides, distance, algorithm, implementation)
 
     # Print number of layers and a brief comment
     # print(f'Number of layers = {n_capas}')
@@ -65,10 +69,16 @@ def PDASC(config_file):
     # while measuring the time spent
     start_time_s = timer()
 
+    # print(f"Solo vamos a buscar el punto {vector_testing[:1]}")
+    # vector_testing = vector_testing[:1]  # Uncomment this line to test with only the first point
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_classical_pruning(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
-    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(radius), dataset)
 
+    # By using the updated implementation
+    # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vector_testing[:1], vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(radius), dataset)
+
+    # By using the distributed implementation
+    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_distributed_.distributed_knn_search(vector_testing, dataset, vector_training, index, k, distance, float(radius))
     end_time_s = timer()
 
     # Obtain search time and print information about it in the log file
@@ -83,6 +93,8 @@ def PDASC(config_file):
 
     # Store indices, coords and dist into a hdf5 file
     save_neighbors_and_performance(indices_vecinos, coords_vecinos, dists_vecinos, n_distances, search_time, file_name)
+
+
 
     logging.info("\n")
 

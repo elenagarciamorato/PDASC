@@ -38,6 +38,7 @@ def load_train_test_h5py(file_name):
         with h5py.File(file_name, 'r') as hdf5_file:
             # print("\n ######### Loading train and test set from " + file_name + " #########")
             logging.info("Loading train and test set from " + file_name + "\n")
+            print("Loading train and test set from " + file_name + "\n")
             return np.array(hdf5_file['train_set']), np.array(hdf5_file['test_set'])
 
 
@@ -91,12 +92,12 @@ def load_train_test(dataset_name, test_eq_train=False):
     elif dataset_name == "municipios":
 
         # Read the complete dataset from a csv file and store it into a NumpyArray
-        datos = pd.read_csv('./data/MUNICIPIOS-utf8.csv', sep=';')
+        datos = pd.read_csv('./data/raw_data/MUNICIPIOS-utf8.csv', sep=';')
         municipios = pd.DataFrame(datos, columns=['LONGITUD_ETRS89', 'LATITUD_ETRS89'])
         # index = datos_geo.index
         # cant_ptos = len(index)
-        municipios['LONGITUD_ETRS89'] = municipios['LONGITUD_ETRS89'].str.replace(',', '.').astype(np.float)
-        municipios['LATITUD_ETRS89'] = municipios['LATITUD_ETRS89'].str.replace(',', '.').astype(np.float)
+        municipios['LONGITUD_ETRS89'] = municipios['LONGITUD_ETRS89'].str.replace(',', '.').astype(float)
+        municipios['LATITUD_ETRS89'] = municipios['LATITUD_ETRS89'].str.replace(',', '.').astype(float)
         municipios = municipios.to_numpy()
 
         # If normaliza, normalize the dataset
@@ -125,11 +126,11 @@ def load_train_test(dataset_name, test_eq_train=False):
     elif dataset_name == "MNIST":
 
         # Read the train_set from a csv file and store it into a Numpy Array
-        data = pd.read_csv('./data/mnist_train.csv', delimiter=',', nrows=None)
+        data = pd.read_csv('./data/raw_data/mnist_train.csv', delimiter=',', nrows=None)
         train_set = pd.DataFrame(data).to_numpy().astype(float)
 
         # Read the test_set from a csv file and store it into a Numpy Array
-        data = pd.read_csv('./data/mnist_test.csv', delimiter=',', nrows=None)
+        data = pd.read_csv('./data/raw_data/mnist_test.csv', delimiter=',', nrows=None)
         test_set = pd.DataFrame(data).drop(columns='label').to_numpy().astype(float)
 
         # For this experiment,compose the test_set (100 elements not contained on the train set) and the train_set
@@ -154,7 +155,7 @@ def load_train_test(dataset_name, test_eq_train=False):
     elif dataset_name == "GLOVE":
 
         # Read the train_set and test_set from a hdf5 file and store it into Numpy Arrays
-        with h5py.File('./data/glove-100-angular.hdf5', 'r') as hdf5_file:
+        with h5py.File('./data/raw_data/glove-100-angular.hdf5', 'r') as hdf5_file:
             # print("Keys: %s" % hdf5_file.keys())
             train_set = np.array(hdf5_file['train'])
             test_set = np.array(hdf5_file['test'])
@@ -181,7 +182,7 @@ def load_train_test(dataset_name, test_eq_train=False):
     elif dataset_name == "GLOVE100000":
 
         # Read the train_set and test_set from a hdf5 file and store it into Numpy Arrays
-        with h5py.File('./data/glove-100-angular.hdf5', 'r') as hdf5_file:
+        with h5py.File('./data/raw_data/glove-100-angular.hdf5', 'r') as hdf5_file:
             # print("Keys: %s" % hdf5_file.keys())
             train_set = np.array(hdf5_file['train'])
             test_set = np.array(hdf5_file['test'])
@@ -209,7 +210,7 @@ def load_train_test(dataset_name, test_eq_train=False):
         return train_set, test_set
 
     elif dataset_name == ("NYtaxis"):
-        datos = pd.read_parquet('./data/NYtaxis.parquet', engine='pyarrow')
+        datos = pd.read_parquet('./data/raw_data/NYtaxis.parquet', engine='pyarrow')
         NYtaxis = pd.DataFrame(datos, columns=['PULocationID', 'DOLocationID'])
 
         # Drop duplicates
@@ -243,7 +244,7 @@ def load_train_test(dataset_name, test_eq_train=False):
 
     elif dataset_name == ("wdbc"):
 
-        datos = pd.DataFrame(pd.read_csv('./data/wdbc.data', sep=","))
+        datos = pd.DataFrame(pd.read_csv('./data/raw_data/wdbc.data', sep=","))
 
         # Drop first two columns (index and diagnoses)
         datos = datos.drop(datos.columns[[0,1]], axis=1)
@@ -279,7 +280,7 @@ def load_train_test(dataset_name, test_eq_train=False):
 
     elif dataset_name == ("wdbc"):
 
-        datos = pd.DataFrame(pd.read_csv('./data/wdbc.data', sep=","))
+        datos = pd.DataFrame(pd.read_csv('./data/raw_data/wdbc.data', sep=","))
 
         # Drop first two columns (index and diagnoses)
         datos = datos.drop(datos.columns[[0, 1]], axis=1)
@@ -316,7 +317,7 @@ def load_train_test(dataset_name, test_eq_train=False):
     elif dataset_name == "NYtimes":
 
         # Read the train_set and test_set from a hdf5 file and store it into Numpy Arrays
-        with h5py.File('./data/nytimes-256-angular.hdf5', 'r') as hdf5_file:
+        with h5py.File('./data/raw_data/nytimes-256-angular.hdf5', 'r') as hdf5_file:
             # print("Keys: %s" % hdf5_file.keys())
             train_set = np.array(hdf5_file['train'])
             test_set = np.array(hdf5_file['test'])
@@ -339,7 +340,7 @@ def load_train_test(dataset_name, test_eq_train=False):
     elif dataset_name == "LastFM":
 
         # Read the train_set and test_set from a hdf5 file and store it into Numpy Arrays
-        with h5py.File('./data/lastfm-64-dot.hdf5', 'r') as hdf5_file:
+        with h5py.File('./data/raw_data/lastfm-64-dot.hdf5', 'r') as hdf5_file:
             #print("Keys: %s" % hdf5_file.keys())
             train_set = np.array(hdf5_file['train'])
             test_set = np.array(hdf5_file['test'])
@@ -396,4 +397,4 @@ def load_train_test(dataset_name, test_eq_train=False):
         return None, None
 
 
-#load_train_test('LastFM')
+#load_train_test('municipios')
