@@ -1198,7 +1198,7 @@ def recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vecto
                 dists_k_vecinos[:minimum] = sorted_neighbours[:minimum, 2]
 
             # Print them
-            # print(f"The neighbours are: {indices_k_vecinos} with distances {dists_k_vecinos}")
+            print(f"The neighbours are: {indices_k_vecinos} with distances {dists_k_vecinos}")
 
             # And return the results
             # print(f"The search process computes a total of {n_distances_computed} distances")
@@ -1208,6 +1208,7 @@ def recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vecto
             dists_vecinos[punto] = dists_k_vecinos
             n_distances[punto] = n_distances_computed
 
-    print(indices_vecinos, coords_vecinos, dists_vecinos, n_distances)
+    #print(indices_vecinos, coords_vecinos, dists_vecinos, n_distances)
+
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances
 

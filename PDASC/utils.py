@@ -252,6 +252,8 @@ def get_distances(point1, point2, metric):
     float: The calculated distance.
     """
     if metric == 'haversine':
+        #print(point1)
+        #print(point2)
         return pairwise_distances(point1, point2, metric=metric)[0]
     else:
         return distance.cdist(point1, point2, metric=metric)[0]
@@ -1015,7 +1017,7 @@ def explore_centroid_CDFradius1(punto_buscado, current_layer, inheritage, curren
 
     return neighbours, distances_computed
 
-def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius):
+def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius, id_flue=0, flue_size=0):
     """
 
     Esta funcion filtra los prototipos a explorar en funcion a su distancia con el punto de query,
@@ -1070,14 +1072,14 @@ def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inher
 
             if len(associated_prototypes_layer_down) == 1 or promoted_points[group_id][neighbour_id % tam_grupo]:
                 #print(f'Neighbour found: {neighbour_id} and distance: {current_centroid_distance}')
-                neighbours.append((neighbour_id, current_centroid_distance))
+                neighbours.append((id_flue * flue_size + neighbour_id, current_centroid_distance))
 
                 # Print the radius value at this step
                 # print(f'Current prototype distance: {current_centroid_distance}')
                 # print(f'Radius value at this step: {radius}')
 
             else:
-                neighbours.append(neighbour_id)
+                neighbours.append(id_flue * flue_size + neighbour_id)
 
         return neighbours, distances_computed
 
@@ -1119,7 +1121,7 @@ def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inher
 
     for i in range(len(explorable_prototypes)):
         centroid = explorable_prototypes[i]
-        neighbours, distances_computed = explore_centroid_dynamicradius_minradius(punto_buscado, current_layer-1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius)
+        neighbours, distances_computed = explore_centroid_dynamicradius_minradius(punto_buscado, current_layer-1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius, id_flue, flue_size)
 
     return neighbours, distances_computed
 

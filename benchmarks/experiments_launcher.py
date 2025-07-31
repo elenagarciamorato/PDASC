@@ -1,7 +1,7 @@
 from benchmarks.algorithms.Exact.knn import Exact
-from benchmarks.algorithms.FLANN.knn import FLANN
 from benchmarks.algorithms.Pynndescent.knn import PYNN
 from benchmarks.algorithms.PDASC.knn import PDASC
+import multiprocessing
 import re
 import argparse
 import os
@@ -30,9 +30,6 @@ def experiment(config_file):
 
     elif method == 'PDASC':
         PDASC(config_file)
-
-    elif method == 'FLANN':
-        FLANN(config_file)
 
     elif method == 'PYNN':
         PYNN(config_file)
@@ -111,6 +108,8 @@ if __name__ == "__main__":
     parser.add_argument("optional_filters", help="Optional filters for .ini files", nargs='*', default=[])
 
     args = parser.parse_args()
+
+    multiprocessing.set_start_method("fork")  # Solo si da problemas sin él (UNIX systems)
 
     execute_experiments(args.argument, args.optional_filters)
 

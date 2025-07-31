@@ -86,6 +86,7 @@ def save_neighbors_and_performance(indices, coords, dists, n_distances, search_t
 
         dset5 = f.create_dataset('search_time', data=search_time)
 
+
         print(f"Neighbors, distances computed and search time stored at {file_name}")
         logging.info(f"Neighbors distances computed and search time stored at {file_name}")
         f.close()
@@ -171,13 +172,15 @@ def read_config_file(config_file):
     elif method == 'PDASC':
         tam_grupo = config.getint('method', 'tg')
         n_centroides = config.getint('method', 'nc')
-        radio = config.get('method', 'r')
+        n_nodes = config.getint('method', 'n_nodes')  # Number of parallel processing nodes to be used
+        radius = float(config.get('method', 'r'))  # Radius of the neighborhood to be considered
+        # radius = [float(r) for r in config.get('method', 'r').split(', ')] # If we want to use multiple radius values, we can pass them as a list
         algorithm = config.get('method', 'algorithm')  # Possible values kmeans, kmedoids. others to be defined
         implementation = config.get('method', 'implementation')  # Possible values:
         #                  for kmeans: sklearn, kclust
         #                  for kmedoids: sklearnextra, fastkmedoids
 
-        parameters = [dataset, k, distance, method, tam_grupo, n_centroides, radio, algorithm, implementation]
+        parameters = [dataset, k, distance, method, tam_grupo, n_centroides, n_nodes, radius, algorithm, implementation]
 
     elif method == 'FLANN':
         ncentroids = config.getint('method', 'ncentroids')  # At PDASC, ncentroids = tam_grupo*n_centroides = 8*16 = 128

@@ -29,8 +29,9 @@ def explore_experiments(dataset, optional_filters=None):
                 indices, coords, distances, n_dist, search_time = load_neighbors_performance(directory_path + "/" + file)
 
                 # Split the file name to get the information about the experiment
-                # by '_' and '.' characters, except if the '.' is between two digits
-                parts = re.split(r'[_]|(?<!\d)\.(?!\d)', file)
+                # by '_'  and remove the '.hdf5' extension
+                parts = file.split('_')
+                parts[-1] = parts[-1].replace('.hdf5', '')
 
                 # If the method is PDASC
                 if parts[4] == 'PDASC':
@@ -40,7 +41,7 @@ def explore_experiments(dataset, optional_filters=None):
                         'Distance': parts[3],
                         'k': parts[2],
                         'radius': float(parts[7][1:]),
-                        'Algorithm': parts[8],
+                        'n_nodes': parts[8][1:],
                         # 'Implementation': parts[9],
                         'Dist_Computed(Av)': np.mean(n_dist),
                         # Get the recall of the experiment
@@ -80,16 +81,17 @@ def explore_experiments(dataset, optional_filters=None):
         # Aplica el tipo al DataFrame y continúa con el flujo
         formatted_results = (
             df
-            .assign(k=lambda d: d['k'].astype(int),
+            .assign(k=lambda d: d['k'].astype(int), n_nodes=lambda d: d['n_nodes'].astype(int),
+                    radius=lambda d: d['radius'].astype(float) if d['radius'] is not None else None,
                     Distance=lambda d: d['Distance'].astype(distance_type))
-            .sort_values(by=['Method', 'Distance', 'radius', 'k'], ascending=[True, True, True, True])
+            .sort_values(by=['Method', 'Distance', 'radius', 'k', 'n_nodes'], ascending=[True, True, True, True, True])
         )
 
         # Selección de columnas
-        excel_results = formatted_results[['Distance', 'radius', 'Dist_Computed(Av)', 'Recall(Av)', 'Search_Time']]
+        excel_results = formatted_results[['Distance', 'radius', 'n_nodes', 'Dist_Computed(Av)', 'Recall(Av)', 'Search_Time']]
 
         # Orden final
-        excel_results = excel_results.sort_values(by=['Distance', 'radius'])
+        excel_results = excel_results.sort_values(by=['Distance', 'radius', 'n_nodes'])
 
         # Añadir una columna de percentiles
         #percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
