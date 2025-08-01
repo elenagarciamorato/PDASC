@@ -25,13 +25,13 @@ np.random.seed(SEED)
 random.seed(SEED)
 
 #####    INDEX STORAGE AND LOADING FUNCTIONS    #####
-def store_PDASC_index_flue(dataset, distance_function, id_flue, index):
-    file_path = f'benchmarks/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index_{id_flue}.joblib'
+def store_PDASC_index_flue(dataset, distance_function, id_flue, n_flues, index):
+    file_path = f'benchmarks/logs/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_index_{n_flues}-{id_flue}.joblib'
     joblib.dump(index, file_path)
-    print(f"Index for flue {id_flue} stored at {file_path}")
+    print(f"Index for flue {id_flue} stored at {file_path}"),
 
-def load_PDASC_index_flue(dataset, distance_function, id_flue):
-    file_path = f'benchmarks/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index_{id_flue}.joblib'
+def load_PDASC_index_flue(dataset, distance_function, id_flue, n_flues):
+    file_path = f'benchmarks/logs/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_index_{n_flues}-{id_flue}.joblib'
     return joblib.load(file_path)
 
 
@@ -65,17 +65,17 @@ def create_index_flues(training_set, dataset, group_size, n_centroids, n_flues, 
     for i in range(len(indexes_flues)):
         # Store the index for each flue
         print(f"Storing index for flue {i} with {indexes_flues[i][0]} layers")
-        store_PDASC_index_flue(dataset, dist_func, i, indexes_flues[i])
+        store_PDASC_index_flue(dataset, dist_func, i, n_flues, indexes_flues[i])
 
     return None
 
 
 #####    DISTRIBUTED ANN SEARCH FUNCTIONS    #####
-def recursive_ANN_search_flue(id_flue, punto_buscado, dataset, flue_size, n_centroids, dist_function, radius):
+def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_size, n_centroids, dist_function, radius):
 
     # print(f"Processing flue {id_flue}")
 
-    index_flue = load_PDASC_index_flue(dataset, dist_function, id_flue)  # Extraemos el DataFrame de la chimenea (flue) a procesar
+    index_flue = load_PDASC_index_flue(dataset, dist_function, id_flue, n_flues)  # Extraemos el DataFrame de la chimenea (flue) a procesar
     #print(len(index_flue))
 
     n_capas = index_flue[0]
@@ -156,7 +156,7 @@ def recursive_ANN_search_radius_pruning(punto, dataset, vector_training, n_flues
 
     # Empaquetamos todos los argumentos
     args = [
-        (flue, punto_buscado, dataset, flue_size, n_centroids, dist_function, radius)
+        (flue, n_flues, punto_buscado, dataset, flue_size, n_centroids, dist_function, radius)
         for flue in np.arange(n_flues)
     ]
 
@@ -302,6 +302,7 @@ def distributed_ANN_search(vector_testing, vector_training, dataset, n_flues, n_
         indices, coords, distances, n_distances = recursive_ANN_search_radius_pruning(
                 punto, dataset, vector_training, n_flues, n_centroids, dist_function, radius, k
             )
+
         results.append((indices, coords, distances, n_distances))
 
 
