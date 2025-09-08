@@ -1,7 +1,5 @@
-/benchmarks/algorithms/LSH/
-/benchmarks/algorithms/LSH_Forest/
-/benchmarks/algorithms/FLANN/Centroids/
-/benchmarks/algorithms/FLANN/index_
+/ANN_Experiments/algorithms/FLANN/Centroids/
+/ANN_Experiments/algorithms/FLANN/index_
 /data/raw_data/
 /data/wdbc_train_test_set.hdf5
 /data/NYtaxis_train_test_set.hdf5
@@ -10,8 +8,12 @@
 /data/GLOVE10000_train_test_set.hdf5
 /data/GLOVE100000_train_test_set.hdf5
 /data/MNIST_train_test_set.hdf5
-/benchmarks/NearestNeighbors/gaussian-clouds-npc200-True/
-/benchmarks/logs/gaussian-clouds-npc200-True/
-/benchmarks/config/gaussian-clouds-npc200-True/
-/benchmarks/algorithms/FLANN/flann/
+/ANN_Experiments/NearestNeighbors/gaussian-clouds-npc200-True/
+/ANN_Experiments/logs/gaussian-clouds-npc200-True/
+/ANN_Experiments/config/gaussian-clouds-npc200-True/
+/ANN_Experiments/algorithms/FLANN/flann/
 .idea
+/ANN_Experiments/algorithms/IVF/
+/ANN_Experiments/algorithms/NMSLIB_HNSW/
+/PDASC/pdasc_DataFrames_.py
+/publications/

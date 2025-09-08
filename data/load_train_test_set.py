@@ -90,26 +90,31 @@ def load_train_test(dataset_name, test_eq_train=False):
 
     # Load Geographical Dataset (Municipios) dataset and generate train and test sets
     elif dataset_name == "municipios":
-
         # Read the complete dataset from a csv file and store it into a NumpyArray
         datos = pd.read_csv('./data/raw_data/MUNICIPIOS-utf8.csv', sep=';')
         municipios = pd.DataFrame(datos, columns=['LONGITUD_ETRS89', 'LATITUD_ETRS89'])
-        # index = datos_geo.index
-        # cant_ptos = len(index)
+
+        # Convertir a float (reemplazando comas por puntos decimales)
         municipios['LONGITUD_ETRS89'] = municipios['LONGITUD_ETRS89'].str.replace(',', '.').astype(float)
         municipios['LATITUD_ETRS89'] = municipios['LATITUD_ETRS89'].str.replace(',', '.').astype(float)
+
+        # Convertir a numpy array
         municipios = municipios.to_numpy()
 
-        # If normaliza, normalize the dataset
+        # Mezclar aleatoriamente el dataset completo (shuffle)
+        np.random.seed(1234)
+        np.random.shuffle(municipios)
+
+        # Normalizar si corresponde
         if normaliza:
             municipios = preprocessing.normalize(municipios, axis=0, norm='l2')
 
-        # For this experiment,compose the test_set (100 elements not contained on the train set) and the train_set
-        np.random.seed(1234)
+        # Separar en train y test
         index_testing = np.random.choice(len(municipios), test_set_size, replace=False)
         test_set = municipios[index_testing]
-        index_complete = np.linspace(0, len(municipios) - 1, len(municipios), dtype=int)
-        index_training = np.setdiff1d(index_complete, index_testing) #The index training are the elements of the complete dataset wich are not on the test set
+
+        index_complete = np.arange(len(municipios))
+        index_training = np.setdiff1d(index_complete, index_testing)
         train_set = municipios[index_training]
 
         # Save train_set on a txt

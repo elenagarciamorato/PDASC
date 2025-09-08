@@ -9,7 +9,7 @@ It constitutes a reliable ANN search method for large, high-dimensional datasets
 
 <!-- * For further detail, please refer to the associated publication. -->
 
-![PDASC](benchmarks/figures/PDASC_MSA.png)
+![PDASC](docs/PDASC_MSA.png)
 *Figure 1: Workflow of index construction on a single node.*
 
 
@@ -65,7 +65,7 @@ PDASC performance is compared with the results obtained using two robust algorit
 ### Experimental results
 For each dataset, a pointplot illustrates the recall of the targeted algorithms across various distance metrics (Manhattan, Euclidean, Chebyshev, Cosine & Haversine) in approximate $10$ - nearest neighbor search.
 
-![grafos4](benchmarks/figures/4grafos.png)
+![grafos4](ANN_Experiments/figures/4grafos.png)
 *Figure 2: Point plots illustrating the average recall of each ANN method - distance function combination for each dataset under study in 10-NN search experiments.*
 
 As shown by these pointplots, PDASC parametrised with the $k$-medoids clustering algorithm, consistently outperforms alternative indexing methods across all distance functions considered in our study.
@@ -82,7 +82,7 @@ The `experiments_launcher.py` script facilitates the execution of the experiment
 The script expects two arguments:
 - Experiment: The name of the dataset whose experiments should be launched or a single .ini configuration file.
 - Optional Filters: Optional filters to apply to the configuration files (if a directory is provided).<br />
-`python3 -m benchmarks.experiments_launcher <dataset_name_or_ini_file> [optional_filters]`
+`python3 -m ANN_Experiments.experiments_launcher <dataset_name_or_ini_file> [optional_filters]`
 
 #### Configuration Files:
 The configuration files are .ini files that contain the parameters for each experiment to be launched. The parameters include:
@@ -103,7 +103,7 @@ If the configuration file is for an experiment using other methods, it should in
 
 #### Examples:  
 - To run an experiment using a single .ini file:<br />
-`python3 -m benchmarks.experiments_launcher test_knn_NYtimes_10_chebyshev_PDASC_tg1000_nc500_r30_n10.ini`
+`python3 -m ANN_Experiments.experiments_launcher test_knn_NYtimes_10_chebyshev_PDASC_tg1000_nc500_r30_n10.ini`
 - To run experiments for a dataset with optional filters:<br />
 `python3 -m benchmarks.experiments_launcher NYtimes chebyshev PDASC`
 
@@ -114,14 +114,14 @@ The `performance_benchmark.py` script facilitates the the performance evaluation
 The script expects two arguments:
 - Dataset: The name of the dataset whose experiments want to be benchmarked.
 - Optional Filters: Optional filters to only show info about the desired experiments.
-`python3 -m benchmarks.performance_benchmark <dataset_name> [optional_filters]`
+`python3 -m ANN_Experiments.benchmark.performance_benchmark <dataset_name> [optional_filters]`
 
 #### Examples:  
 - To benchmark experiments for a dataset:<br />
-`python3 -m benchmarks.performance_benchmark NYtimes`
+`python3 -m ANN_Experiments.benchmark.performance_benchmark NYtimes`
 
 - To benchmark experiments for a dataset with optional filters:<br />
-`python3 -m benchmarks.performance_benchmark NYtimes chebyshev PDASC`
+`python3 -m ANN_Experiments.benchmark.performance_benchmark NYtimes chebyshev PDASC`
 
 ### Distances Distribution's Generation
 The `distances_distribution_generator.py` script allows generating different Distribution Functions to analyze the distribution of distances in a dataset. 
@@ -129,9 +129,9 @@ These distributions are generate both from a random sample of elements from the 
 
 #### Usage:
 The script should be launched as follows:
-`python3 -m data.distances_distribution_generator -<Distribution_Functions> "('dataset_name', 'distance_function')" -size <size>`
+`python3 -m dataset_analysis.distances_distribution_generator -<Distribution_Functions> "('dataset_name', 'distance_function')" -size <size> -nodes <n_nodes>`
 
-The script expects two arguments:
+The script expects three arguments:
 - The Distribution Function(s) to be generated.
   - `-pdfsNN`: Perform kNN Distances CDF analysis with a tuple or a set of tuples.
   - `-pdfsPW`: Perform Pairwise Distances PDF analysis with a tuple or a set of tuples.
@@ -141,27 +141,28 @@ The script expects two arguments:
   - `-cdfsPW_SS`: Perform Pairwise Distances CDF analysis with varying sample sizes.
   
 - `-size`: Sample size to use, as a percentage of the dataset (integer, e.g., `10` for 10%)
+- `-nodes`: Number of distributed nodes composing the PDASC index.
 
 **Note:** The arguments for the `-pdfsNN`, `-pdfsPW`, `-cdfsNN`,  `-cdfsPW`, `-cdfsNN_SS` and `-cdfsPW_SS` parameters must be provided as Python tuples, e.g., `("dataset_name", "distance_function")`.
 
 #### Examples:
 - kNN Distances PDF Analysis (`-pdfsNN`)
-`python3 -m data.distances_distribution_generator -pdfsNN "('municipios', 'haversine')"  -size 10`
+`python3 -m dataset_analysis.distances_distribution_generator -pdfsNN "('municipios', 'haversine')"  -size 10 -nodes 3`
 
 - Pairwise Distances PDF Analysis (`-pdfsPW`)
-`python3 -m data.distances_distribution_generator -pdfsPW "('municipios', 'haversine')"  -size 10`
+`python3 -m dataset_analysis.distances_distribution_generator -pdfsPW "('municipios', 'haversine')"  -size 10 -nodes 3`
 
 - kNN Distances CDF Analysis (`-cdfsNN`)
-`python3 -m data.distances_distribution_generator -cdfsNN "('municipios', 'haversine')"  -size 10`
+`python3 -m dataset_analysis.distances_distribution_generator -cdfsNN "('municipios', 'haversine')"  -size 10 -nodes 3`
 
 - Pairwise Distances CDF Analysis (`-cdfsPW`)
-`python3 -m data.distances_distribution_generator -cdfsPW "('municipios', 'haversine')"  -size 10`
+`python3 -m dataset_analysis.distances_distribution_generator -cdfsPW "('municipios', 'haversine')"  -size 10 -nodes 3`
 
 - kNN-CDF Analysis for different sample sizes(`-cdfsNN_SS`)
-`python3 -m data.distances_distribution_generator -cdfsNN_SS "('municipios', 'haversine')" `
+`python3 -m dataset_analysis.distances_distribution_generator -cdfsNN_SS "('municipios', 'haversine')" `
 
 - Pairwise Distances CDF Analysis for different sample sizes (`-cdfsPW_SS`)
-`python3 -m data.distances_distribution_generator -pdfsNN_SS "('municipios', 'haversine')" `
+`python3 -m dataset_analysis.distances_distribution_generator -pdfsNN_SS "('municipios', 'haversine')" `
 
 ### Distances Distribution's Evaluation
 The `distances_distribution_evaluation.py` script provides statistical analysis tools to compare distributions of pairwise distances in datasets using the Kolmogorov-Smirnov (KS) test and the Wasserstein distance. 
@@ -169,15 +170,16 @@ It is useful for evaluating how similar or different two distributions (a random
 
 #### Usage:
 The script should be launched as follows:
-`python3 -m data.distances_distribution_evaluation  -dataset <dataset_name> -dist <distance_function> -size <size>`
+`python3 -m dataset_analysis.distances_distribution_evaluation  -dataset <dataset_name> -dist <distance_function> -size <size> -nodes <n_nodes>`
 
-The script expects three arguments:
+The script expects four arguments:
 - Dataset: The name of the dataset to process
 - Distance Function: The distance function to be used for the analysis.
 - `-size`: Sample size to use, as a percentage of the dataset (integer, e.g., `10` for 10%)
+- `-nodes`: Number of distributed nodes composing the PDASC index.
 
 #### Example
-`python3 -m data.distances_distribution_generator -dataset MNIST -dist euclidean -size 10`
+`python3 -m dataset_analysis.distances_distribution_generator -dataset MNIST -dist euclidean -size 10 -nodes 3`
 
 #### Output
 - Prints the KS statistic and its interpretation.

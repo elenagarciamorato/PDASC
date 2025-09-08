@@ -206,7 +206,7 @@ def store_PDASC_index(dataset, distance_function, grupos_capa, puntos_capa, labe
             Labels assigned to each point at each layer.
     """
     # Ruta del archivo HDF5
-    file_path = f'benchmarks/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
+    file_path = f'ANN_Experiments/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
 
     # Store the parameters in an hdf5 file
     with h5py.File(file_path, 'w') as f:
@@ -222,7 +222,7 @@ def store_PDASC_index(dataset, distance_function, grupos_capa, puntos_capa, labe
                 f.create_dataset(f'labels_capa_{i}_{j}', data=np.array(sub_label))
         f.close()
 
-    print(f"Index stored in benchmarks/logs/{dataset}/{dataset}_{distance_function}_index.hdf5")
+    print(f"Index stored in ANN_Experiments/logs/{dataset}/{dataset}_{distance_function}_index.hdf5")
 
 def load_PDASC_index(dataset, distance_function):
     """
@@ -241,7 +241,7 @@ def load_PDASC_index(dataset, distance_function):
         list: The labels assigned to each point at each layer.
     """
     # Ruta del archivo HDF5
-    file_path = f'benchmarks/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
+    file_path = f'ANN_Experiments/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
 
     # Diccionarios para almacenar los datos
     grupos_capa = []

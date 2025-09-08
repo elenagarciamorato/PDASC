@@ -1,14 +1,12 @@
 import logging
-
-import numpy as np
-
 from PDASC.utils import *
-from PDASC.pdasc_ import create_tree, recursive_approximate_knn_search_radius_pruning
+from PDASC.pdasc_ import create_tree
 from multiprocessing import Pool
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 import random
 import joblib
+import os
 
 # Clustering methods to be used: k-means, k-medoids
 # import sklearn.cluster  # k-means sklearn implementation
@@ -24,20 +22,26 @@ SEED = 10
 np.random.seed(SEED)
 random.seed(SEED)
 
+
 #####    INDEX STORAGE AND LOADING FUNCTIONS    #####
-def store_PDASC_index_flue(dataset, distance_function, id_flue, n_flues, index):
-    file_path = f'benchmarks/logs/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_index_{n_flues}-{id_flue}.joblib'
+def store_PDASC_index_flue(dataset, distance_function, n_flues, id_flue, index):
+    # If the directory does not exist, create it
+    os.makedirs(f'ANN_Experiments/NearestNeighbors/{dataset}/indexes', exist_ok=True)
+
+    # Set the path of the file where the index will be stored
+    file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_index_{n_flues}-{id_flue}.joblib'
     joblib.dump(index, file_path)
     print(f"Index for flue {id_flue} stored at {file_path}"),
 
-def load_PDASC_index_flue(dataset, distance_function, id_flue, n_flues):
-    file_path = f'benchmarks/logs/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_index_{n_flues}-{id_flue}.joblib'
+
+def load_PDASC_index_flue(dataset, distance_function, n_flues=1, id_flue=1):
+    file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_index_{n_flues}-{id_flue}.joblib'
     return joblib.load(file_path)
 
 
 #####    DISTRIBUTED INDEX BUILDING FUNCTIONS    #####
-def create_index_flues(training_set, dataset, group_size, n_centroids, n_flues, dist_func, algorithm, implementation):
 
+def simulate_flue_partitioning(training_set, n_flues):
     # Total number of points in the training set
     n_total = training_set.shape[0]
 
@@ -48,6 +52,13 @@ def create_index_flues(training_set, dataset, group_size, n_centroids, n_flues, 
 
     # We split the training set into partitions of size tam_nodos
     training_set_partitions = [np.array(training_set[i:i + tam_nodos]) for i in range(0, len(training_set), tam_nodos)]
+
+    return training_set_partitions
+
+def create_index_flues(training_set, dataset, group_size, n_centroids, n_flues, dist_func, algorithm, implementation):
+
+    # Simulate the partitioning of the training set into flues
+    training_set_partitions = simulate_flue_partitioning(training_set, n_flues)
 
     # We build the lowest layer of the PDASC index
 
@@ -64,10 +75,10 @@ def create_index_flues(training_set, dataset, group_size, n_centroids, n_flues, 
 
     for i in range(len(indexes_flues)):
         # Store the index for each flue
-        print(f"Storing index for flue {i} with {indexes_flues[i][0]} layers")
-        store_PDASC_index_flue(dataset, dist_func, i, n_flues, indexes_flues[i])
+        print(f"Storing index for flue {i} of {n_flues} with {indexes_flues[i][0]} layers")
+        store_PDASC_index_flue(dataset, dist_func, n_flues, i, indexes_flues[i])
 
-    return None
+    return True
 
 
 #####    DISTRIBUTED ANN SEARCH FUNCTIONS    #####
@@ -75,7 +86,7 @@ def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_siz
 
     # print(f"Processing flue {id_flue}")
 
-    index_flue = load_PDASC_index_flue(dataset, dist_function, id_flue, n_flues)  # Extraemos el DataFrame de la chimenea (flue) a procesar
+    index_flue = load_PDASC_index_flue(dataset, dist_function, n_flues, id_flue)  # Extraemos el DataFrame de la chimenea (flue) a procesar
     #print(len(index_flue))
 
     n_capas = index_flue[0]
@@ -312,4 +323,6 @@ def distributed_ANN_search(vector_testing, vector_training, dataset, n_flues, n_
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances
 
 
+def PDASC_accepted_distances():
+    return ['cityblock', 'cosine', 'euclidean', 'l1', 'l2', 'manhattan', 'braycurtis', 'canberra', 'chebyshev', 'correlation', 'dice', 'hamming', 'jaccard', 'kulsinski', 'mahalanobis', 'minkowski', 'rogerstanimoto', 'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean', 'yule']
 

@@ -1,6 +1,6 @@
 import os, sys, argparse
 from PDASC.pdasc_ import *
-from benchmarks.neighbors_utils import read_config_file
+from ANN_Experiments.neighbors_utils import read_config_file
 from sklearn.preprocessing import normalize
 
 import data.load_train_test_set as lts
@@ -8,12 +8,12 @@ import data.load_train_test_set as lts
 
 def PDASC_index_genenator(dataset, optional_filters=None):
 
-    # PDASC_config_files = [f for f in os.listdir("./benchmarks/config/" + dataset) if f.endswith('.ini') and 'PDASC' in f]
+    # PDASC_config_files = [f for f in os.listdir("./ANN_Experiments/config/" + dataset) if f.endswith('.ini') and 'PDASC' in f]
 
 
     # Check if the argument correspond to a directory
-    if os.path.isdir("./benchmarks/config/" + dataset):
-        PDASC_config_files = [f for f in os.listdir("./benchmarks/config/" + dataset) if f.endswith('.ini') and 'PDASC' in f]
+    if os.path.isdir("./ANN_Experiments/config/" + dataset):
+        PDASC_config_files = [f for f in os.listdir("./ANN_Experiments/config/" + dataset) if f.endswith('.ini') and 'PDASC' in f]
 
         # Apply optional filter if provided
         if optional_filters:
