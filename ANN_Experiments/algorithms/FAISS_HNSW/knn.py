@@ -29,6 +29,7 @@ def FAISS_HNSW(config_file):
     logging.info('Indexing time= %s seconds', end_time_fit - start_time_fit)
 
     # Save the index to a file
+    os.makedirs(f'ANN_Experiments/NearestNeighbors/{dataset}/indexes', exist_ok=True) # If the directory does not exist, create it
     path = f"./ANN_Experiments/NearestNeighbors/{dataset}/indexes/FAISSHNSW_{dataset}_{metric}_M{M}_efC{efConstruction}_index.joblib"
 
     # Store the index using the customised function (in a joblib format))

@@ -2,10 +2,44 @@ import numpy as np
 import pynndescent
 
 
-def PYNN_nn_index(dataset, distance_type):
+def PYNN_nn_index(dataset, distance, n_neighbors, diversify_prob, pruning_degree_multiplier):
 
     # Create a PYNN instance and build and index
-    index = pynndescent.NNDescent(dataset, metric=distance_type)
+    # index = pynndescent.NNDescent(dataset, metric=distance_type)
+
+    """
+    ## Configuracion (buena para PDASC mala para PYNN) para MNIST
+    index = pynndescent.NNDescent(
+        dataset,
+        # n_neighbors=10,  # muy pequeño → grafo ligero - default=15
+        n_trees=2,  # un solo árbol → construcción ultrarápida - default=10
+        n_iters=2,  # pocas iteraciones → baja convergencia - default = 10
+        max_candidates=5,  # pocos candidatos - default = 60
+        # delta=0.001,  # actualiza poco → menos refinamiento - default = 0.001
+    )
+    """
+
+    """
+    index = pynndescent.NNDescent(
+        dataset,
+        metric=distance,
+        n_neighbors=n_neighbors,  # muy pequeño → grafo ligero - default=15
+        n_trees=n_trees,  # un solo árbol → construcción ultrarápida
+        n_iters=n_iters,  # pocas iteraciones → baja convergencia - default = 10
+        max_candidates=max_candidates,  # pocos candidatos - default = 60
+        delta=delta,  # actualiza poco → menos refinamiento - default = 0.001
+    )
+    """
+
+    index = pynndescent.NNDescent(
+        dataset,
+        metric=distance,
+        n_neighbors = n_neighbors, # default=30
+        diversify_prob = diversify_prob, # default=1 -> probability that an edge identified as redundant will get pruned
+        pruning_degree_multiplier = pruning_degree_multiplier # default=1.5 ->Higher multiples result in more accurate graphs with more edges that take longer to search
+
+    )
+
     index.prepare()
 
     return index
@@ -45,10 +79,12 @@ def PYNN_nn_search(train_set, test_set, k, d, index, epsilon):
     # and the distance used to build it
 
     estimated_distances = 0
+
     for f in range(test_set.shape[0]):
         # print("Point number " + str(f))
 
         neighbors = index.query([test_set[f]], k, epsilon=epsilon)
+
 
         # Estimate the number of distance computations as the number of points examined by PYNN
         n_neighbors = min(30, train_set.shape[0])  # PYNN by default examines 30 neighbors
@@ -64,7 +100,7 @@ def PYNN_nn_search(train_set, test_set, k, d, index, epsilon):
     #logging.info(str(k) + "-Nearest Neighbors found using PYNN + " + distance_type + " distance + " + algorithm + " algorithm.")
 
     # The number of distance computations required to obtain the knn are unknown
-    n_distances = int(estimated_distances/test_set.shape[0])
+    n_distances = np.nan
 
     return np.array(lista_indices), np.array(lista_coords), np.array(lista_dists), n_distances
 

@@ -36,16 +36,34 @@ Although the only requirement for the clustering algorithm used to construct the
 | **k-medoids** | `kmedoids`: `kmedoids.fasterpam`    | cityblock, cosine, euclidean, l1, l2, manhattan, braycurtis, canberra, chebyshev, correlation, dice, hamming, jaccard, kulsinski, mahalanobis, minkowski, rogerstanimoto, russellrao, seuclidean, sokalmichener, sokalsneath, sqeuclidean, yule |
 
 ## Experimental Evaluation
-A comprehensive evaluation of PDASC is presented through a series of experiments. In this study, $k$-medoids has been used due to its compatibility with a wide range of distances.
 
-### Datasets:
-| Dataset                                                       | Label       | N         | Dimensionality | High Sparsity | Data Type  | 
-|---------------------------------------------------------------|-------------|-----------|----------------|---------------|------------|
-| [**Municipalities**](https://doi.org/10.5281/zenodo.12759082) | X_muni      | 8,130     | 2              | No            | Geospatial |
-| [**MNIST**](https://doi.org/10.5281/zenodo.12759284)          | X_MNIST     | 69,000    | 784            | Yes           | Image      |
-| [**GLOVE**](https://doi.org/10.5281/zenodo.12759356)          | X_GLOVE     | 1,000,000 | 100            | No            | Text       |
-| [**NYtimes**](https://doi.org/10.5281/zenodo.12760693)        | X_NYtimes   | 290,000   | 256            | No            | Text       |
+The effectiveness of the proposed method is validated through a two-fold evaluation: performance and quality, in comparison with other approaches.  
+- **Performance** is assessed by reporting the number of distance computations required during the search.  
+- **Quality** is evaluated through the recall obtained with respect to the ground-truth set of 10 nearest neighbours (Recall@10).  
 
+
+### Approximate Algorithms Comparison:
+The provided API allows the user to easily replicate the experiments and compare the performance of PDASC with a diverse set of state-of-the-art ANN algorithms, which differ in their index construction strategies and search methodologies:
+
+* __PyNNDescent__: a graph-based algorithm that builds an approximate k-NN graph through stochastic descent, connecting each point to its neighbours in an iterative refinement process.  
+
+* __HNSW (Hierarchical Navigable Small World Graphs, FAISS)__: another graph-based approach, but one that organizes data into multiple hierarchical layers of proximity graphs, enabling efficient navigation through the index.  
+
+* __IVF (Inverted File Index, FAISS)__: a clustering-based method that partitions the dataset into Voronoi cells around centroids, restricting searches to the most relevant clusters.  
+
+* __LSH (Locality-Sensitive Hashing, FAISS)__: a hashing-based technique that projects data into hash buckets using similarity-preserving functions, so that close points are likely to fall into the same bucket.  
+
+<!--
+### Experimental results
+For each dataset, a pointplot illustrates the recall of the targeted algorithms across various distance metrics (Manhattan, Euclidean, Chebyshev, Cosine & Haversine) in approximate $10$ - nearest neighbor search.
+
+![grafos4](ANN_Experiments/figures/4grafos.png)
+*Figure 2: Point plots illustrating the average recall of each ANN method - distance function combination for each dataset under study in 10-NN search experiments.*
+
+As shown by these pointplots, PDASC parametrised with the $k$-medoids clustering algorithm, consistently outperforms alternative indexing methods across all distance functions considered in our study.
+
+These results not only validate PDASC as a reliable ANN search method for large, high-dimensional datasets that cannot feasibly be processed on a single machine and for those where selecting the optimal distance function is non-trivial, but also supports the core hypothesis of our research: employing distance functions beyond the Euclidean metric can yield superior results for approximate nearest-neighbour queries, depending on the dataset's specific characteristics.
+-->
 ### Distance Functions Employed:
 
 | Distance      | API         | Equation                                                                                                                                                                                                                                                                                                                   |
@@ -57,20 +75,15 @@ A comprehensive evaluation of PDASC is presented through a series of experiments
 | **Cosine**    | `cosine`    | ![d(x, y) = 1 - \frac{\sum_{i=1}^n x_i y_i}{\sqrt{\sum_{i=1}^n x_i^2} \sqrt{\sum_{i=1}^n y_i^2}}](https://latex.codecogs.com/svg.latex?d%28x%2C%20y%29%20%3D%201%20-%20%5Cfrac%7B%5Csum_%7Bi%3D1%7D%5En%20x_i%20y_i%7D%7B%5Csqrt%7B%5Csum_%7Bi%3D1%7D%5En%20x_i%5E2%7D%20%5Csqrt%7B%5Csum_%7Bi%3D1%7D%5En%20y_i%5E2%7D%7D) |
 | **Haversine** | `haversine` | ![d(x, y) = 2r \arcsin\left(\sqrt{\sin^2\left(\frac{\phi_2 - \phi_1}{2}\right) + \cos(\phi_1) \cos(\phi_2) \sin^2\left(\frac{\lambda_2 - \lambda_1}{2}\right)}\right)](https://latex.codecogs.com/svg.latex?d%28x%2C%20y%29%20%3D%202r%20%5Carcsin%5Cleft%28%5Csqrt%7B%5Csin%5E2%5Cleft%28%5Cfrac%7B%5Cphi_2%20-%20%5Cphi_1%7D%7B2%7D%5Cright%29%20%2B%20%5Ccos%28%5Cphi_1%29%20%5Ccos%28%5Cphi_2%29%20%5Csin%5E2%5Cleft%28%5Cfrac%7B%5Clambda_2%20-%20%5Clambda_1%7D%7B2%7D%5Cright%29%7D%5Cright%29) |
 
-### Approximate Algorithms Comparision:
-PDASC performance is compared with the results obtained using two robust algorithms, PyNN and FLANN, which differ in their index construction strategies but are renowned for their scalability in approximate similarity searches on large datasets.
-* __PyNNDescent__  a Python-based implementation of the NNDescent algorithm that efficiently performs nearest neighbour searches by building a graph-based index connecting each data point to its approximate nearest neighbours. 
-<!-- * * __FLANN__ an efficient, tree-based method that applies random projection and hierarchical partitioning to create index structures that accelerate search operations. -->
 
-### Experimental results
-For each dataset, a pointplot illustrates the recall of the targeted algorithms across various distance metrics (Manhattan, Euclidean, Chebyshev, Cosine & Haversine) in approximate $10$ - nearest neighbor search.
+### Datasets:
+| Dataset                                                       | Label     | N         | Dimensionality | Distance  | Data Type  | 
+|---------------------------------------------------------------|-----------|-----------|----------------|-----------|------------|
+| [**Municipalities**](https://doi.org/10.5281/zenodo.12759082) | X_muni    | 8,130     | 2              | Haversine | Geospatial |
+| [**MNIST**](https://doi.org/10.5281/zenodo.12759284)          | X_MNIST   | 69,000    | 784            | Euclidean | Image      |
+| [**GLOVE**](https://doi.org/10.5281/zenodo.12759356)          | X_GLOVE   | 1,000,000 | 100            | Cosine    | Text       |
+| [**NYtimes**](https://doi.org/10.5281/zenodo.12760693)        | X_NYtimes | 290,000   | 256            | Cosine    | Text       |
 
-![grafos4](ANN_Experiments/figures/4grafos.png)
-*Figure 2: Point plots illustrating the average recall of each ANN method - distance function combination for each dataset under study in 10-NN search experiments.*
-
-As shown by these pointplots, PDASC parametrised with the $k$-medoids clustering algorithm, consistently outperforms alternative indexing methods across all distance functions considered in our study.
-
-These results not only validate PDASC as a reliable ANN search method for large, high-dimensional datasets that cannot feasibly be processed on a single machine and for those where selecting the optimal distance function is non-trivial, but also supports the core hypothesis of our research: employing distance functions beyond the Euclidean metric can yield superior results for approximate nearest-neighbour queries, depending on the dataset's specific characteristics.
 
 ## API description
 This appendix is a guide to the usage of the PDASC Experiments Launcher and Benchmarking tool. Both are designed to facilitate the execution of approximate k-Nearest Neighbours searches by using the proposed method but also several SOTA related algorithms, then evaluating its performance on different contexts.

@@ -127,7 +127,7 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
         excel_results = formatted_results[['Distance', 'radius', 'n_nodes', 'Config', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'Query_T(Av)(s)', 'Index_Size(MB)']]
 
         # Orden final
-        excel_results = excel_results.sort_values(by=['Distance', 'radius', 'n_nodes'])
+        excel_results = excel_results.sort_values(by=['Distance', 'n_nodes', 'radius'])
 
         # Añadir una columna de percentiles
         #percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
@@ -171,6 +171,7 @@ if __name__ == "__main__":
     parser.add_argument("dataset", help="Name of the dataset whose results would be benchmarked", type=str)
     parser.add_argument("distance_function", help="Distance function used to carry out the experiment", type=str)
     parser.add_argument("optional_filters", help="Benchmark optional filters", nargs='*', default=[])
+    parser.add_argument('--log', action='store_true', help="Activa el registro en log")
 
     args = parser.parse_args()
 
@@ -179,13 +180,16 @@ if __name__ == "__main__":
     current_time = datetime.datetime.now()
     formatted_time = current_time.strftime("%d-%m-%Y_%H:%M")
 
-    logging.basicConfig(
-        filename="./ANN_Experiments/logs/" + args.dataset + "/benchmark_knn_" + args.dataset + "_" + args.distance_function + "_" + str(formatted_time) + ".log",
-        filemode='w', format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
+    if args.log:
+        logging.basicConfig(
+            filename="./ANN_Experiments/logs/" + args.dataset + "/benchmark_knn_" + args.dataset + "_" + args.distance_function + "_" + str(formatted_time) + ".log",
+            filemode='w', format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
 
-    logging.info('------------------------------------------------------------------------')
-    logging.info('                    %s Dataset Benchmarking for %s distance function', args.dataset, args.distance_function)
-    logging.info('------------------------------------------------------------------------')
+        logging.info('------------------------------------------------------------------------')
+        logging.info('                    %s Dataset Benchmarking for %s distance function', args.dataset, args.distance_function)
+        logging.info('------------------------------------------------------------------------')
+    else:
+        logging.disable(logging.CRITICAL)
 
     # Explore the results of the experiments regarding the dataset provided
     df = explore_experiments(args.dataset, args.distance_function, args.optional_filters)

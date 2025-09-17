@@ -25,10 +25,9 @@ random.seed(SEED)
 
 #####    INDEX STORAGE AND LOADING FUNCTIONS    #####
 def store_PDASC_index_flue(dataset, distance_function, n_flues, id_flue, index):
-    # If the directory does not exist, create it
-    os.makedirs(f'ANN_Experiments/NearestNeighbors/{dataset}/indexes', exist_ok=True)
 
     # Set the path of the file where the index will be stored
+    os.makedirs(f'ANN_Experiments/NearestNeighbors/{dataset}/indexes', exist_ok=True) # If the directory does not exist, create it
     file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_index_{n_flues}-{id_flue}.joblib'
     joblib.dump(index, file_path)
     print(f"Index for flue {id_flue} stored at {file_path}"),

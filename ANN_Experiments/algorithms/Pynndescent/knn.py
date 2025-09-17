@@ -9,7 +9,7 @@ from timeit import default_timer as timer
 def PYNN(config_file):
 
     # Read config file containing experiment's parameters
-    dataset, k, distance, method, epsilon = read_config_file(config_file)
+    dataset, k, distance, method, n_neighbors, diversify_prob, pruning_degree_multiplier, epsilon = read_config_file(config_file)
 
     # Check if the distance and choosen is valid:
     if distance not in PYNN_accepted_distances() :
@@ -22,6 +22,10 @@ def PYNN(config_file):
         dataset) + " dataset using " + str(distance) + " distance. ----")
     logging.info('------------------------------------------------------------------------\n')
 
+    logging.info('Parameters for the experiment:')
+    logging.info('- n_neighbors = ' + str(n_neighbors))
+    logging.info('- diversify_prob = ' + str(diversify_prob))
+    logging.info('- pruning_degree_multiplier = ' + str(pruning_degree_multiplier))
     logging.info('- epsilon = ' + str(epsilon) + '\n')
 
     # Regarding the dataset name, set the file name to load the train and test set
@@ -41,12 +45,13 @@ def PYNN(config_file):
 
     # Using PYNN, build the index tree and generate the num_centroids describing the data
     start_time_i = timer()
-    pynn_index = PYNN_nn_index(train_set, distance)
+    pynn_index = PYNN_nn_index(train_set, distance, n_neighbors, diversify_prob, pruning_degree_multiplier)
     end_time_i = timer()
     logging.info('Index time= %s seconds', end_time_i - start_time_i)
 
     # Store index on disk
-    path = f"./ANN_Experiments/NearestNeighbors/{dataset}/indexes/PYNN_{dataset}_{distance}_index.joblib"
+    os.makedirs(f'ANN_Experiments/NearestNeighbors/{dataset}/indexes', exist_ok=True) # If the directory does not exist, create it
+    path = f"./ANN_Experiments/NearestNeighbors/{dataset}/indexes/PYNN_{dataset}_{distance}_nn{n_neighbors}_div{diversify_prob}_pru{pruning_degree_multiplier}_index.joblib"
     store_index(pynn_index, path)
 
     # Using PYNN and the index built, search for the knn nearest neighbors
@@ -57,7 +62,7 @@ def PYNN(config_file):
     search_time = end_time_s - start_time_s
 
     # Get index size
-    index_size = get_index_size(dataset, 'PYNN', distance, np.nan)
+    index_size = get_index_size(dataset, 'PYNN', distance, {'n_neighbors': n_neighbors, 'diversify_prob': diversify_prob, 'pruning_degree_multiplier': pruning_degree_multiplier})
     # Drop from disk the file located in path containing the index to save space
     os.remove(path)
 
@@ -71,7 +76,7 @@ def PYNN(config_file):
     # knn = zip(indices, coords, dists)
 
     # Regarding the knn, method, dataset_name and distance choosen, set the file name to store the neighbors
-    file_name = f"./ANN_Experiments/NearestNeighbors/{dataset}/knn_{dataset}_{k}_{distance}_{method}_eps{epsilon}.hdf5"
+    file_name = f"./ANN_Experiments/NearestNeighbors/{dataset}/knn_{dataset}_{k}_{distance}_{method}_nn{n_neighbors}_div{diversify_prob}_pru{pruning_degree_multiplier}_eps{epsilon}.hdf5"
     # Store indices, coords and dist into a hdf5 file
     save_neighbors_and_performance(indices, coords, dists, n_distances, search_time, index_size, file_name)
 

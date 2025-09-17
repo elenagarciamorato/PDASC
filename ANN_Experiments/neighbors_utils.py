@@ -194,8 +194,15 @@ def read_config_file(config_file):
         parameters = [dataset, k, distance, method, ncentroids, algorithm]
 
     elif method == 'PYNN':
+        # Query parameters
+        n_neighbors = config.getint('method', 'n_neighbors')
+        diversify_prob = config.getfloat('method', 'diversify_prob')
+        pruning_degree_multiplier = config.getfloat('method', 'pruning_degree_multiplier')
+
+        # Search parameters
         epsilon = config.getfloat('method', 'epsilon')  # Approximation factor
-        parameters = [dataset, k, distance, method, epsilon]
+
+        parameters = [dataset, k, distance, method, n_neighbors, diversify_prob, pruning_degree_multiplier, epsilon]
 
     elif method == 'IVF':
         nlist = config.get('method', 'nlist')
@@ -254,7 +261,12 @@ def get_index_size(dataset, method, distance, method_params):
         index_file = f"{str(dataset)}_{str(distance)}_index_{n_nodes}-{0}.joblib"
 
     elif method == 'PYNN':
-        index_file = f"{str(method)}_{str(dataset)}_{str(distance)}_index.joblib"
+        print('Getting PYNN index size')
+        n_neighbors = method_params['n_neighbors']
+        diversify_prob = method_params['diversify_prob']
+        pruning_degree_multiplier = method_params['pruning_degree_multiplier']
+        index_file = f"PYNN_{str(dataset)}_{str(distance)}_nn{n_neighbors}_div{diversify_prob}_pru{pruning_degree_multiplier}_index.joblib"
+        #index_file = f"{str(method)}_{str(dataset)}_{str(distance)}_index.joblib"
 
     elif method == 'IVF':
         nlist = method_params['nlist']

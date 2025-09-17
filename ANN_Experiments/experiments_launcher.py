@@ -55,7 +55,7 @@ def experiment(config_file):
 
 
 # Function to execute the experiments described in the configuration files provided
-def execute_experiments(argument, optional_filters=None):
+def execute_experiments(argument, log, optional_filters=None):
 
     # Check if the argument is a single .ini file
     if argument.endswith('.ini'):
@@ -80,10 +80,15 @@ def execute_experiments(argument, optional_filters=None):
     current_time = datetime.datetime.now()
     formatted_time = current_time.strftime("%d-%m-%Y_%H:%M")
 
-    # Create a log file to store the performance of the k-nn experiments
-    logging.basicConfig(
-        filename="./ANN_Experiments/logs/" + dataset_name + "/test_knn_" + dataset_name + "_" + str(formatted_time) + ".log",
-        filemode='w', format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
+
+    # Crear archivo de log solo si se pasan filtros opcionales, si no, deshabilitar logging
+    if log:
+        logging.basicConfig(
+            filename="./ANN_Experiments/logs/" + dataset_name + "/test_knn_" + dataset_name + "_" + str(
+                formatted_time) + ".log",
+            filemode='w', format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
+    else:
+        logging.disable(logging.CRITICAL)
 
     logging.info('------------------------------------------------------------------------')
     logging.info('                    Experiments launcher for %s Dataset', dataset_name)
@@ -122,11 +127,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("argument", help="Name of the dataset or a single .ini file", type=str)
     parser.add_argument("optional_filters", help="Optional filters for .ini files", nargs='*', default=[])
+    parser.add_argument('--log', action='store_true', help="Activa el registro en log")
 
     args = parser.parse_args()
 
     multiprocessing.set_start_method("fork")  # Solo si da problemas sin él (UNIX systems)
 
-    execute_experiments(args.argument, args.optional_filters)
+    execute_experiments(args.argument, args.log, args.optional_filters)
 
     #exit(0)

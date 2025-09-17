@@ -111,20 +111,21 @@ class FaissHNSW():
         for i in range(nq):
             # Resetear estadísticas antes de la búsqueda
             faiss.cvar.hnsw_stats.reset()
+            faiss.cvar.hnsw_stats.enable = True
             Di, Ii = self.index.search(queries[i:i + 1, :], k)
             lista_indices.append(Ii[0])
             lista_dists.append(Di[0])
+
             # Obtener estadísticas de distancias computadas
+            # leer estadísticas
+            s = faiss.cvar.hnsw_stats
+            print("Visitas en niveles altos (n1):", s.n1)
+            print("Visitas en nivel base (n2):", s.n2)
+            print("Comparaciones de distancia (ndis):", s.ndis)
+            print("Saltos totales en grafo (nhops):", s.nhops)
 
-            #print(dir(faiss.cvar.hnsw_stats))
-            #n1 = faiss.cvar.hnsw_stats.n1  # Setup/inicialización por query
-            #print(n1)
-            #n2 = faiss.cvar.hnsw_stats.n2  # Operaciones de nivel superior
-            #print(n2)
-            n3 = faiss.cvar.hnsw_stats.ndis  # Operaciones principales (distancias/comparaciones)
-
-            n_distances = n3
-
+            # Guardar el número de distancias computadas para esta query
+            n_distances = faiss.cvar.hnsw_stats.ndis  # Operaciones principales (distancias/comparaciones)
             lista_n_distances.append(n_distances)
 
         # Obtener estadísticas de distancias computadas => Normalmente no es el contador bueno
