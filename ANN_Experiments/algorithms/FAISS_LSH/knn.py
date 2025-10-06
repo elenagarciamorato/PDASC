@@ -26,6 +26,8 @@ def FAISS_LSH(config_file):
     faiss_lsh = FaissLSH(metric, nbits).LSH_nn_index(train_set)
     end_time_fit = timer()
 
+    index_time = end_time_fit - start_time_fit
+
     logging.info('Indexing time= %s seconds', end_time_fit - start_time_fit)
 
     # Save the index to a file
@@ -62,8 +64,8 @@ def FAISS_LSH(config_file):
 
     # Store indices, coords and dist into a hdf5 file
     file_name = f"./ANN_Experiments/NearestNeighbors/{dataset}/knn_{dataset}_{k}_{metric}_{method}_nbits{nbits}.hdf5"
-    
-    save_neighbors_and_performance(indices, coords, dists, n_distances, search_time, index_size, file_name)
+
+    save_neighbors_and_performance(indices, coords, dists, n_distances, index_size, index_time, search_time, file_name)
 
 
 

@@ -75,7 +75,7 @@ def load_neighbors(file_name):
             return np.array(hdf5_file['indices']), np.array(hdf5_file['coords']), np.array(hdf5_file['dists'])
 
 # Store neighbors (indices, coords and dist) and performance (n_distances, search time and index_size) into a hdf5 file
-def save_neighbors_and_performance(indices, coords, dists, n_distances, search_time, index_size, file_name):
+def save_neighbors_and_performance(indices, coords, dists, n_distances, index_size, index_time, search_time, file_name):
 
     # Store the 3 different matrix on a hdf5 file
     with h5py.File(file_name, 'w') as f:
@@ -86,13 +86,15 @@ def save_neighbors_and_performance(indices, coords, dists, n_distances, search_t
 
         dset4 = f.create_dataset('n_distances', data=n_distances)
 
-        dset5 = f.create_dataset('search_time', data=search_time)
+        dset5 = f.create_dataset('index_size', data=index_size)
 
-        dset6 = f.create_dataset('index_size', data=index_size)
+        dset6 = f.create_dataset('index_time', data=index_time)
+        dset7 = f.create_dataset('search_time', data=search_time)
 
 
-        print(f"Neighbors, distances computed, search time and index size stored at {file_name}")
-        logging.info(f"Neighbors distances computed and search time and indez size stored at {file_name}")
+
+        print(f"Neighbors, distances computed, index/search time and index size stored at {file_name}")
+        logging.info(f"Neighbors distances computed and index/search time and indez size stored at {file_name}")
         f.close()
 
 
@@ -105,7 +107,7 @@ def load_neighbors_performance(file_name):
         print(f"File {file_name} does not exist")
         logging.info(f"File {file_name} does not exist\n")
 
-        return None, None, None, None, None, None
+        return None, None, None, None, None, None, None
 
     # If the file exists
     else:
@@ -115,7 +117,7 @@ def load_neighbors_performance(file_name):
             print(f"Loading neighbors, computed distances and search time from {file_name}")
             logging.info(f"Loading neighbors, computed distances and search time from {file_name}")
 
-            return np.array(hdf5_file['indices']), np.array(hdf5_file['coords']), np.array(hdf5_file['dists']), np.array(hdf5_file['n_distances']), np.array(hdf5_file['search_time']), np.array(hdf5_file['index_size'])
+            return np.array(hdf5_file['indices']), np.array(hdf5_file['coords']), np.array(hdf5_file['dists']), np.array(hdf5_file['n_distances']), np.array(hdf5_file['index_size']), np.array(hdf5_file['index_time']) if 'index_time' in hdf5_file else np.nan, np.array(hdf5_file['search_time'])
 
 
 

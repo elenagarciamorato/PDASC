@@ -881,21 +881,28 @@ def plot_cdfs_pairwise_dataset_flues(dataset, distance_function, sample, n_nodes
         labs(
             x=f'{distance_function.capitalize()} Distance',
             y='Probability',
-            title=f"CDFs for {dataset} with {distance_function} ({n_nodes} nodes)"
+            # title=f"CDFs for {dataset} with {distance_function} ({n_nodes} nodes)"
         ) +
         scale_y_continuous(limits=(0, 1), breaks=np.arange(0, 1.1, 0.1)) +
-        scale_x_continuous(breaks=np.linspace(0, max(df_all['distance']), num=10)) +
+        scale_x_continuous(breaks=np.linspace(0, max(df_all['distance']), num=5), labels=lambda l: [f"{x:.3f}" for x in l]) +
         facet_wrap('~node') +
         theme_minimal(base_size=13) +
         theme(
-            figure_size=(16, 10),
-            legend_position="bottom"
+            figure_size=(10, 4),
+            ##legend_position="bottom",
+            legend_position="none",
+            axis_text_x=element_text(size=9),
+            axis_text_y=element_text(size=9),  # Cambia el tamaño de la letra del eje X
+            axis_title_x=element_text(size=11),
+            axis_title_y=element_text(size=11),
+            aspect_ratio=1
         )
     )
 
     p = p + theme(
-        figure_size=(16, 10),
-        legend_position="bottom",
+        figure_size=(10, 4),
+        ##legend_position="bottom",
+        legend_position="none",
         panel_background=element_rect(fill='white', color='black'),  # fondo panel blanco
         plot_background=element_rect(fill='white', color='white'),  # fondo figura blanco
         plot_title = element_text(ha='center')
@@ -903,9 +910,11 @@ def plot_cdfs_pairwise_dataset_flues(dataset, distance_function, sample, n_nodes
 
     out_path = f'./dataset_analysis/{dataset}'
     os.makedirs(out_path, exist_ok=True)
-    filename = f'{dataset}_{distance_function}_pairwise_comparision_overlap_{sample_size}_{n_nodes}.png'
+    filename = f'{dataset}_{distance_function}_pairwise_comparision_overlap_{sample_size}_{n_nodes}_paper.jpg'
 
     # Guardar en formato rasterizado (PNG real)
+    # Muestra por pantalla el gráfico (con show quizas)
+    # print(p)
     ggsave(p, os.path.join(out_path, filename), dpi=150, format='png')
 
 

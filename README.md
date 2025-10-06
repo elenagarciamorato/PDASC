@@ -112,6 +112,9 @@ If the configuration file is for an experiment using PDASC, it should also inclu
 - `algorithm`: The algorithm to be used for the search (e.g., `kmedoids`).
 - `implementation`: The implementation of the algorithm to be used (e.g., `fasterpam`).
 
+In case of employing the proposed pruning strategy, the configuration file should replace the `r` parameter with:
+- `d_threshold`: The distance threshold to be used for pruning the search space in NSA.
+
 If the configuration file is for an experiment using other methods, it should include the initial parameters that are required to configure it.
 
 #### Examples:  

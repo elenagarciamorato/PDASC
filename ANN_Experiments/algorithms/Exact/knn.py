@@ -33,6 +33,8 @@ def Exact(config_file):
     knn_index = Exact_nn_index(vector_training, distance, exact_algorithm)
     end_time_i = timer()
 
+    index_time = end_time_i - start_time_i
+
     logging.info('Index time= %s seconds', end_time_i - start_time_i)
 
     # Store index on disk to obtain its size
@@ -57,7 +59,7 @@ def Exact(config_file):
     file_name = "./ANN_Experiments/NearestNeighbors/" + dataset + "/knn_" + dataset + "_" + str(k) + "_" + distance + "_" + method + "_" + exact_algorithm + ".hdf5"
 
     # Store indices, coords and dist into a hdf5 file
-    save_neighbors_and_performance(indices, coords, dists, n_dist, search_time, 0, file_name)
+    save_neighbors_and_performance(indices, coords, dists, n_dist, 0, index_time, search_time, file_name)
 
     # Print
     # print_knn(train_set, test_set, coords, dataset_name, d, "Exact", k)

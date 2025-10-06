@@ -52,7 +52,7 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
             if file.endswith('.hdf5'):
 
                 # Load the neighbors and performance of the k-nn experiments associated to that file
-                indices, coords, distances, n_dist, search_time, index_size = load_neighbors_performance(directory_path + "/" + file)
+                indices, coords, distances, n_dist, index_size, index_time, search_time = load_neighbors_performance(directory_path + "/" + file)
 
                 # Split the file name to get the information about the experiment
                 # by '_'  and remove the '.hdf5' extension
@@ -76,7 +76,8 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
                         'Recall(Av)': get_recall(dataset, parts[2], distance_function, indices, coords, distances),
                         'Search_T(s)': np.round(search_time, 2),
                         'Query_T(Av)(s)': np.round(search_time/len(indices), 4),
-                        'Index_Size(MB)': index_size
+                        'In_S(MB)': index_size,
+                        'In_T(s)': np.round(index_time, 2)
 
                     })
 
@@ -99,7 +100,8 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
                         'Recall(Av)': get_recall(dataset, parts[2], distance_function, indices, coords, distances),
                         'Search_T(s)': np.round(search_time, 4),
                         'Query_T(Av)(s)': np.round(search_time / len(indices), 4),
-                        'Index_Size(MB)': index_size
+                        'In_S(MB)': index_size,
+                        'In_T(s)': np.round(index_time, 2)
                     })
 
         # Primero convierte la lista de dicts a DataFrame
@@ -124,7 +126,7 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
         )
 
         # Selección de columnas
-        excel_results = formatted_results[['Distance', 'radius', 'n_nodes', 'Config', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'Query_T(Av)(s)', 'Index_Size(MB)']]
+        excel_results = formatted_results[['Distance', 'radius', 'n_nodes', 'Config', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'Query_T(Av)(s)', 'In_S(MB)']]
 
         # Orden final
         excel_results = excel_results.sort_values(by=['Distance', 'n_nodes', 'radius'])
@@ -134,7 +136,7 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
         #excel_results['Percentil'] = percentiles
 
         # Reemplazo de decimales con comas
-        for col in ['radius', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'Query_T(Av)(s)', 'Index_Size(MB)']:
+        for col in ['radius', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'Query_T(Av)(s)', 'In_S(MB)']:
             excel_results[col] = excel_results[col].astype(str).str.replace('.', ',', regex=False)
 
         # Añade una columna más al dataset con el percentil correpondiente a cada radio

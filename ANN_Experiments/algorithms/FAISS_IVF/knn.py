@@ -35,6 +35,7 @@ def FAISS_IVF(config_file):
     mem_after = memory_usage_mb()
     end_time_fit = timer()
 
+    index_time = end_time_fit - start_time_fit
 
     # Save the index to a file
     os.makedirs(f'ANN_Experiments/NearestNeighbors/{dataset}/indexes', exist_ok=True) # If the directory does not exist, create it
@@ -85,8 +86,8 @@ def FAISS_IVF(config_file):
 
     # Store indices, coords and dist into a hdf5 file
     file_name = f"./ANN_Experiments/NearestNeighbors/{dataset}/knn_{dataset}_{k}_{metric}_{method}_nlist{nlist}_nprobe{nprobe}.hdf5"
-    
-    save_neighbors_and_performance(indices, coords, dists, n_distances, search_time, index_size, file_name)
+
+    save_neighbors_and_performance(indices, coords, dists, n_distances, index_size, index_time, search_time, file_name)
 
 
 

@@ -72,6 +72,7 @@ def PDASC(config_file):
 
     # Check if all index files already exist
     all_exist = True
+    index_time = 0
     path = f"./ANN_Experiments/NearestNeighbors/{dataset}/indexes/"
     for node in range(n_nodes):
         filename = f"{dataset}_{distance}_index_{n_nodes}-{node}.joblib"
@@ -83,10 +84,12 @@ def PDASC(config_file):
     # If they don't exist, create them
     if not all_exist:
 
+        start_time_i = timer()
         print("[INFO] Some index files are missing, creating all with create_index...")
         index = pdasc_flues_.create_index_flues(vector_training, dataset, group_size, n_centroids, n_nodes, distance,
                                                 algorithm, implementation)
-
+        end_time_i = timer()
+        index_time = end_time_i - start_time_i
     # By using the DataFrame experimental implementation
     #index = pdasc_DataFrames_.create_tree(vector_training, dataset, group_size, n_centroids, n_nodes, distance, algorithm, implementation)
     # print(index)
@@ -126,7 +129,7 @@ def PDASC(config_file):
     file_name = f"./ANN_Experiments/NearestNeighbors/{dataset}/knn_{dataset}_{k}_{distance}_{method}_tg{group_size}_nc{n_centroids}_r{radius}_n{n_nodes}.hdf5"
 
     # Store indices, coords and dist into a hdf5 file
-    save_neighbors_and_performance(indices_vecinos, coords_vecinos, dists_vecinos, n_distances, search_time, index_size, file_name)
+    save_neighbors_and_performance(indices_vecinos, coords_vecinos, dists_vecinos, n_distances, index_size, index_time, search_time, file_name)
 
 
     logging.info("\n")
