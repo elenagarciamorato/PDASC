@@ -28,10 +28,10 @@ def load_random_sample_flue(partition, sample_size):
     return sample
 
 # Load the prototype points composing a layer of the PDASC index corresponding to a flue
-def load_PDASC_sample(dataset, sample_size, distance_function, n_flues=1, id_flue=1):
+def load_PDASC_sample(dataset, sample_size, distance_function, tg, nc, n_flues=1, id_flue=1):
 
     # Load the PDASC index
-    index_flue = pdasc_flues_.load_PDASC_index_flue(dataset, distance_function, n_flues, id_flue)
+    index_flue = pdasc_flues_.load_PDASC_index_flue(dataset, distance_function, tg, nc, n_flues, id_flue)
 
     n_capas = index_flue[0]
     grupos_capa = index_flue[1]

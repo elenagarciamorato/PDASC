@@ -68,7 +68,7 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
                         # 'k': parts[2],
                         'radius': float(parts[7][1:]),
                         'n_nodes': parts[8][1:],
-                        'Config': np.nan, # As PDASc doest has more configuration parameters, we set it to NaN
+                        'Config': f'{parts[5]}_{parts[6]}', # As PDASc doest has more configuration parameters, we set it to NaN
                         # 'Implementation': parts[9],
                         'Dist_C(Av)': np.round(np.mean(n_dist), 2),
                         'Dist_C-Node(Av)': np.round(np.mean(n_dist/int(parts[8][1:])), 2),

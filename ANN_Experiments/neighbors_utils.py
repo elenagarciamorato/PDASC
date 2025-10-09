@@ -260,7 +260,9 @@ def get_index_size(dataset, method, distance, method_params):
 
     if method == 'PDASC':
         n_nodes = method_params['n_nodes']
-        index_file = f"{str(dataset)}_{str(distance)}_index_{n_nodes}-{0}.joblib"
+        tg = method_params['tg']
+        nc = method_params['nc']
+        index_file = f"{str(dataset)}_{str(distance)}_tg{tg}_nc{nc}_index_{n_nodes}-{0}.joblib"
 
     elif method == 'PYNN':
         print('Getting PYNN index size')

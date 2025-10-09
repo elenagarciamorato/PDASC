@@ -579,7 +579,7 @@ def search_near_centroid(group_id, centroid_id, last_neighbor_id, examined_centr
     return point_id, distance, group_id, nearest_centroid_id
 
 
-def find_centroid_group(inheritage, grupos_capa, n_centroids, subgroup):
+def find_centroid_group(inheritage, tg, n_centroids, subgroup):
     """
     Determines the group of a centroid in a hierarchical tree structure.
 
@@ -597,8 +597,13 @@ def find_centroid_group(inheritage, grupos_capa, n_centroids, subgroup):
     int
         The group index of the centroid.
     """
+
     # Number of branches depends on the number of centroids and the number of points in the group
-    n_branches = grupos_capa[-1][0] // n_centroids
+    # n_branches = grupos_capa[-1][0] // n_centroids
+    #print(f"n_branches = {n_branches}")
+
+    n_branches = (tg + n_centroids - 1) // n_centroids
+    #print(f"n_branches = {n_branches}")
 
     # The group of the centroid depends on the number of branches, the current layer and the subgroup (0 or 1) index
     return inheritage[-1] * n_branches + subgroup
@@ -687,7 +692,7 @@ def insert_candidate_neighbour(candidates_array, distance):
     return candidates_array
 
 
-def explore_centroid_dynamicradius_layer(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, dynamic_radius_list):
+def explore_centroid_dynamicradius_layer(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, group_size, n_centroides, metrica, neighbours, distances_computed, dynamic_radius_list):
     """
     Explores the hierarchical tree structure to find centroids within a given radius.
 
@@ -752,7 +757,7 @@ def explore_centroid_dynamicradius_layer(punto_buscado, current_layer, inheritag
 
     for i in range(len(id_associated_prototypes_layer_down)):
         subgroup = id_associated_prototypes_layer_down[i] // n_centroides
-        group = find_centroid_group(inheritage, grupos_capa, n_centroides, subgroup)
+        group = find_centroid_group(inheritage, group_size, n_centroides, subgroup)
         id_associated_prototypes_layer_down[i] = id_associated_prototypes_layer_down[i] % n_centroides
 
         associated_prototypes_layer_down[i, 0] = id_associated_prototypes_layer_down[i]
@@ -813,7 +818,7 @@ def explore_centroid_dynamicradius_layer(punto_buscado, current_layer, inheritag
 
     return neighbours, distances_computed
 
-def explore_centroid_classical_pruning(vector_original, punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours):
+def explore_centroid_classical_pruning(vector_original, punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, group_size, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours):
 
     # Rather than identify all the points that are neighbors of the query point and, at the end of the index exploration,
     # obtain the distance for all of them, we will compute the distance for each point when reaching it
@@ -833,7 +838,7 @@ def explore_centroid_classical_pruning(vector_original, punto_buscado, current_l
 
     for i in range(len(id_associated_prototypes_layer_down)):
         subgroup = id_associated_prototypes_layer_down[i] // n_centroides
-        group = find_centroid_group(inheritage, grupos_capa, n_centroides, subgroup)
+        group = find_centroid_group(inheritage, group_size, n_centroides, subgroup)
         id_associated_prototypes_layer_down[i] = id_associated_prototypes_layer_down[i] % n_centroides
 
         associated_prototypes_layer_down[i, 0] = id_associated_prototypes_layer_down[i]
@@ -907,7 +912,7 @@ def explore_centroid_classical_pruning(vector_original, punto_buscado, current_l
         centroid = explorable_prototypes[i]
         explore_centroid_classical_pruning(vector_original, punto_buscado, current_layer - 1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, candidate_neighbours)
 
-def explore_centroid_CDFradius1(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_coords, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius):
+def explore_centroid_CDFradius1(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_coords, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, group_size, n_centroides, metrica, neighbours, distances_computed, min_radius):
     """
 
     Esta funcion filtra los prototipos a explorar en funcion a su distancia con el prototipo padre,
@@ -943,7 +948,7 @@ def explore_centroid_CDFradius1(punto_buscado, current_layer, inheritage, curren
 
     for i in range(len(id_associated_prototypes_layer_down)):
         subgroup = id_associated_prototypes_layer_down[i] // n_centroides
-        group = find_centroid_group(inheritage, grupos_capa, n_centroides, subgroup)
+        group = find_centroid_group(inheritage, group_size, n_centroides, subgroup)
         id_associated_prototypes_layer_down[i] = id_associated_prototypes_layer_down[i] % n_centroides
 
         associated_prototypes_layer_down[i, 0] = id_associated_prototypes_layer_down[i]
@@ -1017,7 +1022,103 @@ def explore_centroid_CDFradius1(punto_buscado, current_layer, inheritage, curren
 
     return neighbours, distances_computed
 
-def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius, id_flue=0, flue_size=0):
+def explore_centroid_staticradius(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, group_size, n_centroides, metrica, neighbours, distances_computed, radius, id_flue=0, flue_size=0):
+    """
+    Esta funcion filtra los prototipos a explorar en funcion a su distancia con el punto de query
+    utilizando un radio fijo para todas las capas del indice jerarquico
+    """
+    # Calculate the group onto the layer which the centroid belongs to
+    prototype_group = inheritage[-1]
+
+    #print(f'Current prototype: {current_centroid_id} from group {prototype_group} at layer {current_layer-1}')
+
+    # Obtain the IDs of prototypes from the layer below
+    id_prototypes_layer_down = puntos_capas[current_layer-1][prototype_group]
+
+    # Obtain the prototypes of the layer below which are mapped by this prototype
+    id_associated_prototypes_layer_down = np.where(id_prototypes_layer_down == current_centroid_id)[0]
+
+    # Explore each associated prototype in the layer below and store it into a list
+    associated_prototypes_layer_down = np.empty((len(id_associated_prototypes_layer_down), 4), dtype=object)
+
+    # Calculate subgroups and modulo indices for each associated prototype
+    subgroups = id_associated_prototypes_layer_down // n_centroides
+    mod_indices = id_associated_prototypes_layer_down % n_centroides
+
+    # Get the group for each subgroup using the helper function
+    groups = [find_centroid_group(inheritage, group_size, n_centroides, sg) for sg in subgroups]
+
+    # Assign the calculated values to the associated prototypes array
+    for i in range(len(id_associated_prototypes_layer_down)):
+        associated_prototypes_layer_down[i, 0] = mod_indices[i]  # Prototype index within the group
+        associated_prototypes_layer_down[i, 1] = groups[i]       # Group to which the prototype belongs
+        # Coordinates of the prototype in the previous layer, if it exists
+        associated_prototypes_layer_down[i, 2] = None if current_layer-1 == 0 else coords_puntos_capas[current_layer-2][groups[i]][mod_indices[i]]
+        # Distance to the current centroid, only if we are in the last layer
+        associated_prototypes_layer_down[i, 3] = current_centroid_distance if current_layer-1 == 0 else None
+
+    # If the centroid explored is in the last layer of the index
+    if current_layer == 1:
+
+        # Lets take into account that at this point we do not restrict by radius, but explore all the points mapped by the current prototype
+        for i in range(len(associated_prototypes_layer_down)):
+            neighbour_id = n_centroides * associated_prototypes_layer_down[i, 1] + associated_prototypes_layer_down[i, 0]
+            tam_grupo = group_size
+            group_id = neighbour_id // tam_grupo
+
+            if len(associated_prototypes_layer_down) == 1 or promoted_points[group_id][neighbour_id % tam_grupo]:
+                #print(f'Neighbour found: {neighbour_id} and distance: {current_centroid_distance}')
+                neighbours.append((id_flue * flue_size + neighbour_id, current_centroid_distance))
+
+                # Print the radius value at this step
+                # print(f'Current prototype distance: {current_centroid_distance}')
+                # print(f'Radius value at this step: {radius}')
+
+            else:
+                neighbours.append(id_flue * flue_size + neighbour_id)
+
+        return neighbours, distances_computed
+
+
+    # If the prototype has only one associated prototype below, it is explored directly
+    if len(associated_prototypes_layer_down) == 1:
+        # Assign the current centroid distance to the associated prototype
+        associated_prototypes_layer_down[0, 3] = current_centroid_distance
+        explorable_prototypes = associated_prototypes_layer_down
+    else:
+        # Stack the coordinates of the associated prototypes from the previous layer
+        coordinates_bottomed_prototypes = np.vstack(associated_prototypes_layer_down[:, 2])
+        # Create a mask for NaN values in the coordinates
+        nan_mask = np.isnan(coordinates_bottomed_prototypes).any(axis=1)
+        # Assign the current centroid distance to prototypes with NaN coordinates
+        associated_prototypes_layer_down[nan_mask, 3] = current_centroid_distance
+        # If not all prototypes have NaN coordinates, calculate distances for valid ones
+        if not np.all(nan_mask):
+            distances = get_distances(
+                punto_buscado,
+                coordinates_bottomed_prototypes[~nan_mask].reshape(-1, coordinates_bottomed_prototypes.shape[1]),
+                metrica
+            )
+            # Assign the calculated distances to the corresponding prototypes
+            associated_prototypes_layer_down[~nan_mask, 3] = distances
+            # Update the count of computed distances
+            distances_computed += np.sum(~nan_mask)
+        # Select prototypes whose distance is less than or equal to the radius
+        explorable_prototypes_indices = np.where(associated_prototypes_layer_down[:, 3] <= radius)[0]
+        explorable_prototypes = associated_prototypes_layer_down[explorable_prototypes_indices]
+
+    # Recursively explore each explorable prototype in the previous layer
+    for i in range(len(explorable_prototypes)):
+        centroid = explorable_prototypes[i]
+        neighbours, distances_computed = explore_centroid_staticradius(
+            punto_buscado, current_layer - 1, inheritage + [centroid[1]], centroid[0], centroid[3],
+            coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, group_size, n_centroides,
+            metrica, neighbours, distances_computed, radius, id_flue, flue_size
+        )
+
+    return neighbours, distances_computed
+
+def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, group_size, n_centroides, metrica, neighbours, distances_computed, min_radius, id_flue=0, flue_size=0):
     """
 
     Esta funcion filtra los prototipos a explorar en funcion a su distancia con el punto de query,
@@ -1041,6 +1142,7 @@ def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inher
     # Calculate the group onto the layer which the centroid belongs to
     prototype_group = inheritage[-1]
 
+    #print(f'Current prototype: {current_centroid_id} from group {prototype_group} at layer {current_layer-1}')
 
     # Obtain the IDs of prototypes from the layer below
     id_prototypes_layer_down = puntos_capas[current_layer-1][prototype_group]
@@ -1053,7 +1155,7 @@ def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inher
 
     for i in range(len(id_associated_prototypes_layer_down)):
         subgroup = id_associated_prototypes_layer_down[i] // n_centroides
-        group = find_centroid_group(inheritage, grupos_capa, n_centroides, subgroup)
+        group = find_centroid_group(inheritage, group_size, n_centroides, subgroup)
         id_associated_prototypes_layer_down[i] = id_associated_prototypes_layer_down[i] % n_centroides
 
         associated_prototypes_layer_down[i, 0] = id_associated_prototypes_layer_down[i]
@@ -1067,7 +1169,7 @@ def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inher
         # Lets take into account that at this point we do not restrict by radius, but explore all the points mapped by the current prototype
         for i in range(len(associated_prototypes_layer_down)):
             neighbour_id = n_centroides * associated_prototypes_layer_down[i, 1] + associated_prototypes_layer_down[i, 0]
-            tam_grupo = grupos_capa[0][0]
+            tam_grupo = group_size
             group_id = neighbour_id // tam_grupo
 
             if len(associated_prototypes_layer_down) == 1 or promoted_points[group_id][neighbour_id % tam_grupo]:
@@ -1121,11 +1223,11 @@ def explore_centroid_dynamicradius_minradius(punto_buscado, current_layer, inher
 
     for i in range(len(explorable_prototypes)):
         centroid = explorable_prototypes[i]
-        neighbours, distances_computed = explore_centroid_dynamicradius_minradius(punto_buscado, current_layer-1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius, id_flue, flue_size)
+        neighbours, distances_computed = explore_centroid_dynamicradius_minradius(punto_buscado, current_layer-1, inheritage + [centroid[1]], centroid[0], centroid[3], coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, group_size, n_centroides, metrica, neighbours, distances_computed, min_radius, id_flue, flue_size)
 
     return neighbours, distances_computed
 
-def explore_centroid_CDFradius3(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, n_centroides, metrica, neighbours, distances_computed, min_radius):
+def explore_centroid_CDFradius3(punto_buscado, current_layer, inheritage, current_centroid_id, current_centroid_distance, coords_puntos_capas, puntos_capas, grupos_capa, promoted_points, group_size, n_centroides, metrica, neighbours, distances_computed, min_radius):
     """
     Under development
     """
@@ -1145,7 +1247,7 @@ def explore_centroid_CDFradius3(punto_buscado, current_layer, inheritage, curren
 
     for i in range(len(id_associated_prototypes_layer_down)):
         subgroup = id_associated_prototypes_layer_down[i] // n_centroides
-        group = find_centroid_group(inheritage, grupos_capa, n_centroides, subgroup)
+        group = find_centroid_group(inheritage, group_size, n_centroides, subgroup)
         id_associated_prototypes_layer_down[i] = id_associated_prototypes_layer_down[i] % n_centroides
 
         associated_prototypes_layer_down[i, 0] = id_associated_prototypes_layer_down[i]

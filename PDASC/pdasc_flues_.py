@@ -24,17 +24,17 @@ random.seed(SEED)
 
 
 #####    INDEX STORAGE AND LOADING FUNCTIONS    #####
-def store_PDASC_index_flue(dataset, distance_function, n_flues, id_flue, index):
+def store_PDASC_index_flue(dataset, distance_function, tg, nc, n_flues, id_flue, index):
 
     # Set the path of the file where the index will be stored
     os.makedirs(f'ANN_Experiments/NearestNeighbors/{dataset}/indexes', exist_ok=True) # If the directory does not exist, create it
-    file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_index_{n_flues}-{id_flue}.joblib'
+    file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_tg{str(tg)}_nc{str(nc)}_index_{n_flues}-{id_flue}.joblib'
     joblib.dump(index, file_path)
     print(f"Index for flue {id_flue} stored at {file_path}"),
 
 
-def load_PDASC_index_flue(dataset, distance_function, n_flues=1, id_flue=1):
-    file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_index_{n_flues}-{id_flue}.joblib'
+def load_PDASC_index_flue(dataset, distance_function, tg, nc, n_flues=1, id_flue=1):
+    file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_tg{str(tg)}_nc{str(nc)}_index_{n_flues}-{id_flue}.joblib'
     return joblib.load(file_path)
 
 
@@ -63,8 +63,8 @@ def create_index_flues(training_set, dataset, group_size, n_centroids, n_flues, 
 
     # Create a pool of workers to build the index corresponding to each flue in parallel using the create_tree function
     with Pool() as pool:
-        build_index_flue = partial(create_tree, tam_grupo=group_size,
-                                        n_centroides=n_centroids, metric=dist_func,algorithm=algorithm, implementation=implementation)
+        build_index_flue = partial(create_tree, tg=group_size,
+                                        nc=n_centroids, distance_function=dist_func,algorithm=algorithm, implementation=implementation)
 
         indexes_flues = pool.map(build_index_flue, training_set_partitions)
 
@@ -75,17 +75,17 @@ def create_index_flues(training_set, dataset, group_size, n_centroids, n_flues, 
     for i in range(len(indexes_flues)):
         # Store the index for each flue
         print(f"Storing index for flue {i} of {n_flues} with {indexes_flues[i][0]} layers")
-        store_PDASC_index_flue(dataset, dist_func, n_flues, i, indexes_flues[i])
+        store_PDASC_index_flue(dataset, dist_func, group_size, n_centroids, n_flues, i, indexes_flues[i])
 
     return True
 
 
 #####    DISTRIBUTED ANN SEARCH FUNCTIONS    #####
-def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_size, n_centroids, dist_function, radius):
+def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_size, tg, n_centroids, dist_function, radius, pruning_strategy=False):
 
     # print(f"Processing flue {id_flue}")
 
-    index_flue = load_PDASC_index_flue(dataset, dist_function, n_flues, id_flue)  # Extraemos el DataFrame de la chimenea (flue) a procesar
+    index_flue = load_PDASC_index_flue(dataset, dist_function, tg, n_centroids, n_flues, id_flue)  # Extraemos el DataFrame de la chimenea (flue) a procesar
     #print(len(index_flue))
 
     n_capas = index_flue[0]
@@ -114,34 +114,45 @@ def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_siz
     distances_top_prototypes = get_distances(np.array(punto_buscado), coordinates_top_prototypes, dist_function)
     # print(coordinates_top_prototypes)
     # print(distances_top_prototypes)
-    # print(distances_top_prototypes)
 
     # distances_top_prototypes = distance.cdist(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
     # distances_top_prototypes = pairwise_distances(np.array(punto_buscado), coordinates_top_prototypes, metric=metrica)[0]
-    # print(distances_top_prototypes)
 
     # At the first lever, the radius to be used is the biggest one
     # first_layer_radius = max_radius
     # print(first_layer_radius)
 
     # We store the distances computed on the distances_computed lists
-    distances_computed = distances_top_prototypes.tolist()
+    #distances_computed = distances_top_prototypes.tolist()
     n_distances_computed = len(distances_top_prototypes)
 
     # At the top layer, we explore every prototype
     neighbours = []
-    for prototype_id in range(len(distances_top_prototypes)):
-        # prototype_coords = coordinates_top_prototypes[prototype_id]
-        prototype_distance = distances_top_prototypes[prototype_id]
-        # aux_neighbors, aux_n_distances = explore_centroid_CDFradius1(punto_buscado, n_capas, inheritage, prototype_id, prototype_coords, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroids, metrica, [], 0, min_radius)
-        aux_neighbors, aux_n_distances = explore_centroid_dynamicradius_minradius(punto_buscado, n_capas, inheritage,
-                                                                                  prototype_id, prototype_distance,
-                                                                                  puntos_capa, labels_capa, grupos_capa,
-                                                                                  promoted_points, n_centroids,
-                                                                                  dist_function, [], 0, radius, id_flue, flue_size)
 
-        # Para todos los aux_neighbors, aux_neighbors[0]=aux_neigbors + id_flue*flue_size
+    # Regarding the pruning strategy to be used:
+    # If pruning_strategy is True, we use the dynamic radius with min_radius
+    if pruning_strategy:
+        resultados = [
+            explore_centroid_dynamicradius_minradius(
+                punto_buscado, n_capas, inheritage, prototype_id, prototype_distance,
+                puntos_capa, labels_capa, grupos_capa, promoted_points, tg, n_centroids,
+                dist_function, [], 0, radius, id_flue, flue_size
+            )
+            for prototype_id, prototype_distance in enumerate(distances_top_prototypes)
+        ]
+    # If pruning_strategy is False, we use the static radius
+    else:
+        resultados = [
+            explore_centroid_staticradius(
+                punto_buscado, n_capas, inheritage, prototype_id, prototype_distance,
+                puntos_capa, labels_capa, grupos_capa, promoted_points, tg, n_centroids,
+                dist_function, [], 0, radius, id_flue, flue_size
+            )
+            for prototype_id, prototype_distance in enumerate(distances_top_prototypes)
+        ]
 
+    # We collect the results
+    for aux_neighbors, aux_n_distances in resultados:
         neighbours.extend(aux_neighbors)
         n_distances_computed += aux_n_distances
 
@@ -149,7 +160,7 @@ def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_siz
     # print(neighbours)
     return neighbours, n_distances_computed
 
-def recursive_ANN_search_radius_pruning(punto, dataset, vector_training, n_flues, n_centroids, dist_function, radius, k_vecinos):
+def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, tg, n_centroids, dist_function, radius, k_vecinos):
 
     # Establece el punto de búsqueda como un array de una sola fila
     punto_buscado = punto.reshape(1, -1)
@@ -166,7 +177,7 @@ def recursive_ANN_search_radius_pruning(punto, dataset, vector_training, n_flues
 
     # Empaquetamos todos los argumentos
     args = [
-        (flue, n_flues, punto_buscado, dataset, flue_size, n_centroids, dist_function, radius)
+        (flue, n_flues, punto_buscado, dataset, flue_size, tg, n_centroids, dist_function, radius)
         for flue in np.arange(n_flues)
     ]
 
@@ -210,9 +221,10 @@ def recursive_ANN_search_radius_pruning(punto, dataset, vector_training, n_flues
 
         # By acceding the original dataset, we obtain its coordinates
         coords_neighbours_with_d = vector_training[id_neighbours_with_d]
+        # print(f'Number of neighbours with distance already computed: {len(id_neighbours_with_d)}')
 
         # For control, print the distances already computed
-        # print(f'The distances computed until now are {len(distances_computed)}')
+        #print(f'The distances computed until now are {len(distances_computed)}')
 
         # The neighbours whose distance is not computed yet are those which are not tuples
         id_neighbours_without_d = [n for n in neighbours if not isinstance(n, tuple)]
@@ -284,7 +296,7 @@ def recursive_ANN_search_radius_pruning(punto, dataset, vector_training, n_flues
 
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances_computed
 
-def distributed_ANN_search(vector_testing, vector_training, dataset, n_flues, n_centroids, dist_function, radius, k):
+def ANN_search(vector_testing, vector_training, dataset, n_flues, tg, n_centroids, dist_function, radius, k):
 
     # Update the metric name for compatibility with scipy
     if dist_function == 'manhattan':
@@ -309,8 +321,8 @@ def distributed_ANN_search(vector_testing, vector_training, dataset, n_flues, n_
     # Iterate over each point in the testing set
     for punto in vector_testing:
         # Call the recursive knn search function for each point
-        indices, coords, distances, n_distances = recursive_ANN_search_radius_pruning(
-                punto, dataset, vector_training, n_flues, n_centroids, dist_function, radius, k
+        indices, coords, distances, n_distances = recursive_ann_search_coordinated(
+                punto, dataset, vector_training, n_flues, tg, n_centroids, dist_function, radius, k
             )
 
         results.append((indices, coords, distances, n_distances))

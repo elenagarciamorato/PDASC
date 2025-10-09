@@ -28,10 +28,10 @@ class FaissIVF():
         if self._metric in ("euclidean", "l2"):
             self.quantizer = faiss.IndexFlatL2(d)
             self.index = faiss.IndexIVFFlat(self.quantizer, d, self._n_list, faiss.METRIC_L2)
-            print("Entro por aqui nn index con metric L2")
+            #print("Entro por aqui nn index con metric L2")
         elif self._metric in ("cosine", "angular", "ip", "inner_product", "dot"):
             self.quantizer = faiss.IndexFlatIP(d)
-            print("Entro por aqui nn index con metric angular o cosine")
+            #print("Entro por aqui nn index con metric angular o cosine")
             self.index = faiss.IndexIVFFlat(self.quantizer, d, self._n_list, faiss.METRIC_INNER_PRODUCT)
         else:
             raise ValueError(
@@ -45,8 +45,7 @@ class FaissIVF():
         """
         Realizar búsqueda y calcular estadísticas de distancias computadas
         """
-        print("Entro por aqui nn search")
-        print(f"shape of queries: {queries.shape}")
+        #print(f"shape of queries: {queries.shape}")
         lista_indices, lista_dists, lista_n_distances = [], [], []
 
         # Preparar queries según la métrica

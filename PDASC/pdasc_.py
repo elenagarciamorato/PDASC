@@ -19,12 +19,12 @@ import kmedoids as fast_kmedoids  # k-medoids fast_k-medoids (PAM) implementatio
 logger = logging.getLogger(__name__)
 
 #### MSA Algorithm ####
-def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, implementation):
+def create_tree(data_objects, tg, nc, distance_function, algorithm, implementation):
     """
     Constructs a hierarchical tree structure using the clustering algorithm provided.
 
     Parameters:
-    vector_original : np.array
+    data_objects : np.array
             Original data points.
     tam_grupo : int
             Size of the group to be clustered with centroids.
@@ -52,23 +52,23 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
         To avoid future redundant distance computations, the structures are improved to contain nan values in the place of duplicated points.
     """
 
-    normaliza = False
 
-    # Starts the iterative process of construction-deconstruction of the index
-    start_time_constr = timer()
+    objects_length = data_objects.shape[0]
+    objects_dimensionality = data_objects.shape[1]
+    n_layers = calculate_numcapas(objects_length, tg, nc)
+    puntos_capa, labels_capa, grupos_capa, promoted_points = built_estructuras_capa_new(objects_length, tg,
+                                                                                        nc, n_layers,
+                                                                                        objects_dimensionality)
+    #print(f'Number of objects: {objects_length}')
+    #print('Dimensionality of the objects:', objects_dimensionality)
+    #print(f'Number of layers in the tree: {n_layers}')
+    #print(f'Puntos capa structure: {[len(arr) for arr in puntos_capa]}')
+    #print(f'Grupos capa structure: {[len(arr) for arr in grupos_capa]}')
+    #print(f'Labels capa structure: {[len(arr) for arr in labels_capa]}')
 
-    vector = vector_original
-    if normaliza:
-        vector = preprocessing.normalize(vector, axis=0, norm='l2')
-
-    vector_length = vector_original.shape[0]
-    vector_dimensionality = vector_original.shape[1]
-    n_layers = calculate_numcapas(vector_length, tam_grupo, n_centroides)
-    puntos_capa, labels_capa, grupos_capa, promoted_points = built_estructuras_capa_new(vector_length, tam_grupo,
-                                                                                        n_centroides, n_layers,
-                                                                                        vector_dimensionality)
+    # We create a copy of puntos_capa to be able to simplify the structure by setting to NaN the points that are duplicated in the upper layer
     simplified_puntos_capa = copy(puntos_capa)
-    duplicates = 0
+    # duplicates = 0
 
     # Iterative process to apply the clustering algorithm to each layer
     for id_layer in range(n_layers):
@@ -77,24 +77,23 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
         cont_ptos = 0  # Counts numer of points of each layer
         n_points = np.zeros(ngrupos, dtype=int)
 
-
         for id_group in range(ngrupos):
 
-            fin = inicio + tam_grupo
+            fin = inicio + tg
 
             # To ensure that the last group has the correct number of points, last point would be rather the last point of the dataset or the last point of the group
-            fin = min(fin, vector_length)
+            fin = min(fin, objects_length)
             n_points[id_group] = fin - inicio # Number of points in the group
 
              # If the number of points within the group is greater than or equal to the number of centroids
-            if (fin - inicio) >= n_centroides:
+            if (fin - inicio) >= nc:
 
                 # Apply the clustering algorithm to the current group:
 
                 #########        K-medoids clustering algorithm      ###########
 
-                kmedoids = fast_kmedoids.KMedoids(n_clusters=n_centroides, method='fasterpam',
-                                                  metric=metric).fit(vector[inicio:fin])
+                kmedoids = fast_kmedoids.KMedoids(n_clusters=nc, method='fasterpam',
+                                                  metric=distance_function).fit(data_objects[inicio:fin])
 
                 # print(f"cluster_centers {kmedoids.cluster_centers_}")  # coordenadas de los (nc=35) puntos que promocionan como medoides
                 # print(f"indices {kmedoids.medoid_indices_}")  # indices de los (nc=35) puntos que promocionan como medoides
@@ -124,18 +123,21 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
 
                     # For every point that has been promoted as prototype, we set to NaN the corresponding point in the lower layer
                     for i in prototype_points:
-                        id_lower_group = id_group * 2 + (i >= n_centroides)
-                        element = int(i % n_centroides)
+                        n_branches = (tg + nc - 1) // nc
+                        branch_offset = int(i // nc)
+                        #print(f'branch_offset: {branch_offset}')
+                        id_lower_group = id_group * n_branches + branch_offset
+                        element = int(i % nc)
                         simplified_puntos_capa[id_layer - 1][id_lower_group][element] = np.nan
-                        duplicates += 1
+                        #duplicates += 1
 
-                cont_ptos += n_centroides
+                cont_ptos += nc
 
             # Else (the group has less points than centroids)
             else:
 
                 # We store the points in the group as they are
-                puntos_capa[id_layer][id_group] = np.array(vector[inicio:fin])
+                puntos_capa[id_layer][id_group] = np.array(data_objects[inicio:fin])
 
                 # Next layer for each group
                 cont_ptos = cont_ptos + (fin - inicio)
@@ -157,10 +159,12 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
 
                     # For every point that has been promoted as prototype, we set to NaN the corresponding point in the lower layer
                     for i in prototype_points:
-                        id_lower_group = id_group * 2 + (i >= n_centroides)
-                        element = int(i % n_centroides)
+                        n_branches = (tg + nc - 1) // nc
+                        branch_offset = int(i // nc)
+                        id_lower_group = id_group * n_branches +  branch_offset
+                        element = int(i % nc)
                         simplified_puntos_capa[id_layer - 1][id_lower_group][element] = np.nan
-                        duplicates += 1
+                        #duplicates += 1
 
             inicio = fin
 
@@ -168,20 +172,16 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
         grupos_capa[id_layer] = n_points
 
         # We store the centroids of the layer to be able to do the inverse process
-        vector = puntos_capa[id_layer]
-        vector = np.concatenate(vector).ravel().tolist()
-        vector = np.array(vector)
-        vector = vector.reshape(cont_ptos, vector_dimensionality)
+        data_objects = puntos_capa[id_layer]
+        data_objects = np.concatenate(data_objects).ravel().tolist()
+        data_objects = np.array(data_objects)
+        data_objects = data_objects.reshape(cont_ptos, objects_dimensionality)
 
-        # We update vector_length with the number of points of the next layer
-        vector_length = cont_ptos
+        # We update objects_length with the number of points of the next layer
+        objects_length = cont_ptos
 
     # Print the number of elements that have been substituted by NaN
     # print(f'Duplicates found = {duplicates}')
-
-    end_time_constr = timer()
-
-    logger.info('tree time=%s seconds', end_time_constr - start_time_constr)
 
     return n_layers, grupos_capa, simplified_puntos_capa, labels_capa, promoted_points
 
@@ -189,7 +189,7 @@ def create_tree(vector_original, tam_grupo, n_centroides, metric, algorithm, imp
 def PDASC_accepted_algorithms():
     return ['kmedoids', 'kmeans']
 
-def store_PDASC_index(dataset, distance_function, grupos_capa, puntos_capa, labels_capa):
+def store_PDASC_index(dataset, distance_function, tg, nc, grupos_capa, puntos_capa, labels_capa):
     """
     Store the index build by PDASC in a file.
 
@@ -206,7 +206,7 @@ def store_PDASC_index(dataset, distance_function, grupos_capa, puntos_capa, labe
             Labels assigned to each point at each layer.
     """
     # Ruta del archivo HDF5
-    file_path = f'ANN_Experiments/logs/{dataset}/{str(dataset)}_{str(distance_function)}_index.hdf5'
+    file_path = f'ANN_Experiments/logs/{dataset}/{str(dataset)}_{str(distance_function)}_tg{str(tg)}_nc{str(nc)}_index.hdf5'
 
     # Store the parameters in an hdf5 file
     with h5py.File(file_path, 'w') as f:
@@ -222,7 +222,7 @@ def store_PDASC_index(dataset, distance_function, grupos_capa, puntos_capa, labe
                 f.create_dataset(f'labels_capa_{i}_{j}', data=np.array(sub_label))
         f.close()
 
-    print(f"Index stored in ANN_Experiments/logs/{dataset}/{dataset}_{distance_function}_index.hdf5")
+    print(f"Index stored in ANN_Experiments/logs/{dataset}/{str(dataset)}_{str(distance_function)}_tg{str(tg)}_nc{str(nc)}_index.hdf5")
 
 def load_PDASC_index(dataset, distance_function):
     """
@@ -1005,7 +1005,7 @@ def recursive_approximate_knn_search_classical_pruning(n_capas, n_centroides, ve
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances
 
 
-def recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vector_testing, vector_original, k_vecinos, metrica,
+def recursive_approximate_knn_search_radius_pruning(n_capas, tg, n_centroides, vector_testing, vector_original, k_vecinos, metrica,
                            grupos_capa, puntos_capa, labels_capa, promoted_points, radius, dataset):
     """
     Realiza una búsqueda aproximada de los k vecinos más cercanos (A-KNN search) utilizando un índice de PDASC previamente construido
@@ -1103,7 +1103,7 @@ def recursive_approximate_knn_search_radius_pruning(n_capas, n_centroides, vecto
             #prototype_coords = coordinates_top_prototypes[prototype_id]
             prototype_distance = distances_top_prototypes[prototype_id]
             #aux_neighbors, aux_n_distances = explore_centroid_CDFradius1(punto_buscado, n_capas, inheritage, prototype_id, prototype_coords, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
-            aux_neighbors, aux_n_distances = explore_centroid_dynamicradius_minradius(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
+            aux_neighbors, aux_n_distances = explore_centroid_dynamicradius_minradius(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, tg, n_centroides, metrica, [], 0, min_radius)
             neighbours.extend(aux_neighbors)
             n_distances_computed += aux_n_distances
 

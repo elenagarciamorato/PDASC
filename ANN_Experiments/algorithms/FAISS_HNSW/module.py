@@ -119,10 +119,10 @@ class FaissHNSW():
             # Obtener estadísticas de distancias computadas
             # leer estadísticas
             s = faiss.cvar.hnsw_stats
-            print("Visitas en niveles altos (n1):", s.n1)
-            print("Visitas en nivel base (n2):", s.n2)
-            print("Comparaciones de distancia (ndis):", s.ndis)
-            print("Saltos totales en grafo (nhops):", s.nhops)
+            #print("Visitas en niveles altos (n1):", s.n1)
+            #print("Visitas en nivel base (n2):", s.n2)
+            #print("Comparaciones de distancia (ndis):", s.ndis)
+            #print("Saltos totales en grafo (nhops):", s.nhops)
 
             # Guardar el número de distancias computadas para esta query
             n_distances = faiss.cvar.hnsw_stats.ndis  # Operaciones principales (distancias/comparaciones)

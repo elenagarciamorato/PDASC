@@ -11,7 +11,7 @@ from sklearn.preprocessing import normalize
 def PDASC(config_file):
 
     # Read config file containing experiment's parameters
-    dataset, k, distance, method, group_size, n_centroids, n_nodes, radius, algorithm, implementation = read_config_file(config_file)
+    dataset, k, distance_function, method, group_size, n_centroids, n_nodes, radius, algorithm, implementation = read_config_file(config_file)
 
 
     # Check if the method choosen are valid:
@@ -22,7 +22,7 @@ def PDASC(config_file):
     # Print information about the experiment in the log file
     logging.info('------------------------------------------------------------------------')
     logging.info("---- Searching the " + str(k) + " nearest neighbors within " + method + " over " + str(
-        dataset) + " dataset using " + str(distance) + " distance. ----")
+        dataset) + " dataset using " + str(distance_function) + " distance. ----")
     logging.info("")
     logging.info('---- PDASC Parameters - group_size=%s - n_centroids=%s - radius=%s - algorithm=%s - implementation=%s ----', group_size, n_centroids, radius, algorithm, implementation)
     logging.info('------------------------------------------------------------------------\n')
@@ -37,12 +37,12 @@ def PDASC(config_file):
     vector_training, vector_testing = lts.load_train_test_h5py(file_name)
 
     # If distance is haversine, convert data to radians
-    if distance == 'haversine':
+    if distance_function == 'haversine':
         vector_training = np.radians(vector_training)
         vector_testing = np.radians(vector_testing)
 
     # If distance is cosine, normalize the vectors
-    elif distance == 'cosine':
+    elif distance_function == 'cosine':
         vector_training = normalize(vector_training, axis=1, norm='l2')
         vector_testing = normalize(vector_testing, axis=1, norm='l2')
 
@@ -75,7 +75,7 @@ def PDASC(config_file):
     index_time = 0
     path = f"./ANN_Experiments/NearestNeighbors/{dataset}/indexes/"
     for node in range(n_nodes):
-        filename = f"{dataset}_{distance}_index_{n_nodes}-{node}.joblib"
+        filename = f'{dataset}_{distance_function}_tg{str(group_size)}_nc{str(n_centroids)}_index_{n_nodes}-{node}.joblib'
         filepath = os.path.join(path, filename)
         if not os.path.exists(filepath):
             all_exist = False
@@ -86,7 +86,7 @@ def PDASC(config_file):
 
         start_time_i = timer()
         print("[INFO] Some index files are missing, creating all with create_index...")
-        index = pdasc_flues_.create_index_flues(vector_training, dataset, group_size, n_centroids, n_nodes, distance,
+        index = pdasc_flues_.create_index_flues(vector_training, dataset, group_size, n_centroids, n_nodes, distance_function,
                                                 algorithm, implementation)
         end_time_i = timer()
         index_time = end_time_i - start_time_i
@@ -109,7 +109,7 @@ def PDASC(config_file):
     #indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_.recursive_approximate_knn_search_radius_pruning(n_capas, n_centroids, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(radius), dataset)
 
     # By using the distributed (flues) implementation
-    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_flues_.distributed_ANN_search(vector_testing, vector_training, dataset, n_nodes, n_centroids, distance, radius, k)
+    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_flues_.ANN_search(vector_testing, vector_training, dataset, n_nodes, group_size, n_centroids, distance_function, radius, k)
 
     # By using the experimental DataFrame implementation
     #indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_DataFrames_.distributed_ANN_search(vector_testing, dataset, vector_training, n_nodes, distance, float(radius), k)
@@ -119,14 +119,14 @@ def PDASC(config_file):
     search_time = end_time_s - start_time_s
 
     # Get the size of the index in MB
-    index_size = get_index_size(dataset, 'PDASC', distance, {'n_nodes': n_nodes})
+    index_size = get_index_size(dataset, 'PDASC', distance_function, {'n_nodes': n_nodes, 'tg': group_size, 'nc': n_centroids})
 
     logging.info('Search time = %s seconds\n', search_time)
     logging.info('Average time spent in searching a single point = %s', search_time/vector_testing.shape[0])
     logging.info('Speed (points/s) = %s\n', vector_testing.shape[0]/search_time)
 
     # Regarding the knn, method, dataset_name and distance choosen, set the file name to store the neighbors
-    file_name = f"./ANN_Experiments/NearestNeighbors/{dataset}/knn_{dataset}_{k}_{distance}_{method}_tg{group_size}_nc{n_centroids}_r{radius}_n{n_nodes}.hdf5"
+    file_name = f"./ANN_Experiments/NearestNeighbors/{dataset}/knn_{dataset}_{k}_{distance_function}_{method}_tg{group_size}_nc{n_centroids}_r{radius}_n{n_nodes}.hdf5"
 
     # Store indices, coords and dist into a hdf5 file
     save_neighbors_and_performance(indices_vecinos, coords_vecinos, dists_vecinos, n_distances, index_size, index_time, search_time, file_name)
