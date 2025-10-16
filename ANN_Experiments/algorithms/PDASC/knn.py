@@ -24,7 +24,7 @@ def PDASC(config_file):
     logging.info("---- Searching the " + str(k) + " nearest neighbors within " + method + " over " + str(
         dataset) + " dataset using " + str(distance_function) + " distance. ----")
     logging.info("")
-    logging.info('---- PDASC Parameters - group_size=%s - n_centroids=%s - radius=%s - algorithm=%s - implementation=%s ----', group_size, n_centroids, radius, algorithm, implementation)
+    logging.info('---- PDASC Parameters - n_centroids=%s - group_size=%s - radius=%s - algorithm=%s - implementation=%s ----', group_size, n_centroids, radius, algorithm, implementation)
     logging.info('------------------------------------------------------------------------\n')
 
     # Regarding the dataset name, set the file name to load the train and test set
@@ -75,12 +75,13 @@ def PDASC(config_file):
     index_time = 0
     path = f"./ANN_Experiments/NearestNeighbors/{dataset}/indexes/"
     for node in range(n_nodes):
-        filename = f'{dataset}_{distance_function}_tg{str(group_size)}_nc{str(n_centroids)}_index_{n_nodes}-{node}.joblib'
+        filename = f'{dataset}_{distance_function}_nc{str(n_centroids)}_tg{str(group_size)}_index_{n_nodes}-{node}.joblib'
         filepath = os.path.join(path, filename)
         if not os.path.exists(filepath):
             all_exist = False
             break  # no need to check further if one is missing
 
+    all_exist = False
     # If they don't exist, create them
     if not all_exist:
 
@@ -101,7 +102,7 @@ def PDASC(config_file):
     start_time_s = timer()
 
     # print(f"Solo vamos a buscar el punto {vector_testing[:1]}")
-    # vector_testing = vector_testing[:1]  # Uncomment this line to test with only the first point
+    #vector_testing = vector_testing[:1]  # Uncomment this line to test with only the first point
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search(n_capas, n_centroids, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_classical_pruning(n_capas, n_centroids, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
 
@@ -109,7 +110,7 @@ def PDASC(config_file):
     #indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_.recursive_approximate_knn_search_radius_pruning(n_capas, n_centroids, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(radius), dataset)
 
     # By using the distributed (flues) implementation
-    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_flues_.ANN_search(vector_testing, vector_training, dataset, n_nodes, group_size, n_centroids, distance_function, radius, k)
+    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_flues_.ANN_search(vector_testing, vector_training, dataset, n_nodes, group_size, n_centroids, distance_function, radius, k, pruning_strategy=False)
 
     # By using the experimental DataFrame implementation
     #indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_DataFrames_.distributed_ANN_search(vector_testing, dataset, vector_training, n_nodes, distance, float(radius), k)
@@ -126,7 +127,7 @@ def PDASC(config_file):
     logging.info('Speed (points/s) = %s\n', vector_testing.shape[0]/search_time)
 
     # Regarding the knn, method, dataset_name and distance choosen, set the file name to store the neighbors
-    file_name = f"./ANN_Experiments/NearestNeighbors/{dataset}/knn_{dataset}_{k}_{distance_function}_{method}_tg{group_size}_nc{n_centroids}_r{radius}_n{n_nodes}.hdf5"
+    file_name = f"./ANN_Experiments/NearestNeighbors/{dataset}/knn_{dataset}_{k}_{distance_function}_{method}_nc{n_centroids}_tg{group_size}_r{radius}_n{n_nodes}.hdf5"
 
     # Store indices, coords and dist into a hdf5 file
     save_neighbors_and_performance(indices_vecinos, coords_vecinos, dists_vecinos, n_distances, index_size, index_time, search_time, file_name)

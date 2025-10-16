@@ -53,6 +53,8 @@ The provided API allows the user to easily replicate the experiments and compare
 
 * __LSH (Locality-Sensitive Hashing, FAISS)__: a hashing-based technique that projects data into hash buckets using similarity-preserving functions, so that close points are likely to fall into the same bucket.  
 
+* __Annoy__: a tree-based method that constructs multiple random projection trees to partition the data space, allowing for efficient nearest neighbour searches by traversing these trees.
+
 <!--
 ### Experimental results
 For each dataset, a pointplot illustrates the recall of the targeted algorithms across various distance metrics (Manhattan, Euclidean, Chebyshev, Cosine & Haversine) in approximate $10$ - nearest neighbor search.
@@ -119,7 +121,7 @@ If the configuration file is for an experiment using other methods, it should in
 
 #### Examples:  
 - To run an experiment using a single .ini file:<br />
-`python3 -m ANN_Experiments.experiments_launcher test_knn_NYtimes_10_chebyshev_PDASC_tg1000_nc500_r30_n10.ini`
+`python3 -m ANN_Experiments.experiments_launcher test_knn_NYtimes_10_chebyshev_PDASC_nc500_tg1000_r30_n10.ini`
 - To run experiments for a dataset with optional filters:<br />
 `python3 -m benchmarks.experiments_launcher NYtimes chebyshev PDASC`
 

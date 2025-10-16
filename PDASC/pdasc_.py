@@ -1,12 +1,14 @@
 from copy import deepcopy, copy
 
+from setuptools.namespaces import flatten
 # import numpy as np
 from sklearn import preprocessing
 from timeit import default_timer as timer
 import logging
+
+from PDASC.clustering_algorithms.clustering_techniques import *
 from PDASC.utils import *
 import h5py
-import json
 # from sys import getsizeof
 import concurrent.futures
 
@@ -18,8 +20,9 @@ import kmedoids as fast_kmedoids  # k-medoids fast_k-medoids (PAM) implementatio
 
 logger = logging.getLogger(__name__)
 
+
 #### MSA Algorithm ####
-def create_tree(data_objects, tg, nc, distance_function, algorithm, implementation):
+def create_tree(data_objects_unordered, tg, nc, distance_function, algorithm, implementation):
     """
     Constructs a hierarchical tree structure using the clustering algorithm provided.
 
@@ -52,6 +55,17 @@ def create_tree(data_objects, tg, nc, distance_function, algorithm, implementati
         To avoid future redundant distance computations, the structures are improved to contain nan values in the place of duplicated points.
     """
 
+    data_objects = deepcopy(data_objects_unordered)
+    ordered_indices = np.arange(data_objects.shape[0])
+
+    #print(f'Array original: {data_objects_unordered}')
+
+    # Cluster and reorder data objects to improve spatial locality using some method
+    #data_objects, ordered_indices = hierarchical_clusters_by_size_ordered(data_objects_unordered, tg)
+
+    #print("Array reordenado:", data_objects)
+    #print("Índices ordenados:", ordered_indices)
+    #print("Tamaño de ordered_indices:", len(ordered_indices))
 
     objects_length = data_objects.shape[0]
     objects_dimensionality = data_objects.shape[1]
@@ -183,7 +197,7 @@ def create_tree(data_objects, tg, nc, distance_function, algorithm, implementati
     # Print the number of elements that have been substituted by NaN
     # print(f'Duplicates found = {duplicates}')
 
-    return n_layers, grupos_capa, simplified_puntos_capa, labels_capa, promoted_points
+    return n_layers, grupos_capa, simplified_puntos_capa, labels_capa, promoted_points, ordered_indices
 
 # Clustering method accepted by PDASC
 def PDASC_accepted_algorithms():

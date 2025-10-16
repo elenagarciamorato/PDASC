@@ -1,4 +1,5 @@
 import logging
+
 from PDASC.utils import *
 from PDASC.pdasc_ import create_tree
 from multiprocessing import Pool
@@ -28,13 +29,13 @@ def store_PDASC_index_flue(dataset, distance_function, tg, nc, n_flues, id_flue,
 
     # Set the path of the file where the index will be stored
     os.makedirs(f'ANN_Experiments/NearestNeighbors/{dataset}/indexes', exist_ok=True) # If the directory does not exist, create it
-    file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_tg{str(tg)}_nc{str(nc)}_index_{n_flues}-{id_flue}.joblib'
+    file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_nc{str(nc)}_tg{str(tg)}_index_{n_flues}-{id_flue}.joblib'
     joblib.dump(index, file_path)
     print(f"Index for flue {id_flue} stored at {file_path}"),
 
 
 def load_PDASC_index_flue(dataset, distance_function, tg, nc, n_flues=1, id_flue=1):
-    file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_tg{str(tg)}_nc{str(nc)}_index_{n_flues}-{id_flue}.joblib'
+    file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_nc{str(nc)}_tg{str(tg)}_index_{n_flues}-{id_flue}.joblib'
     return joblib.load(file_path)
 
 
@@ -81,7 +82,7 @@ def create_index_flues(training_set, dataset, group_size, n_centroids, n_flues, 
 
 
 #####    DISTRIBUTED ANN SEARCH FUNCTIONS    #####
-def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_size, tg, n_centroids, dist_function, radius, pruning_strategy=False):
+def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_size, tg, n_centroids, dist_function, radius, pruning_strategy):
 
     # print(f"Processing flue {id_flue}")
 
@@ -93,6 +94,7 @@ def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_siz
     puntos_capa = index_flue[2]
     labels_capa = index_flue[3]
     promoted_points = index_flue[4]
+    ordered_indices = index_flue[5]
 
 
     # Create an array of k_vecinos * 2 elements where the value of them are the initial radius
@@ -135,7 +137,7 @@ def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_siz
         resultados = [
             explore_centroid_dynamicradius_minradius(
                 punto_buscado, n_capas, inheritage, prototype_id, prototype_distance,
-                puntos_capa, labels_capa, grupos_capa, promoted_points, tg, n_centroids,
+                puntos_capa, labels_capa, grupos_capa, promoted_points, ordered_indices, tg, n_centroids,
                 dist_function, [], 0, radius, id_flue, flue_size
             )
             for prototype_id, prototype_distance in enumerate(distances_top_prototypes)
@@ -145,7 +147,7 @@ def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_siz
         resultados = [
             explore_centroid_staticradius(
                 punto_buscado, n_capas, inheritage, prototype_id, prototype_distance,
-                puntos_capa, labels_capa, grupos_capa, promoted_points, tg, n_centroids,
+                puntos_capa, labels_capa, grupos_capa, promoted_points, ordered_indices, tg, n_centroids,
                 dist_function, [], 0, radius, id_flue, flue_size
             )
             for prototype_id, prototype_distance in enumerate(distances_top_prototypes)
@@ -157,10 +159,9 @@ def recursive_ANN_search_flue(id_flue, n_flues, punto_buscado, dataset, flue_siz
         n_distances_computed += aux_n_distances
 
     # Once the complete index has been explored:
-    # print(neighbours)
     return neighbours, n_distances_computed
 
-def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, tg, n_centroids, dist_function, radius, k_vecinos):
+def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, tg, n_centroids, dist_function, radius, k_vecinos, pruning_strategy):
 
     # Establece el punto de búsqueda como un array de una sola fila
     punto_buscado = punto.reshape(1, -1)
@@ -175,9 +176,10 @@ def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, t
     # Creamos una variable para almacenar el número de distancias computadas
     n_distances_computed = 0
 
+
     # Empaquetamos todos los argumentos
     args = [
-        (flue, n_flues, punto_buscado, dataset, flue_size, tg, n_centroids, dist_function, radius)
+        (flue, n_flues, punto_buscado, dataset, flue_size, tg, n_centroids, dist_function, radius, pruning_strategy)
         for flue in np.arange(n_flues)
     ]
 
@@ -229,6 +231,7 @@ def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, t
         # The neighbours whose distance is not computed yet are those which are not tuples
         id_neighbours_without_d = [n for n in neighbours if not isinstance(n, tuple)]
         # print(f'There are {len(id_neighbours_without_d)} which distance is not computed yet')
+        #print(sorted(id_neighbours_without_d))
 
         # By acceding the original dataset, we obtain its coordinates and compute its distances to the query point
         coords_neighbours_without_d = vector_training[id_neighbours_without_d]
@@ -296,7 +299,7 @@ def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, t
 
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances_computed
 
-def ANN_search(vector_testing, vector_training, dataset, n_flues, tg, n_centroids, dist_function, radius, k):
+def ANN_search(vector_testing, vector_training, dataset, n_flues, tg, n_centroids, dist_function, radius, k, pruning_strategy=False):
 
     # Update the metric name for compatibility with scipy
     if dist_function == 'manhattan':
@@ -322,7 +325,7 @@ def ANN_search(vector_testing, vector_training, dataset, n_flues, tg, n_centroid
     for punto in vector_testing:
         # Call the recursive knn search function for each point
         indices, coords, distances, n_distances = recursive_ann_search_coordinated(
-                punto, dataset, vector_training, n_flues, tg, n_centroids, dist_function, radius, k
+                punto, dataset, vector_training, n_flues, tg, n_centroids, dist_function, radius, k, pruning_strategy
             )
 
         results.append((indices, coords, distances, n_distances))

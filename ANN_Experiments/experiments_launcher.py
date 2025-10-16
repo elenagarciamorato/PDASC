@@ -5,6 +5,7 @@ from ANN_Experiments.algorithms.FAISS_IVF.knn import FAISS_IVF
 from ANN_Experiments.algorithms.FAISS_LSH.knn import FAISS_LSH
 from ANN_Experiments.algorithms.FAISS_HNSW.knn import FAISS_HNSW
 from ANN_Experiments.algorithms.NMSLIB_HNSW.knn import NMSLIB_HNSW
+from ANN_Experiments.algorithms.Annoy.knn import Annoy
 
 import multiprocessing
 import re
@@ -50,6 +51,9 @@ def experiment(config_file):
 
     elif method == 'NMSLIBHNSW':
         NMSLIB_HNSW(config_file)
+
+    elif method == 'ANNOY':
+        Annoy(config_file)
     else:
         print("Method not able")
 

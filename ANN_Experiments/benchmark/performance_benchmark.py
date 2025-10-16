@@ -75,9 +75,9 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
                         # Get the recall of the experiment
                         'Recall(Av)': get_recall(dataset, parts[2], distance_function, indices, coords, distances),
                         'Search_T(s)': np.round(search_time, 2),
-                        'Query_T(Av)(s)': np.round(search_time/len(indices), 4),
-                        'In_S(MB)': index_size,
-                        'In_T(s)': np.round(index_time, 2)
+                        #'Query_T(Av)(s)': np.round(search_time/len(indices), 4),
+                        'In_T(s)': np.round(index_time, 3),
+                        'In_S(MB)': index_size
 
                     })
 
@@ -99,9 +99,9 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
                         # Get the recall of the experiment
                         'Recall(Av)': get_recall(dataset, parts[2], distance_function, indices, coords, distances),
                         'Search_T(s)': np.round(search_time, 4),
-                        'Query_T(Av)(s)': np.round(search_time / len(indices), 4),
+                        #'Query_T(Av)(s)': np.round(search_time / len(indices), 4),
+                        'In_T(s)': np.round(index_time, 3),
                         'In_S(MB)': index_size,
-                        'In_T(s)': np.round(index_time, 2)
                     })
 
         # Primero convierte la lista de dicts a DataFrame
@@ -122,21 +122,21 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
             .assign(n_nodes=lambda d: d['n_nodes'].astype(int),
                     radius=lambda d: d['radius'].astype(float) if d['radius'] is not None else None,
                     Distance=lambda d: d['Distance'].astype(distance_type))
-            .sort_values(by=['Method', 'Distance', 'radius', 'n_nodes'], ascending=[True, True, True, True])
+            .sort_values(by=['Method', 'Distance', 'radius', 'Config', 'n_nodes'], ascending=[True, True, True, True, True])
         )
 
         # Selección de columnas
-        excel_results = formatted_results[['Distance', 'radius', 'n_nodes', 'Config', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'Query_T(Av)(s)', 'In_S(MB)']]
+        excel_results = formatted_results[['Distance', 'radius', 'Config', 'n_nodes', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'In_S(MB)']]
 
         # Orden final
-        excel_results = excel_results.sort_values(by=['Distance', 'n_nodes', 'radius'])
+        excel_results = excel_results.sort_values(by=['Distance', 'radius',  'Config', 'n_nodes'])
 
         # Añadir una columna de percentiles
         #percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
         #excel_results['Percentil'] = percentiles
 
         # Reemplazo de decimales con comas
-        for col in ['radius', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'Query_T(Av)(s)', 'In_S(MB)']:
+        for col in ['radius', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'In_S(MB)']:
             excel_results[col] = excel_results[col].astype(str).str.replace('.', ',', regex=False)
 
         # Añade una columna más al dataset con el percentil correpondiente a cada radio

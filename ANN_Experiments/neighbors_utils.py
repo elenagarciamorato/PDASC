@@ -177,8 +177,8 @@ def read_config_file(config_file):
         parameters = [dataset, k, distance, method, exact_algorithm]
 
     elif method == 'PDASC':
-        tam_grupo = config.getint('method', 'tg')
         n_centroides = config.getint('method', 'nc')
+        tam_grupo = config.getint('method', 'tg')
         n_nodes = config.getint('method', 'n_nodes')  # Number of parallel processing nodes to be used
         radius = float(config.get('method', 'r'))  # Radius of the neighborhood to be considered
         # radius = [float(r) for r in config.get('method', 'r').split(', ')] # If we want to use multiple radius values, we can pass them as a list
@@ -232,6 +232,11 @@ def read_config_file(config_file):
                           {"M": M, "efConstruction": efConstruction, "efSearch": efSearch, "post": post,
                            "coords_in_degrees": coords_in_degrees}]
         """
+    elif method == 'ANNOY':
+        n_trees = config.getint('method', 'n_trees')
+        k_search = config.getint('method', 'k_search')
+        parameters = [dataset, k, distance, method, n_trees, k_search]
+
     else:
         print("Method not able")
         exit(1)
@@ -262,7 +267,7 @@ def get_index_size(dataset, method, distance, method_params):
         n_nodes = method_params['n_nodes']
         tg = method_params['tg']
         nc = method_params['nc']
-        index_file = f"{str(dataset)}_{str(distance)}_tg{tg}_nc{nc}_index_{n_nodes}-{0}.joblib"
+        index_file = f"{str(dataset)}_{str(distance)}_nc{nc}_tg{tg}_index_{n_nodes}-{0}.joblib"
 
     elif method == 'PYNN':
         print('Getting PYNN index size')
@@ -284,6 +289,12 @@ def get_index_size(dataset, method, distance, method_params):
         M = method_params['M']
         efConstruction = method_params['efConstruction']
         index_file = f"FAISSHNSW_{str(dataset)}_{str(distance)}_M{M}_efC{efConstruction}_index.joblib"
+
+    elif method == 'ANNOY':
+        n_trees = method_params['n_trees']
+        k_search = method_params['k_search']
+        index_file = f"ANNOY_{str(dataset)}_{str(distance)}_nn{method_params['n_neighbors']}_ntrees{n_trees}_ksearch{k_search}_index.joblib"
+
     else:
 
         index_file = f"{str(method)}_{dataset}_{distance}_index.joblib"
