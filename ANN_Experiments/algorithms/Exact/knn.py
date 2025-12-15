@@ -1,7 +1,8 @@
 from ANN_Experiments.neighbors_utils import *
 from ANN_Experiments.algorithms.Exact.module import Exact_nn_index, Exact_nn_search
 from timeit import default_timer as timer
-from data.load_train_test_set import load_train_test_h5py, load_train_test
+from data.load_train_test_set import load_train_test_h5py, load_hdf5
+from sklearn.preprocessing import MultiLabelBinarizer
 
 
 def Exact(config_file):
@@ -19,7 +20,15 @@ def Exact(config_file):
 
     # Load the train and test sets to carry on the benchmark
     # train_set, test_set = load_train_test(str(dataset))
-    vector_training, vector_testing = load_train_test_h5py(file_name)
+    if distance == "jaccard":
+        train_set_csr, test_set_csr = load_hdf5(file_name)
+        train_lists = [row.indices.tolist() for row in train_set_csr]
+        test_lists = [row.indices.tolist() for row in test_set_csr]
+        mlb = MultiLabelBinarizer()
+        vector_training = mlb.fit_transform(train_lists).astype(bool)  # dtype=bool para Jaccard
+        vector_testing = mlb.transform(test_lists).astype(bool)  # dtype=bool para Jaccard
+    else:
+        vector_training, vector_testing = load_train_test_h5py(file_name)
 
     if distance == 'haversine':
         vector_training = np.radians(vector_training)

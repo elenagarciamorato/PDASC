@@ -1,5 +1,7 @@
 import logging
 
+from pynndescent.distances import jaccard
+
 from PDASC.utils import *
 from PDASC.pdasc_ import create_tree
 from multiprocessing import Pool
@@ -41,24 +43,52 @@ def load_PDASC_index_flue(dataset, distance_function, tg, nc, n_flues=1, id_flue
 
 #####    DISTRIBUTED INDEX BUILDING FUNCTIONS    #####
 
-def simulate_flue_partitioning(training_set, n_flues):
+def simulate_flue_partitioning(training_set, n_flues, distance_function=None, n_centroids=None):
+
+
     # Total number of points in the training set
     n_total = training_set.shape[0]
 
-    # The size of each node is calculated by dividing the total number of points by the number of nodes, with the last node possibly being smaller
-    tam_nodos = int(np.ceil(n_total / n_flues))  # Size of each node (or flue) in the tree
+    if (distance_function=='jaccard') & (n_flues>1):
+        # For Jaccard distance, we want all partitions except the last one to have the same size,
+        # and that size to be the largest multiple of n_centroids that fits in the division
 
-    print(f"Total points: {n_total}, Nodes: {n_flues}, Size of each node: {tam_nodos}")
+        n_parts = n_flues - 1  # number of equal partitions (the last one may be smaller)
+        avg_for_parts = n_total // n_parts
+        base_size = (avg_for_parts // n_centroids) * n_centroids  # mayor múltiplo de n_centroids <= avg_for_k
 
-    # We split the training set into partitions of size tam_nodos
-    training_set_partitions = [np.array(training_set[i:i + tam_nodos]) for i in range(0, len(training_set), tam_nodos)]
+        if base_size == 0:
+            base_size = min(n_centroids, n_total)
 
+        training_set_partitions = []
+        start = 0
+        for _ in range(n_parts):
+            end = min(start + base_size, n_total)
+            training_set_partitions.append(training_set[start:end])
+            start = end
+            if start >= n_total:
+                break
+
+        # Last partition takes the remaining elements
+        training_set_partitions.append(training_set[start:])
+
+    else:
+
+        # The size of each node is calculated by dividing the total number of points by the number of nodes, with the last node possibly being smaller
+        tam_nodos = int(np.ceil(n_total / n_flues))  # Size of each node (or flue) in the tree
+
+        # We split the training set into partitions of size tam_nodos
+        training_set_partitions = [np.array(training_set[i:i + tam_nodos]) for i in range(0, n_total, tam_nodos)]
+
+    print(f"Total points: {n_total}, Nodes: {n_flues}, Size of each node: {[len(part) for part in training_set_partitions]}")
     return training_set_partitions
 
 def create_index_flues(training_set, dataset, group_size, n_centroids, n_flues, dist_func, algorithm, implementation):
 
     # Simulate the partitioning of the training set into flues
-    training_set_partitions = simulate_flue_partitioning(training_set, n_flues)
+    training_set_partitions = simulate_flue_partitioning(training_set, n_flues, dist_func, n_centroids)
+
+    #print(f"Tamaños de cada partición en training_set_partitions: {[len(part) for part in training_set_partitions]}")
 
     # We build the lowest layer of the PDASC index
 
@@ -166,9 +196,19 @@ def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, t
     # Establece el punto de búsqueda como un array de una sola fila
     punto_buscado = punto.reshape(1, -1)
 
-    # Calcula el tamaño de las flues (excepto el último nodo que puede ser más pequeño):
-    flue_size = int(np.ceil(len(vector_training) / n_flues))  # Número de flues (training_set_partitions) en el índice
-    # print("Tamaño de cada flue:", tam_flue)
+    # Calcula el tamaño de las flues (particiones) según la métrica de distancia:
+    if (dist_function == 'jaccard') & (n_flues > 1):
+        # Para Jaccard, se busca que todas las particiones menos la última tengan el mismo tamaño,
+        # y que ese tamaño sea el mayor múltiplo posible de n_centroids que quepa en la división.
+        n_part = n_flues - 1  # número de particiones iguales (la última puede ser más pequeña)
+        avg_for_part = len(vector_training) // n_part  # tamaño promedio entero por partición
+        flue_size = (avg_for_part // n_centroids) * n_centroids  # mayor múltiplo de n_centroids <= avg_for_part
+
+    else:
+        # Para otras distancias, simplemente se reparte el total entre el número de flues,
+        # redondeando hacia arriba para que todas tengan al menos un elemento.
+        flue_size = int(np.ceil(len(vector_training) / n_flues))
+    # print("Tamaño de cada flue:", flue_size)
 
     # Creamos una lista para almacenar los vecinos encontrados
     neighbours = []
@@ -187,6 +227,10 @@ def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, t
     with Pool() as pool:
         results = pool.starmap(recursive_ANN_search_flue, args)
 
+    # Imprime las estadísticas de cada flue
+    #for flue_id, (neighs, n_dists) in enumerate(results):
+    #    print(f"Flue {flue_id}: Found {len(neighs)} neighbours, computed {n_dists} distances")
+
     # Recolectamos los resultados
     for neighbours_flue, n_distances_computed_flue in results:
         n_distances_computed += n_distances_computed_flue
@@ -198,13 +242,13 @@ def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, t
     # If no neighbours have been found:
     if not neighbours:
 
-        # print("No neighbours have been found for this query point")
+        print("No neighbours have been found for this query point")
 
         # Pad the array of close points with None objects until it reaches the size of k neighbors
         # To avoid index out of bounds error
         vacio = np.empty(k_vecinos, dtype=int), np.empty([k_vecinos, vector_training.shape[0]], dtype=float), np.empty(k_vecinos, dtype=float), n_distances_computed
 
-        print(f'vacio:{vacio}')
+        #print(f'vacio:{vacio}')
         return vacio
 
     # If any neighbour have been found:
@@ -214,7 +258,7 @@ def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, t
 
         # The neighbours whose distance is already computed are those which are stored as tuples
         neighbours_with_d = [n for n in neighbours if isinstance(n, tuple)]
-        # print(f'There are {len(neighbours_with_d)} which distance is already computed')
+        #print(f'There are {len(neighbours_with_d)} which distance is already computed')
 
         # Separate tuple\_neighbours into two sublists: one for the ids and one for the distances to the query point
         id_neighbours_with_d = [n[0] for n in neighbours_with_d]
@@ -223,14 +267,13 @@ def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, t
 
         # By acceding the original dataset, we obtain its coordinates
         coords_neighbours_with_d = vector_training[id_neighbours_with_d]
-        # print(f'Number of neighbours with distance already computed: {len(id_neighbours_with_d)}')
 
         # For control, print the distances already computed
-        #print(f'The distances computed until now are {len(distances_computed)}')
+        #print(f'The distances computed until now are {n_distances_computed}')
 
         # The neighbours whose distance is not computed yet are those which are not tuples
         id_neighbours_without_d = [n for n in neighbours if not isinstance(n, tuple)]
-        # print(f'There are {len(id_neighbours_without_d)} which distance is not computed yet')
+        #print(f'There are {len(id_neighbours_without_d)} which distance is not computed yet')
         #print(sorted(id_neighbours_without_d))
 
         # By acceding the original dataset, we obtain its coordinates and compute its distances to the query point

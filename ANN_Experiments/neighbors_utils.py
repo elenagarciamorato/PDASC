@@ -77,11 +77,21 @@ def load_neighbors(file_name):
 # Store neighbors (indices, coords and dist) and performance (n_distances, search time and index_size) into a hdf5 file
 def save_neighbors_and_performance(indices, coords, dists, n_distances, index_size, index_time, search_time, file_name):
 
+    # If the distance function is jaccard, we do not store coords, as they are provided as list of lists
+    if "jaccard" in file_name:
+        distance_function = 'jaccard'
+    else:
+        distance_function = 'other'
+
     # Store the 3 different matrix on a hdf5 file
     with h5py.File(file_name, 'w') as f:
         f.flush()
+
         dset1 = f.create_dataset('indices', data=indices)
-        dset2 = f.create_dataset('coords', data=coords)
+        if distance_function == 'jaccard':
+            dset2 = f.create_dataset('coords', data=[])
+        else:
+            dset2 = f.create_dataset('coords', data=coords)
         dset3 = f.create_dataset('dists', data=dists)
 
         dset4 = f.create_dataset('n_distances', data=n_distances)
@@ -221,17 +231,17 @@ def read_config_file(config_file):
         efSearch = config.getint('method', 'efSearch')
         parameters = [dataset, k, distance, method, M, efConstruction, efSearch]
 
-        """
-        elif method == 'NMSLIBHNSW':
-            M = config.getint('test', 'M')
-            efConstruction = config.getint('test', 'efConstruction')
-            efSearch = config.getint('test', 'efSearch')
-            post = config.getint('test', 'post')
-            coords_in_degrees = config.getboolean('test', 'coords_in_degrees')
-            parameters = [dataset, k, distance, method,
-                          {"M": M, "efConstruction": efConstruction, "efSearch": efSearch, "post": post,
-                           "coords_in_degrees": coords_in_degrees}]
-        """
+
+    elif method == 'NMSLIBHNSW':
+        M = config.getint('method', 'M')
+        efConstruction = config.getint('method', 'efConstruction')
+        efSearch = config.getint('method', 'efSearch')
+
+        post = config.getint('method', 'post')
+        coords_in_degrees = config.getboolean('method', 'coords_in_degrees')
+        parameters = [dataset, k, distance, method, M, efConstruction, efSearch, post, coords_in_degrees]
+        #parameters = [dataset, k, distance, method, {"M": M, "efConstruction": efConstruction, "efSearch": efSearch, "post": post, "coords_in_degrees": coords_in_degrees}]
+
     elif method == 'ANNOY':
         n_trees = config.getint('method', 'n_trees')
         k_search = config.getint('method', 'k_search')
@@ -290,6 +300,14 @@ def get_index_size(dataset, method, distance, method_params):
         efConstruction = method_params['efConstruction']
         index_file = f"FAISSHNSW_{str(dataset)}_{str(distance)}_M{M}_efC{efConstruction}_index.joblib"
 
+    elif method == 'NMSLIBHNSW':
+        print('Getting NMSLIB HNSW index size')
+        M = method_params['M']
+        efConstruction = method_params['efConstruction']
+        index_file = f"NMSLIBHNSW_{str(dataset)}_{str(distance)}_M{M}_efC{efConstruction}_index.joblib"
+        index_file_aux = f"NMSLIBHNSW_{str(dataset)}_{str(distance)}_M{M}_efC{efConstruction}_index.joblib.dat"
+
+
     elif method == 'ANNOY':
         n_trees = method_params['n_trees']
         k_search = method_params['k_search']
@@ -300,10 +318,14 @@ def get_index_size(dataset, method, distance, method_params):
         index_file = f"{str(method)}_{dataset}_{distance}_index.joblib"
 
     full_path = directory_path + index_file
+    full_path_aux = directory_path + index_file_aux if method == 'NMSLIBHNSW' else None
+
+    if method == 'NMSLIBHNSW' and os.path.isfile(full_path) and os.path.isfile(full_path_aux):
+        size_mb_total = (os.path.getsize(full_path) + os.path.getsize(full_path_aux)) / (1024 * 1024)
+        return round(size_mb_total, 2)
 
     if os.path.isfile(full_path):
-        size_bytes = os.path.getsize(full_path)
-        size_mb = size_bytes / (1024 * 1024)
+        size_mb = os.path.getsize(full_path) / (1024 * 1024)
         return round(size_mb, 2)
-    else:
-        return np.nan
+
+    return np.nan

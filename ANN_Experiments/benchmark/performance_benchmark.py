@@ -122,21 +122,21 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
             .assign(n_nodes=lambda d: d['n_nodes'].astype(int),
                     radius=lambda d: d['radius'].astype(float) if d['radius'] is not None else None,
                     Distance=lambda d: d['Distance'].astype(distance_type))
-            .sort_values(by=['Method', 'Distance', 'radius', 'Config', 'n_nodes'], ascending=[True, True, True, True, True])
+            .sort_values(by=['Method', 'Distance', 'n_nodes', 'radius', 'Config'], ascending=[True, True, True, True, True])
         )
 
         # Selección de columnas
-        excel_results = formatted_results[['Distance', 'radius', 'Config', 'n_nodes', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'In_S(MB)']]
+        excel_results = formatted_results[['Distance', 'radius', 'Config', 'n_nodes', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'In_T(s)', 'In_S(MB)']]
 
         # Orden final
-        excel_results = excel_results.sort_values(by=['Distance', 'radius',  'Config', 'n_nodes'])
+        excel_results = excel_results.sort_values(by=['Distance', 'n_nodes', 'radius', 'Config'])
 
         # Añadir una columna de percentiles
         #percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
         #excel_results['Percentil'] = percentiles
 
         # Reemplazo de decimales con comas
-        for col in ['radius', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'In_S(MB)']:
+        for col in ['radius', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'In_T(s)', 'In_S(MB)']:
             excel_results[col] = excel_results[col].astype(str).str.replace('.', ',', regex=False)
 
         # Añade una columna más al dataset con el percentil correpondiente a cada radio

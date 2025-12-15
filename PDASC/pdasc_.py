@@ -1,16 +1,9 @@
 from copy import deepcopy, copy
-
-from setuptools.namespaces import flatten
-# import numpy as np
-from sklearn import preprocessing
-from timeit import default_timer as timer
 import logging
-
 from PDASC.clustering_algorithms.clustering_techniques import *
 from PDASC.utils import *
 import h5py
-# from sys import getsizeof
-import concurrent.futures
+
 
 # Clustering methods to be used: k-means, k-medoids
 # import sklearn.cluster  # k-means sklearn implementation
@@ -56,12 +49,12 @@ def create_tree(data_objects_unordered, tg, nc, distance_function, algorithm, im
     """
 
     data_objects = deepcopy(data_objects_unordered)
-    ordered_indices = np.arange(data_objects.shape[0])
+    ordered_indices = np.arange(data_objects.shape[0]) # Util si utilizamos clusterización para reordenar los datos
 
     #print(f'Array original: {data_objects_unordered}')
 
-    # Cluster and reorder data objects to improve spatial locality using some method
-    #data_objects, ordered_indices = hierarchical_clusters_by_size_ordered(data_objects_unordered, tg)
+    # Cluster and reorder data objects to improve spatial locality
+    # data_objects, ordered_indices = hierarchical_clusters_by_size_ordered(data_objects_unordered, tg, method='kmeans')
 
     #print("Array reordenado:", data_objects)
     #print("Índices ordenados:", ordered_indices)
@@ -99,7 +92,10 @@ def create_tree(data_objects_unordered, tg, nc, distance_function, algorithm, im
             fin = min(fin, objects_length)
             n_points[id_group] = fin - inicio # Number of points in the group
 
-             # If the number of points within the group is greater than or equal to the number of centroids
+            # Print some debug information
+            # print(f'Layer {id_layer}, Group {id_group}, Points in group: {fin - inicio} y el numero de centroides es {nc}')
+
+            # If the number of points within the group is greater than or equal to the number of centroids
             if (fin - inicio) >= nc:
 
                 # Apply the clustering algorithm to the current group:
@@ -165,6 +161,7 @@ def create_tree(data_objects_unordered, tg, nc, distance_function, algorithm, im
                 # The same process is done in order to simplify the structure
                 # For the first layer, we store the promoted real points in an auxiliar structure
                 if id_layer == 0:
+
                     promoted_points[id_group] = np.full(fin - inicio, False, dtype=bool)
                     promoted_points[id_group][prototype_points] = True
 
@@ -178,6 +175,7 @@ def create_tree(data_objects_unordered, tg, nc, distance_function, algorithm, im
                         id_lower_group = id_group * n_branches +  branch_offset
                         element = int(i % nc)
                         simplified_puntos_capa[id_layer - 1][id_lower_group][element] = np.nan
+
                         #duplicates += 1
 
             inicio = fin
@@ -1020,7 +1018,7 @@ def recursive_approximate_knn_search_classical_pruning(n_capas, n_centroides, ve
 
 
 def recursive_approximate_knn_search_radius_pruning(n_capas, tg, n_centroides, vector_testing, vector_original, k_vecinos, metrica,
-                           grupos_capa, puntos_capa, labels_capa, promoted_points, radius, dataset):
+                           grupos_capa, puntos_capa, labels_capa, promoted_points, radius, dataset, ordered_indices):
     """
     Realiza una búsqueda aproximada de los k vecinos más cercanos (A-KNN search) utilizando un índice de PDASC previamente construido
     y un radio dado.
@@ -1117,7 +1115,7 @@ def recursive_approximate_knn_search_radius_pruning(n_capas, tg, n_centroides, v
             #prototype_coords = coordinates_top_prototypes[prototype_id]
             prototype_distance = distances_top_prototypes[prototype_id]
             #aux_neighbors, aux_n_distances = explore_centroid_CDFradius1(punto_buscado, n_capas, inheritage, prototype_id, prototype_coords, puntos_capa, labels_capa, grupos_capa, promoted_points,n_centroides, metrica, [], 0, min_radius)
-            aux_neighbors, aux_n_distances = explore_centroid_dynamicradius_minradius(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, tg, n_centroides, metrica, [], 0, min_radius)
+            aux_neighbors, aux_n_distances = explore_centroid_dynamicradius_minradius(punto_buscado, n_capas, inheritage, prototype_id, prototype_distance, puntos_capa, labels_capa, grupos_capa, promoted_points, ordered_indices, tg, n_centroides, metrica, [], [], 0, min_radius)
             neighbours.extend(aux_neighbors)
             n_distances_computed += aux_n_distances
 

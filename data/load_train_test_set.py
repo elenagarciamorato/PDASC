@@ -6,6 +6,9 @@ from sklearn import preprocessing
 import pandas as pd
 import logging
 import re
+from pathlib import Path
+import random
+from scipy.sparse import csr_matrix
 np.set_printoptions(suppress=True)
 
 # Set constants for dataset generation
@@ -15,7 +18,6 @@ nclouds = 8
 normaliza = False
 
 ####### Load and store train and test set from a h5py file #########
-
 
 # Store train and test set into a hdf5 file
 def save_train_test_h5py(train_set, test_set, file_name):
@@ -41,6 +43,129 @@ def load_train_test_h5py(file_name):
             print("Loading train and test set from " + file_name + "\n")
             return np.array(hdf5_file['train_set']), np.array(hdf5_file['test_set'])
 
+
+
+#### Load and store train and test set from a hdf5 file as CSR binary for Jaccard distance datasets (MovieLens & Kosarak) #########
+def to_sorted_unique_int_list(lst):
+    """Devuelve la lista ordenada y sin duplicados (valores convertidos a int)."""
+    return sorted(set(int(x) for x in lst))
+
+
+def split_train_test(X, test_size=100, seed=0):
+    n = len(X)
+    if test_size > n:
+        raise ValueError(f"test_size ({test_size}) no puede ser mayor que n ({n})")
+    idxs = list(range(n))
+    rng = random.Random(seed)
+    rng.shuffle(idxs)
+    test_idx = set(idxs[:test_size])
+    train = [X[i] for i in range(n) if i not in test_idx]
+    test = [X[i] for i in range(n) if i in test_idx]
+    return train, test
+
+
+def infer_dimension(list_of_lists):
+    """Calcula dimension = max(indice)+1 en todo el dataset; si vacío, 0."""
+    m = -1
+    for lst in list_of_lists:
+        for x in lst:
+            xi = int(x)
+            if xi > m:
+                m = xi
+    return (m + 1) if m >= 0 else 0
+
+
+def lists_to_csr(X, dimension=None, dtype=np.uint8, dedup=True):
+    """
+    Convierte lista de listas de índices en una CSR binaria.
+    - X: list[list[int]]
+    - dimension: nº de columnas (si None se infiere)
+    - dedup: elimina duplicados por fila (recomendado para Jaccard)
+    """
+    n_rows = len(X)
+    if dimension is None:
+        dimension = infer_dimension(X)
+
+    indptr = [0]
+    indices = []
+    data = []
+
+    for row in X:
+        if dedup:
+            row = set(row)  # elimina duplicados
+        # opcionalmente, filtra posibles índices fuera de rango
+        row = [c for c in row if 0 <= c < dimension]
+        # orden estable/consistente (no obligatorio)
+        row = sorted(row)
+        indices.extend(row)
+        data.extend([1] * len(row))
+        indptr.append(len(indices))
+
+    # Construye CSR
+    X_csr = csr_matrix(
+        (np.asarray(data, dtype=dtype),
+         np.asarray(indices, dtype=np.int32),
+         np.asarray(indptr, dtype=np.int32)),
+        shape=(n_rows, dimension),
+        dtype=dtype
+    )
+    return X_csr
+
+
+def _write_csr(group: h5py.Group, M: csr_matrix, compress=True):
+    """Guarda una CSR en un subgrupo HDF5."""
+    if compress:
+        compression = "gzip"
+        compression_opts = 4
+    else:
+        compression = None
+        compression_opts = None
+
+    group.create_dataset("data", data=M.data, compression=compression, compression_opts=compression_opts)
+    group.create_dataset("indices", data=M.indices, compression=compression, compression_opts=compression_opts)
+    group.create_dataset("indptr", data=M.indptr, compression=compression, compression_opts=compression_opts)
+    group.attrs["shape"] = M.shape
+
+
+def save_hdf5(path: Path, train_set, test_set, dimension):
+    """
+    Guarda train/test en HDF5 como CSR binaria.
+    - train_set / test_set: list[list[int]] o CSR directamente
+    - dimension: nº columnas global
+    - meta: dict con metadatos (se guarda como JSON en attrs)
+    """
+    # Asegura CSR
+    train_csr = train_set if isinstance(train_set, csr_matrix) else lists_to_csr(train_set, dimension)
+    test_csr = test_set if isinstance(test_set, csr_matrix) else lists_to_csr(test_set, dimension)
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with h5py.File(path, "w") as f:
+        gtrain = f.create_group("train_set")
+        gtest = f.create_group("test_set")
+
+        _write_csr(gtrain, train_csr)
+        _write_csr(gtest, test_csr)
+
+
+def _read_csr(group: h5py.Group, dtype=np.uint8) -> csr_matrix:
+    """Lee una CSR desde un subgrupo HDF5."""
+    data = group["data"][()]
+    indices = group["indices"][()]
+    indptr = group["indptr"][()]
+    shape = tuple(group.attrs["shape"])
+    return csr_matrix((data, indices, indptr), shape=shape, dtype=dtype)
+
+
+def load_hdf5(path: Path):
+    """
+    Carga train/test CSR y metadatos desde HDF5.
+    Devuelve: (train_csr, test_csr, dimension, meta_dict)
+    """
+    with h5py.File(path, "r") as f:
+        train_csr = _read_csr(f["train_set"])
+        test_csr = _read_csr(f["test_set"])
+
+    return train_csr, test_csr
 
 ####### Generate brand new train and test set #########
 
@@ -342,6 +467,99 @@ def load_train_test(dataset_name, test_eq_train=False):
 
         return train_set, test_set
 
+    elif dataset_name == "kosarak":
+
+        #local_fn = "kosarak.dat.gz"
+        # only consider sets with at least min_elements many elements
+        min_elements = 20
+        #url = "http://fimi.uantwerpen.be/data/%s" % local_fn
+        #download(url, local_fn)
+
+        X = []
+        dimension = 0
+        with open("./data/raw_data/kosarak.dat", "r") as f:
+            content = f.readlines()
+            # preprocess data to find sets with more than 20 elements
+            # keep track of used ids for reenumeration
+            for line in content:
+                if len(line.split()) >= min_elements:
+                    X.append(list(map(int, line.split())))
+                    dimension = max(dimension, max(X[-1]) + 1)
+
+        # 1) split
+        train_set, test_set = split_train_test(X, test_size=100, seed=1234)
+        print(f"train: {len(train_set)}   test: {len(test_set)}")
+
+        # dimensión global (máx índice + 1)
+        dimension = infer_dimension(X)
+        print("dimension:", dimension)
+
+        save_hdf5(
+            Path("./data/kosarak_train_test_set.hdf5"),
+            train_set,
+            test_set,
+            dimension
+        )
+
+        # save_train_test_h5py(train_set, test_set, "./data/kosarak_train_test_set.hdf5")
+
+        return train_set, test_set
+    elif dataset_name == "MovieLens":
+
+        fn = "./data/raw_data/ml-10m.zip"
+        #url = "http://files.grouplens.org/datasets/MovieLens/%s" % fn
+
+        # asumo que tienes disponible download(url, fn) como en tu snippet
+        #download(url, fn)
+
+        ratings_file = "./data/raw_data/ml-10M100K/ratings.dat"
+        separator = "::"
+        min_rating = 3.0
+
+        users = {}  # map userId -> row index
+        X = []  # lista de listas: por usuario, ids de items
+        dimension = 0  # nº total de items = max(itemId)+1
+
+        with open(ratings_file, "r") as file:
+            for line in file:
+                el = line.strip().split(separator)
+                if len(el) < 3:
+                    continue
+                userId = el[0]
+                itemId = int(el[1])
+                rating = float(el[2])
+
+                if rating < min_rating:
+                    continue
+
+                if userId not in users:
+                    users[userId] = len(users)
+                    X.append([])
+
+                X[users[userId]].append(itemId)
+                if itemId + 1 > dimension:
+                    dimension = itemId + 1
+
+        # 1) split
+        train_set, test_set = split_train_test(X, test_size=100, seed=1234)
+        print(f"train: {len(train_set)}   test: {len(test_set)}")
+
+        # dimensión global (máx índice + 1)
+        dimension = infer_dimension(X)
+        print("dimension:", dimension)
+
+        save_hdf5(
+            Path("./data/MovieLens_train_test_set.hdf5"),
+            train_set,
+            test_set,
+            dimension
+        )
+
+        # save_train_test_h5py(train_set, test_set, "./data/MovieLens_train_test_set.hdf5")
+        return train_set, test_set
+
+
+
     elif dataset_name == "LastFM":
 
         # Read the train_set and test_set from a hdf5 file and store it into Numpy Arrays
@@ -402,4 +620,4 @@ def load_train_test(dataset_name, test_eq_train=False):
         return None, None
 
 
-#load_train_test('municipios')
+#load_train_test('kosarak')

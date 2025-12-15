@@ -2,6 +2,10 @@ from k_means_constrained import KMeansConstrained
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.decomposition import PCA
 import numpy as np
+import kmedoids as fast_kmedoids
+from math import ceil
+from sklearn.metrics import pairwise_distances
+import warnings
 
 def constrained_cluster_reorder(data_objects, tg, random_state=42):
     """
@@ -151,15 +155,11 @@ def hierarchical_clusters_by_size(X, tg, batch_size=1000, random_state=None):
     print(f"Dividido en {len(grouped_indices)} grupos de tamaño máximo {tg} (último puede ser menor)")
     return X_reordered, grouped_indices
 
-
+"""
 def hierarchical_clusters_by_size_ordered(X, tg, batch_size=1000, random_state=None):
-    """
-    Divide X en clusters de tamaño máximo tg usando MiniBatchKMeans de forma jerárquica.
-    Ordena los grupos por proximidad entre sus centroides.
-    Devuelve el array reordenado y los índices originales por grupo.
-    """
-    import numpy as np
-    from sklearn.cluster import MiniBatchKMeans
+    # Divide X en clusters de tamaño máximo tg usando MiniBatchKMeans de forma jerárquica.
+    #Ordena los grupos por proximidad entre sus centroides.
+    #Devuelve el array reordenado y los índices originales por grupo.
 
     n = len(X)
     n_clusters = int(np.ceil(n / tg))
@@ -212,3 +212,113 @@ def hierarchical_clusters_by_size_ordered(X, tg, batch_size=1000, random_state=N
     #print(f"Dividido en {n_groups} grupos ordenados por proximidad de centroides (máx {tg} elementos por grupo)")
 
     return X_reordered, order
+"""
+
+def hierarchical_clusters_by_size_ordered(X, tg, method='kmeans', distance_function='euclidean',
+                                          batch_size=1000, random_state=None):
+    """
+    Divide X en clusters jerárquicos de tamaño máximo tg y concatena
+    los clusters en un orden calculado por proximidad entre sus representativos.
+
+    Parámetros:
+        X : np.ndarray
+        tg : int, tamaño máximo de cada grupo
+        method : {'fastpam', 'kmeans'}
+        distance_function : métrica de distancia usada para clustering
+        batch_size : int, solo para kmeans
+        random_state : int o None
+    Retorna:
+        X_reordered : np.ndarray
+        order : np.ndarray de índices respecto a X
+    """
+    X = np.asarray(X)
+    n = len(X)
+    if n == 0:
+        return np.empty((0, X.shape[1])), np.array([], dtype=int)
+
+    # 1️⃣ determinar número de clusters inicial
+    n_clusters = int(ceil(n / tg))
+    n_clusters_initial = min(20, n_clusters)
+
+    # 2️⃣ función auxiliar para clustering
+    def cluster_fit(data, n_c):
+        if n_c <= 1:
+            return np.zeros(len(data), dtype=int), np.reshape(data.mean(axis=0), (1, -1))
+        if method == 'fastpam':
+
+            model = fast_kmedoids.KMedoids(n_clusters=n_c, method='fasterpam', metric=distance_function)
+            model.fit(data)
+            labels = model.labels_
+            reprs = data[model.medoid_indices_.astype(int)]
+            return labels, reprs
+        elif method == 'kmeans':
+            if distance_function != 'euclidean':
+                raise ValueError("KMeans solo admite euclidean")
+            km = MiniBatchKMeans(n_clusters=n_c, batch_size=batch_size, random_state=random_state)
+            labels = km.fit_predict(data)
+            return labels, km.cluster_centers_
+        else:
+            raise ValueError("Método desconocido. Usa 'fastpam' o 'kmeans'.")
+
+    # 3️⃣ clustering inicial
+    labels_init, repr_init = cluster_fit(X, n_clusters_initial)
+
+    grouped_indices = []
+    repr_vectors = []
+
+    # 4️⃣ subdividir clusters si son mayores que tg
+    for i in range(n_clusters_initial):
+        idx = np.where(labels_init == i)[0]
+        if len(idx) == 0:
+            continue
+        points = X[idx]
+        if len(points) <= tg:
+            grouped_indices.append(idx)
+            repr_vectors.append(repr_init[i] if i < len(repr_init) else points.mean(axis=0))
+        else:
+            n_sub = int(ceil(len(points) / tg))
+            sub_labels, sub_repr = cluster_fit(points, n_sub)
+            for j in range(n_sub):
+                idx_sub = idx[sub_labels == j]
+                if len(idx_sub) > 0:
+                    grouped_indices.append(idx_sub)
+                    repr_vectors.append(sub_repr[j])
+
+    repr_vectors = np.vstack(repr_vectors)
+    n_groups = len(grouped_indices)
+
+    # 5️⃣ calcular distancias entre representativos para ordenar
+    try:
+        if distance_function.lower() == 'jaccard':
+            repr_bool = (repr_vectors != 0).astype(bool)
+            D = pairwise_distances(repr_bool, metric='jaccard')
+        else:
+            D = pairwise_distances(repr_vectors, metric=distance_function)
+    except Exception:
+        warnings.warn("No se pudo usar pairwise_distances con metric='{metric}', se usa euclidean",
+                      RuntimeWarning)
+        D = pairwise_distances(repr_vectors, metric='euclidean')
+
+    # 6️⃣ recorrido greedy para determinar orden
+    overall_mean = X.mean(axis=0)
+    start_idx = int(np.argmin(np.linalg.norm(repr_vectors - overall_mean, axis=1)))
+    visited = np.zeros(n_groups, dtype=bool)
+    order_groups = [start_idx]
+    visited[start_idx] = True
+    current = start_idx
+
+    for _ in range(1, n_groups):
+        dists = D[current].copy()
+        dists[visited] = np.inf
+        next_group = int(np.argmin(dists))
+        order_groups.append(next_group)
+        visited[next_group] = True
+        current = next_group
+
+    # 7️⃣ concatenar
+    ordered_indices = [grouped_indices[i] for i in order_groups]
+    order = np.concatenate(ordered_indices)
+    X_reordered = X[order]
+
+    return X_reordered, order
+

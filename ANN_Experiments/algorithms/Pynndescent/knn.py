@@ -1,6 +1,6 @@
 from ANN_Experiments.neighbors_utils import *
 from ANN_Experiments.algorithms.Pynndescent.module import PYNN_nn_index, PYNN_nn_search, PYNN_accepted_distances
-from data.load_train_test_set import load_train_test_h5py
+from data.load_train_test_set import load_train_test_h5py, load_hdf5
 from timeit import default_timer as timer
 
 # PYNN algorithm admits the following distances:
@@ -32,8 +32,11 @@ def PYNN(config_file):
     file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
 
     # Load the train and test sets to carry on the benchmark
-    # train_set, test_set = load_train_test(str(dataset))
-    train_set, test_set = load_train_test_h5py(file_name)
+    if distance == "jaccard":
+        train_set, test_set = load_hdf5(file_name)
+    else:
+        # train_set, test_set = load_train_test(str(dataset))
+        train_set, test_set = load_train_test_h5py(file_name)
 
     # If distance is haversine, convert data to radians
     if distance == 'haversine':

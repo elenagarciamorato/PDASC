@@ -32,7 +32,7 @@ def Exact_nn_index(train_set, metric, exact_algorithm):
 
     if exact_algorithm == 'auto':
     # Based on the metric that is going to be used, choose an exact algorithm that supports it
-        if metric == 'cosine' or metric == 'haversine':
+        if metric == 'cosine' or metric == 'haversine' or metric == 'jaccard':
             exact_algorithm = 'brute'
             print("Using brute force algorithm")
         else:
@@ -103,6 +103,7 @@ def LinearScan_nn_search(train_set, test_set, k, metric, same_set=None):
 # Find the k nearest neighbors of the elements constituting the test set through an exact method
 def Exact_nn_search(vector_training, vector_testing, k, metric, tree_index, same_set=None):
 
+
     # If distance is cosine, normalize the vectors
     if metric == 'cosine':
         vector_training = normalize(vector_training, axis=1, norm='l2')
@@ -111,10 +112,10 @@ def Exact_nn_search(vector_training, vector_testing, k, metric, tree_index, same
     # Build the arrays to store the indices, coordinates and distances of the k nearest neighbors
     indices_vecinos = np.empty([len(vector_testing), k], dtype=int)
     coords_vecinos = np.empty([len(vector_testing), k, vector_testing.shape[1]], dtype=vector_testing.dtype)
-    dists_vecinos = np.empty([len(vector_testing), k], dtype=vector_testing.dtype)
+    dists_vecinos = np.empty([len(vector_testing), k], dtype=float)
 
     # Print a sentence indicating if you are using a float64 or float 32 precision
-    print(f'Using {coords_vecinos.dtype} precision')
+    #print(f'Using {coords_vecinos.dtype} precision')
 
     # And number of distances computed
     n_distances_vecinos = np.empty(len(vector_testing))
@@ -128,6 +129,8 @@ def Exact_nn_search(vector_training, vector_testing, k, metric, tree_index, same
             punto = vector_testing[i].reshape(1, -1)
 
             indices, coords, dists, n_distances = LinearScan_nn_search(vector_training, punto, k, metric, same_set)
+
+            #print(dists)
 
             indices_vecinos[i] = indices[0]
             coords_vecinos[i] = coords[0]
@@ -156,7 +159,7 @@ def Exact_nn_search(vector_training, vector_testing, k, metric, tree_index, same
 
 
         # Return knn and the number of distance computations required to obtain them
-        #print(f"Los vecinos exactos son: {indices} con distancias {dists}")
+    #print(f"Los vecinos exactos son: {indices} con distancias {dists}")
 
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances_vecinos
 

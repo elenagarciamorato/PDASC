@@ -1,11 +1,11 @@
 import argparse
 from scipy.stats import ks_2samp
-from dataset_analysis.distances_distribution_generator import get_pairwise_distances
+from dataset_analysis.distances_distribution_generator import get_pairwise_distances_flue
 from scipy.stats import wasserstein_distance
 import os
 import pandas as pd
 
-def kolmogorov_smirnov_test(dataset, distance_function, sample_size):
+def kolmogorov_smirnov_test(dataset, distance_function, sample_size, nc, tg, nodes):
     """
     Perform the Kolmogorov-Smirnov test on the pairwise distances of a dataset.
 
@@ -33,14 +33,14 @@ def kolmogorov_smirnov_test(dataset, distance_function, sample_size):
     print(f"Processing {dataset} dataset with {distance_function} distance function and sample size {sample_size}")
 
     # Paths for the PDASC and random distances
-    PDASC_path = f'./dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_PDASC.csv'
+    PDASC_path = f'./dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_nc{nc}_tg{tg}_PDASC.csv'
     random_path = f'./dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_random.csv'
 
     # If the paths do not exist, compute the distances
     if not (os.path.exists(PDASC_path)) or not (os.path.exists(random_path)):
         # Compute the distances and save them to CSV files
         # print(f"\nComputing distances for {dataset} with {distance_function} distance function and sample size {sample_size}")
-        random_dists, pdasc_dists = get_pairwise_distances(dataset, distance_function, sample_size, dataset_size)
+        random_dists, pdasc_dists = get_pairwise_distances_flue(dataset, distance_function, sample_size,nc, tg)
 
     else:
         # If it exists, load the distances from the CSV files
@@ -119,7 +119,7 @@ def kolmogorov_smirnov_test(dataset, distance_function, sample_size):
     # - El p-value depende del tamaño de la muestra.
     #   En muestras grandes, pequeñas diferencias pueden dar p-valores bajos.
 
-def wasserstein_distance_test(dataset, distance_function, sample_size):
+def wasserstein_distance_test(dataset, distance_function, sample_size, nc, tg, nodes):
     """
     Perform the Wasserstein distance test on the pairwise distances of a dataset.
 
@@ -146,13 +146,13 @@ def wasserstein_distance_test(dataset, distance_function, sample_size):
     print(f"Processing {dataset} dataset with {distance_function} distance function and sample size {sample_size}")
 
     # Paths for the PDASC and random distances
-    PDASC_path = f'./dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_PDASC.csv'
+    PDASC_path = f'./dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_nc{nc}_tg{tg}_PDASC.csv'
     random_path = f'./dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{sample_size}_random.csv'
 
     # If the paths do not exist, compute the distances
     if not (os.path.exists(PDASC_path)) or not (os.path.exists(random_path)):
         # Compute the distances and save them to CSV files
-        random_dists, pdasc_dists = get_pairwise_distances(dataset, distance_function, sample_size, dataset_size)
+        random_dists, pdasc_dists = get_pairwise_distances_flue(dataset, distance_function, sample_size, nc, tg)
 
     else:
         # If it exists, load the distances from the CSV files
@@ -172,17 +172,26 @@ if __name__ == "__main__":
     parser.add_argument("-dataset", help="Name of the dataset to process", type=str, required=True)
     parser.add_argument("-dist", help="Distance function to use", type=str, required=True)
     parser.add_argument("-size", help="Sample size to use", type=int, required=True)
+    parser.add_argument("-nc", help="Indicate the number of centroids of the PDASC index to be used.", type=int)
+    parser.add_argument("-tg", help="Indicate the group size of the PDASC index to be used.", type=int)
+    parser.add_argument("-nodes", help="Indicate the nodes of the PDASC index to be used.", type=int)
+
+
 
     args = parser.parse_args()
 
     dataset = args.dataset
     distance_function = args.dist
+    nc = args.nc
+    tg = args.tg
     sample_size = args.size
+    nodes = args.nodes
+
 
     # Call the Kolmogorov-Smirnov test function
-    kolmogorov_smirnov_test(dataset, distance_function, sample_size)
+    #kolmogorov_smirnov_test(dataset, distance_function, sample_size, nc, tg, nodes)
 
     # Call the Wasserstein distance test function
-    wasserstein_distance_test(dataset, distance_function, sample_size)
+    #wasserstein_distance_test(dataset, distance_function, sample_size, nc, tg, nodes)
 
     exit(0)

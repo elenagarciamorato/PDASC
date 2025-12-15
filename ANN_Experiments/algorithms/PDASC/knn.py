@@ -3,9 +3,13 @@ from timeit import default_timer as timer
 import data.load_train_test_set as lts
 from PDASC import pdasc_
 from PDASC import pdasc_flues_
-# from PDASC import pdasc_DataFrames_
 from ANN_Experiments.neighbors_utils import *
 from sklearn.preprocessing import normalize
+from sklearn.preprocessing import MultiLabelBinarizer
+import warnings
+from sklearn.exceptions import DataConversionWarning
+
+warnings.filterwarnings("ignore", category=DataConversionWarning)
 
 
 def PDASC(config_file):
@@ -31,11 +35,27 @@ def PDASC(config_file):
     file_name = f"./data/{dataset}_train_test_set.hdf5"
 
 
+
     # 1st - We read the dataset to be used
+    if distance_function == "jaccard":
+        train_set_csr, test_set_csr = lts.load_hdf5(file_name)
+        train_lists = [row.indices.tolist() for row in train_set_csr]
+        test_lists = [row.indices.tolist() for row in test_set_csr]
+        mlb = MultiLabelBinarizer()
+        vector_training = mlb.fit_transform(train_lists).astype(bool)  # dtype=bool para Jaccard
+        vector_testing = mlb.transform(test_lists).astype(bool)  # dtype=bool para Jaccard
+    else:
+        # Read train and test set from preprocesed h5py file
+        vector_training, vector_testing = lts.load_train_test_h5py(file_name)
 
-    # Read train and test set from preprocesed h5py file
-    vector_training, vector_testing = lts.load_train_test_h5py(file_name)
 
+    """
+    if distance_function == "jaccard":
+        vector_training, vector_testing = lts.load_hdf5(file_name)
+    else:
+        # train_set, test_set = load_train_test(str(dataset))
+        vector_training, vector_testing = lts.load_train_test_h5py(file_name)
+    """
     # If distance is haversine, convert data to radians
     if distance_function == 'haversine':
         vector_training = np.radians(vector_training)
@@ -87,10 +107,12 @@ def PDASC(config_file):
 
         start_time_i = timer()
         print("[INFO] Some index files are missing, creating all with create_index...")
+        #print(f"[INFO] Parameters: n_nodes={n_nodes}, group_size={group_size}, n_centroids={n_centroids}, distance_function={distance_function}, algorithm={algorithm}, implementation={implementation}")
         index = pdasc_flues_.create_index_flues(vector_training, dataset, group_size, n_centroids, n_nodes, distance_function,
                                                 algorithm, implementation)
         end_time_i = timer()
         index_time = end_time_i - start_time_i
+    print(f"Index time: {index_time} seconds")
     # By using the DataFrame experimental implementation
     #index = pdasc_DataFrames_.create_tree(vector_training, dataset, group_size, n_centroids, n_nodes, distance, algorithm, implementation)
     # print(index)
@@ -101,8 +123,10 @@ def PDASC(config_file):
     # while measuring the time spent
     start_time_s = timer()
 
+    #exit()
+
     # print(f"Solo vamos a buscar el punto {vector_testing[:1]}")
-    #vector_testing = vector_testing[:1]  # Uncomment this line to test with only the first point
+    # vector_testing = vector_testing[:1]  # Uncomment this line to test with only the first point
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search(n_capas, n_centroids, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_classical_pruning(n_capas, n_centroids, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
 

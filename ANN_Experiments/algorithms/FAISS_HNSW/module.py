@@ -134,4 +134,5 @@ class FaissHNSW():
         # print(f"  - Distancias computadas: {n_distances}")
         # print(f"Distancias computadas (faiss): {self._last_ndis}")
 
+
         return np.array(lista_dists), np.array(lista_indices), np.array(lista_n_distances)

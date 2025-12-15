@@ -1,8 +1,9 @@
 import PDASC.pdasc_flues_ as pdasc_flues_
 from ANN_Experiments.algorithms.Exact.knn import Exact_nn_search
-from data.load_train_test_set import load_train_test_h5py
+from data.load_train_test_set import load_train_test_h5py, load_hdf5
 from scipy.stats import skew, kurtosis
 from scipy.spatial import distance
+from sklearn.preprocessing import MultiLabelBinarizer
 import numpy as np
 import logging
 
@@ -11,7 +12,16 @@ import logging
 def load_random_sample(dataset, sample_size):
     # Load the random sample of the dataset
     file_name = "./data/" + str(dataset) + "_train_test_set.hdf5"
-    vector_training, vector_testing = load_train_test_h5py(file_name)
+
+
+    if dataset in ['MovieLens', 'kosarak']:
+        train_set_csr, test_set_csr = load_hdf5(file_name)
+        train_lists = [row.indices.tolist() for row in train_set_csr]
+        mlb = MultiLabelBinarizer()
+        vector_training = mlb.fit_transform(train_lists).astype(bool)  # dtype=bool para Jaccard
+    else:
+        # train_set, test_set = load_train_test(str(dataset))
+        vector_training, vector_testing = load_train_test_h5py(file_name)
 
     # We take a sample of n random elements from the dataset
     np.random.seed(42)  # Fijar la semilla para reproducibilidad
@@ -28,7 +38,7 @@ def load_random_sample_flue(partition, sample_size):
     return sample
 
 # Load the prototype points composing a layer of the PDASC index corresponding to a flue
-def load_PDASC_sample(dataset, sample_size, distance_function, tg, nc, n_flues=1, id_flue=1):
+def load_PDASC_sample(dataset, sample_size, distance_function, nc, tg, n_flues=1, id_flue=0):
 
     # Load the PDASC index
     index_flue = pdasc_flues_.load_PDASC_index_flue(dataset, distance_function, tg, nc, n_flues, id_flue)
@@ -78,7 +88,12 @@ def load_PDASC_sample(dataset, sample_size, distance_function, tg, nc, n_flues=1
 
     # We take all the points from the desired layer
     # (Lets take into account that the layer of puntos_capa equivalent to lablels_capa is one below)
-    puntos_capa_concatenado = np.vstack(puntos_capa[closest_index - 1])
+
+    if closest_index==-1:
+        puntos_capa_concatenado = np.vstack(puntos_capa[-1])
+    else:
+        puntos_capa_concatenado = np.vstack(puntos_capa[closest_index - 1])
+
     print(f"Number of points in the layer {closest_index}: {len(puntos_capa_concatenado)}")
 
     # These prototypes will constitute the sample to be analysed
