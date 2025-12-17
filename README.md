@@ -29,12 +29,17 @@ It operates through two stages
 __Arbitrary Distances Support__
 
 By relying on clustering methods compatible with several dissimilarity functions, PDASC can operate directly with non-metric and domain-specific distances, significantly extending its applicability across heterogeneous data.
+In this context, the $k$-medoids algorithm  is utilised, as it supports a wide range of dissimilarity functions, making it suitable for scenarios involving non-Euclidean or domain-specific distances.
+<!--
 ### Clustering Algorithms Supported:
+-->
 
 | Algorithm     | Implementation                      | Supported Distances                                         |
 |---------------|-------------------------------------|-------------------------------------------------------------|
-| **k-means**   | `sklearn`: `sklearn.cluster.KMeans` | Euclidean                                                   |
 | **k-medoids** | `kmedoids`: `kmedoids.fasterpam`    | cityblock, cosine, euclidean, l1, l2, manhattan, braycurtis, canberra, chebyshev, correlation, dice, hamming, jaccard, kulsinski, mahalanobis, minkowski, rogerstanimoto, russellrao, seuclidean, sokalmichener, sokalsneath, sqeuclidean, yule |
+<!-- 
+| **k-means**   | `sklearn`: `sklearn.cluster.KMeans` | Euclidean                                                   | 
+-->
 
 ## Experimental Evaluation
 
