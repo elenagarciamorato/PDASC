@@ -8,6 +8,10 @@
 /data/GLOVE10000_train_test_set.hdf5
 /data/GLOVE100000_train_test_set.hdf5
 /data/MNIST_train_test_set.hdf5
+/data/MovieLens10m-jaccard.hdf5
+/data/municipios_train_test_set.hdf5
+/data/MovieLens_train_test_set.hdf5
+/data/kosarak_train_test_set.hdf5
 /ANN_Experiments/NearestNeighbors/gaussian-clouds-npc200-True/
 /ANN_Experiments/logs/gaussian-clouds-npc200-True/
 /ANN_Experiments/config/gaussian-clouds-npc200-True/
@@ -16,4 +20,4 @@
 /ANN_Experiments/algorithms/IVF/
 /PDASC/pdasc_DataFrames_.py
 /publications/
-/data/MovieLens10m-jaccard.hdf5
+
