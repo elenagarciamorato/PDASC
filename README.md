@@ -7,8 +7,10 @@
 
 <!-- * This project introduces PDASC (Parametrizable Distributed Approximate Similarity Search with Clustering), a parametrizable algorithm for ANN search that constructs a multilevel index using clustering techniques in an innovative way. By integrating clustering algorithms that inherently accommodate various distance functions, PDASC provides the adaptability needed to support arbitrary similarity measures.
 -->
-This project introduces PDASC (Parametrizable Distributed Approximate Similarity Search with Clustering) a fully distributable ANN algorithm designed to operate under a broad set of distance functions beyond conventional metric settings. The method applies established clustering techniques in a tailored and structurally oriented manner to build a hierarchical index aimed at mitigating several practical consequences of the curse of dimensionality while accommodating diverse notions of dissimilarity.
-
+<!-- * This project introduces PDASC (Parametrizable Distributed Approximate Similarity Search with Clustering) a fully distributable ANN algorithm designed to operate under a broad set of distance functions beyond conventional metric settings. The method applies established clustering techniques in a tailored and structurally oriented manner to build a hierarchical index aimed at mitigating several practical consequences of the curse of dimensionality while accommodating diverse notions of dissimilarity.
+-->
+This work introduces PDASC (Parametrizable Distributed Approximate Similarity Search with Clustering), a distributed ANN search algorithm whose index design simultaneously enables support for arbitrary dissimilarity functions and efficient deployment in distributed, storage-aware environments. 
+By relying on a hierarchical clustering-based structure that does not assume specific distance properties, PDASC naturally accommodates non-metric and domain-specific similarities while allowing both indexing and search to be partitioned across multiple computing nodes with a compact per-node memory footprint
 For further detail, please refer to the associated publication.
 
 ![MSA](ANN_Experiments/figures/PDASC_MSA.png)
@@ -100,7 +102,7 @@ These results not only validate PDASC as a reliable ANN search method for large,
 -->
 
 ### Experimental results
-Comparative experiments against established ANN methods from different families highlight that PDASC is competitive in both efficiency and accuracy, achieving equivalent or superior recall for similar or smaller index sizes, while additionally supporting distance functions that many state-of-the-art algorithms cannot handle and without relying on additional hardware acceleration strategies such as GPUs or TPU.
+Empirical results across diverse datasets and distance functions demonstrate that PDASC consistently achieves competitive recall while requiring a smaller or comparable per-node index size than state-of-the-art ANN methods. When distance computations are explicitly measured, PDASC attains favourable accuracy–efficiency trade-offs without relying on GPUs, TPUs, or other specialised accelerators.
 
 ![PDASCvsIVF](ANN_Experiments/figures/PDASC_vsIVF_NYtimes.png)
 *Figure 2: Recall - NDC trade-off comparison of PDASC and IVF with the NYTimes dataset.*
@@ -109,4 +111,4 @@ Instructions for installing PDASC and conducting the experiments are available i
 
 ## References
 
-- **A parametrizable algorithm for distributed approximate similarity search with arbitrary distances**. Elena Garcia-Morato, Maria Jesus Algar, Cesar Alfaro, Felipe Ortega, Javier Gomez, Javier M. Moguerza. [arXiv:2405.13795](https://arxiv.org/abs/2405.13795)
+- **A Memory-Efficient Distributed Algorithm for Approximate Nearest Neighbour Search with Arbitrary Distances**. Elena Garcia-Morato, Maria Jesus Algar, Cesar Alfaro, Felipe Ortega, Javier Gomez, Javier M. Moguerza. [arXiv:2405.13795](https://arxiv.org/abs/2405.13795)
