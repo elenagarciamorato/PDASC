@@ -3,7 +3,10 @@
 
 ![PDASC](ANN_Experiments/figures/PDASC_logo.png)
 
-[![DOI](https://zenodo.org/badge/827397858.svg)](https://zenodo.org/doi/10.5281/zenodo.13220359)
+<p align="center">
+    <a href="https://doi.org/10.5281/zenodo.13220359"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.13220359.svg" alt="DOI"></a>  
+    <a href="https://arxiv.org/abs/2405.13795"><img src="https://badgen.net/static/arXiv/2405.13795/red" /></a>
+</p>
 
 <!-- * This project introduces PDASC (Parametrizable Distributed Approximate Similarity Search with Clustering), a parametrizable algorithm for ANN search that constructs a multilevel index using clustering techniques in an innovative way. By integrating clustering algorithms that inherently accommodate various distance functions, PDASC provides the adaptability needed to support arbitrary similarity measures.
 -->
@@ -32,14 +35,13 @@ __Arbitrary Distances Support__
 
 By relying on clustering methods compatible with several dissimilarity functions, PDASC can operate directly with non-metric and domain-specific distances, significantly extending its applicability across heterogeneous data.
 In this context, the $k$-medoids algorithm  is utilised, as it supports a wide range of dissimilarity functions, making it suitable for scenarios involving non-Euclidean or domain-specific distances.
-<!--
-### Clustering Algorithms Supported:
--->
+* __Example of Supported Distances__: cityblock, cosine, euclidean, l1, l2, manhattan, braycurtis, canberra, chebyshev, correlation, dice, hamming, jaccard, kulsinski, mahalanobis, minkowski, rogerstanimoto, russellrao, seuclidean, sokalmichener, sokalsneath, sqeuclidean, yule
 
+<!-- 
+### Clustering Algorithms Supported:
 | Algorithm     | Implementation                      | Supported Distances                                         |
 |---------------|-------------------------------------|-------------------------------------------------------------|
 | **k-medoids** | `kmedoids`: `kmedoids.fasterpam`    | cityblock, cosine, euclidean, l1, l2, manhattan, braycurtis, canberra, chebyshev, correlation, dice, hamming, jaccard, kulsinski, mahalanobis, minkowski, rogerstanimoto, russellrao, seuclidean, sokalmichener, sokalsneath, sqeuclidean, yule |
-<!-- 
 | **k-means**   | `sklearn`: `sklearn.cluster.KMeans` | Euclidean                                                   | 
 -->
 
