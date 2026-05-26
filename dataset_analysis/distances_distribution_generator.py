@@ -1,3 +1,5 @@
+from plotnine.themes.themeable import legend_position
+
 from PDASC.pdasc_flues_ import simulate_flue_partitioning
 from dataset_analysis.dataset_analysis import load_random_sample, load_random_sample_flue, load_PDASC_sample, compute_distances_kth_nn, compute_distances_pairwise
 import argparse
@@ -279,7 +281,7 @@ def plot_cdfs_nn_dataset_flues(dataset, distance_function, sample, nc, tg, n_nod
     # Guardar en formato rasterizado (PNG real)
     # Muestra por pantalla el gráfico (con show quizas)
     # print(p)
-    ggsave(p, os.path.join(out_path, filename), dpi=150, format='png')
+    ggsave(p, os.path.join(out_path, filename), dpi=300, format='png')
 
 def plot_cdfs_pairwise_dataset_flues(dataset, distance_function, sample, nc, tg, n_nodes):
 
@@ -291,7 +293,7 @@ def plot_cdfs_pairwise_dataset_flues(dataset, distance_function, sample, nc, tg,
     if distance_function == "jaccard":
         train_set_csr, test_set_csr = load_hdf5(file_name)
         train_lists = [row.indices.tolist() for row in train_set_csr]
-        test_lists = [row.indices.tolist() for row in test_set_csr]
+        # test_lists = [row.indices.tolist() for row in test_set_csr]
         mlb = MultiLabelBinarizer()
         vector_training = mlb.fit_transform(train_lists).astype(bool)  # dtype=bool para Jaccard
         #vector_testing = mlb.transform(test_lists).astype(bool)  # dtype=bool para Jaccard
@@ -327,12 +329,16 @@ def plot_cdfs_pairwise_dataset_flues(dataset, distance_function, sample, nc, tg,
         out_dir = f'./dataset_analysis/{dataset}'
         os.makedirs(out_dir, exist_ok=True)
 
+        # Nombrar los paths para PDASC y random
         PDASC_path=f'./dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{n_nodes}-{node}_nc{nc}_tg{tg}_{sample_size}_PDASC.csv'
         random_path=f'./dataset_analysis/{dataset}/{dataset}_pairwise_{distance_function}_{n_nodes}-{node}_{sample_size}_random.csv'
 
-
         print(f'nc: {nc}, tg: {tg}, n_nodes: {n_nodes}, node: {node}')
+
         if not (os.path.exists(PDASC_path)) or not (os.path.exists(random_path)):
+            print(f"\nDistances computations not provided in updated implementation")
+            #exit(1)
+            ## TO FIX: adaptar extraccion de muestra de arbol de PDASC cuando la relación nc/tg no es 1/2
             random_dists, pdasc_dists = get_pairwise_distances_flue(
                 dataset, distance_function, sample_size, nc, tg, node, n_nodes
             )
@@ -348,12 +354,13 @@ def plot_cdfs_pairwise_dataset_flues(dataset, distance_function, sample, nc, tg,
         percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
         pdasc_percentile_values = np.percentile(pdasc_dists, percentiles)
 
+        print(distance_function)
         # Decimales según métrica
         if distance_function in ['euclidean', 'manhattan']:
             decimales = 2
         elif distance_function == 'chebyshev':
             decimales = 3
-        elif distance_function in ['cosine', 'haversine']:
+        elif distance_function in ['cosine', 'haversine', 'jaccard']:
             decimales = 4
         else:
             decimales = 2
@@ -363,6 +370,7 @@ def plot_cdfs_pairwise_dataset_flues(dataset, distance_function, sample, nc, tg,
             + " ".join([f"{v:.{decimales}f}" for v in pdasc_percentile_values])
             + "\""
         )
+
 
         node_label = f'Node {node}'
         df_all_nodes.append(pd.DataFrame({
@@ -397,67 +405,165 @@ def plot_cdfs_pairwise_dataset_flues(dataset, distance_function, sample, nc, tg,
     vlines_all = pd.concat(df_vlines_all, ignore_index=True)
     hlines_all = pd.concat(df_hlines_all, ignore_index=True)
 
-    custom_colors = {'Random': '#4C78A8', 'PDASC': '#F58518'}
+    custom_colors = {'Random': '#4C78A8', 'PDASC': '#F58518'} # Random azul, PDASC naranja
 
-    p = (
-        ggplot(df_all, aes(x='distance', y='cdf', fill='method')) +
-        geom_area(alpha=0.3, position='identity') +
-        geom_line(aes(color='method'), size=1.1) +
-        scale_fill_manual(values=custom_colors) +
-        scale_color_manual(values=custom_colors) +
-        geom_segment(
-            data=vlines_all,
-            mapping=aes(x='distance', xend='xend', y='y', yend='yend'),
-            linetype='dashed', color='black', inherit_aes=False
-        ) +
-        geom_segment(
-            data=hlines_all,
-            mapping=aes(x='x', xend='xend', y='cdf', yend='yend'),
-            linetype='dashed', color='black', inherit_aes=False
-        ) +
-        geom_point(
-            data=points_all,
-            mapping=aes(x='distance', y='cdf'),
-            color='black', size=1.8, inherit_aes=False
-        ) +
-        labs(
-            x=f'{distance_function.capitalize()} Distance',
-            y='Probability',
-            # title=f"CDFs for {dataset} with {distance_function} ({n_nodes} nodes)"
-        ) +
-        scale_y_continuous(limits=(0, 1), breaks=np.arange(0, 1.1, 0.1)) +
-        scale_x_continuous(breaks=np.linspace(0, max(df_all['distance']), num=5), labels=lambda l: [f"{x:.3f}" for x in l]) +
-        facet_wrap('~node') +
-        theme_minimal(base_size=13) +
-        theme(
-            figure_size=(10, 4),
+    if n_nodes==1:
+        p = (
+                ggplot(df_all, aes(x='distance', y='cdf', fill='method')) +
+                geom_area(alpha=0.3, position='identity') +
+                geom_line(aes(color='method'), size=1.1) +
+                scale_fill_manual(values=custom_colors) +
+                scale_color_manual(values=custom_colors) +
+                # Líneas y puntos de percentiles
+                geom_segment(data=vlines_all, mapping=aes(x='distance', xend='xend', y='y', yend='yend'),
+                             linetype='dashed', color='black', size=0.4, inherit_aes=False) +
+                geom_segment(data=hlines_all, mapping=aes(x='x', xend='xend', y='cdf', yend='yend'),
+                             linetype='dashed', color='black', size=0.4, inherit_aes=False) +
+                geom_point(data=points_all, mapping=aes(x='distance', y='cdf'),
+                           color='black', size=1.8, inherit_aes=False) +
+                labs(
+                    x=f'{distance_function.capitalize()} Distance',
+                    y='Probability'
+                    # Título general eliminado
+                ) +
+                scale_y_continuous(limits=(0, 1), breaks=np.arange(0, 1.1, 0.1)) +
+                scale_x_continuous(breaks=np.linspace(0, max(df_all['distance']), num=10)) +
+                # SIN facet_wrap para quitar el "Node 0"
+                theme_minimal(base_size=13) +
+                theme(
+                    figure_size=(12, 9),
+                    legend_position='none',  # Cambiar a 'bottom' si quieres ver la leyenda
+                    panel_background=element_rect(fill='white', color='black'),
+                    plot_background=element_rect(fill='white', color='white'),
+                    panel_grid_major=element_line(color="#e5e5e5"),
+                    panel_grid_minor=element_line(color="#f5f5f5"),
+                    legend_title=element_blank(),
+                    plot_title=element_text(ha='center'),
+                    # Ticks detallados que dan aspecto profesional
+                    axis_ticks_major_x=element_line(),
+                    axis_ticks_major_y=element_line(),
+                    axis_ticks_minor_x=element_line(color='gray', size=0.5),
+                    axis_ticks_minor_y=element_line(color='gray', size=0.5),
+                    axis_title_x=element_text(size=19, margin={'t': 25}),
+                    axis_title_y=element_text(size=19, margin={'r': 25}),
+                    axis_text_x=element_text(size=15),
+                    axis_text_y=element_text(size=15),  # Cambia el tamaño de la letra del eje X
+                    # El strip_text_x ya no se verá si quitas el facet_wrap
+                    strip_text_x=element_text(size=11, weight='bold', margin={'t': 10}),
+                )
+        )
+
+    else:
+        p = (
+                ggplot(df_all, aes(x='distance', y='cdf', fill='method')) +
+                geom_area(alpha=0.3, position='identity') +
+                geom_line(aes(color='method'), size=1.1) +
+                scale_fill_manual(values=custom_colors) +
+                scale_color_manual(values=custom_colors) +
+                geom_segment(
+                    data=vlines_all,
+                    mapping=aes(x='distance', xend='xend', y='y', yend='yend'),
+                    linetype='dashed', color='black', inherit_aes=False
+                ) +
+                geom_segment(
+                    data=hlines_all,
+                    mapping=aes(x='x', xend='xend', y='cdf', yend='yend'),
+                    linetype='dashed', color='black', inherit_aes=False
+                ) +
+                geom_point(
+                    data=points_all,
+                    mapping=aes(x='distance', y='cdf'),
+                    color='black', size=1.8, inherit_aes=False
+                ) +
+                labs(
+                    x=f'{distance_function.capitalize()} Distance',
+                    y='Probability',
+                    # title=f"CDFs for {dataset} with {distance_function} ({n_nodes} nodes)"
+                ) +
+                scale_y_continuous(limits=(0, 1), breaks=np.arange(0, 1.1, 0.1)) +
+                scale_x_continuous(breaks=np.linspace(0, max(df_all['distance']), num=5),
+                                   labels=lambda l: [f"{x:.0f}" for x in l]) +
+                facet_wrap('~node', ncol=5) +
+                theme_minimal(base_size=13) +
+                theme(
+                    figure_size=(12, 9),
+                    ##legend_position="bottom",
+                    legend_position="none",
+                    axis_text_x=element_text(size=10),
+                    axis_text_y=element_text(size=10),  # Cambia el tamaño de la letra del eje X
+                    axis_title_x=element_text(size=15, margin={'t': 15}),
+                    axis_title_y=element_text(size=15, margin={'r': 8}),
+                    aspect_ratio=1,
+                    panel_spacing_x=0.02
+                )
+        )
+
+        p = p + theme(
+            figure_size=(15, 9),
             ##legend_position="bottom",
             legend_position="none",
-            axis_text_x=element_text(size=9),
-            axis_text_y=element_text(size=9),  # Cambia el tamaño de la letra del eje X
-            axis_title_x=element_text(size=11),
-            axis_title_y=element_text(size=11),
-            aspect_ratio=1
+            panel_background=element_rect(fill='white', color='black'),  # fondo panel blanco
+            plot_background=element_rect(fill='white', color='white'),  # fondo figura blanco
+            plot_title=element_text(ha='center')
         )
-    )
 
-    p = p + theme(
-        figure_size=(10, 4),
-        ##legend_position="bottom",
-        legend_position="none",
-        panel_background=element_rect(fill='white', color='black'),  # fondo panel blanco
-        plot_background=element_rect(fill='white', color='white'),  # fondo figura blanco
-        plot_title = element_text(ha='center')
-    )
-
+    # Guardado con el nombre detallado de la primera función
     out_path = f'./dataset_analysis/{dataset}'
     os.makedirs(out_path, exist_ok=True)
-    filename = f'{dataset}_{distance_function}_pairwise_comparision_overlap_n{n_nodes}_nc{nc}_tg{tg}_{len(partitions[0])}.jpg'
+    filename = f'{dataset}_{distance_function}_pairwise_comparision_overlap_n{n_nodes}_nc{nc}_tg{tg}_{sample_size}.png'
 
-    # Guardar en formato rasterizado (PNG real)
-    # Muestra por pantalla el gráfico (con show quizas)
-    # print(p)
-    ggsave(p, os.path.join(out_path, filename), dpi=150, format='png')
+    ggsave(p, os.path.join(out_path, filename), dpi=300)
+
+    """
+        p = (
+                ggplot(df_all, aes(x='distance', y='cdf', fill='method')) +
+                geom_area(alpha=0.3, position='identity') +
+                geom_line(aes(color='method'), size=1.1) +
+                scale_fill_manual(values=custom_colors) +
+                scale_color_manual(values=custom_colors) +
+                geom_segment(
+                    data=vlines_all,
+                    mapping=aes(x='distance', xend='xend', y='y', yend='yend'),
+                    linetype='dashed', color='black', inherit_aes=False
+                ) +
+                geom_segment(
+                    data=hlines_all,
+                    mapping=aes(x='x', xend='xend', y='cdf', yend='yend'),
+                    linetype='dashed', color='black', inherit_aes=False
+                ) +
+                geom_point(
+                    data=points_all,
+                    mapping=aes(x='distance', y='cdf'),
+                    color='black', size=1.8, inherit_aes=False
+                ) +
+                labs(
+                    x=f'{distance_function.capitalize()} Distance',
+                    y='Probability',
+                    #title=f"CDFs for {dataset} with {distance_function} ({n_nodes} nodes)"  # Recuperamos el título
+                ) +
+                scale_y_continuous(limits=(0, 1), breaks=np.arange(0, 1.1, 0.1)) +
+                scale_x_continuous(
+                    breaks=np.linspace(0, max(df_all['distance']), num=10)) +  # Más marcas en X como la antigua
+                #facet_wrap('~node') +
+                theme_minimal(base_size=13) +
+                theme(
+                    figure_size=(15, 10),  # Tamaño grande de la segunda
+                    legend_position="none",  # Sin leyenda
+                    panel_background=element_rect(fill='white', color='black'),
+                    plot_background=element_rect(fill='white', color='white'),
+                    panel_grid_major=element_line(color="#e5e5e5"),  # Rejilla marcada de la segunda
+                    panel_grid_minor=element_line(color="#f5f5f5"),
+                    legend_title=element_blank(),
+                    plot_title=element_text(ha='center', size=16),
+                    axis_ticks_major_x=element_line(),
+                    axis_ticks_major_y=element_line(),
+                    axis_text_x=element_text(size=10),
+                    axis_text_y=element_text(size=10),
+                    axis_title_x=element_text(margin={'t': 20}),
+                    axis_title_y=element_text(margin={'r': 20})
+                )
+        )
+        """
 
 # Plotting PDFs for pairwise distances in a dataset
 def plot_pdfs_pairwise_dataset_flues(dataset, distance_function, sample_size, nc, tg, n_nodes):
@@ -499,6 +605,7 @@ def plot_pdfs_pairwise_dataset_flues(dataset, distance_function, sample_size, nc
 
         # Colors
         custom_colors = {'Random': '#4C78A8', 'PDASC': '#F58518'}
+
 
         # Create the plot
         p = (
@@ -544,7 +651,8 @@ def plot_cdfs_nn_samplesize_dataset(dataset, distance_function):
         "municipios": 8031,
         "MNIST": 59999,
         "NYtimes": 290000,
-        "GLOVE": 1200000  # 1183514
+        "GLOVE": 1200000,  # 1183514,
+        "MovieLens": 690000
     }
 
     all_data = []

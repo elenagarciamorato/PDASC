@@ -91,17 +91,20 @@ def PDASC(config_file):
     # By using the distributed implementation
 
     # Check if all index files already exist
-    all_exist = True
     index_time = 0
     path = f"./ANN_Experiments/NearestNeighbors/{dataset}/indexes/"
-    for node in range(n_nodes):
-        filename = f'{dataset}_{distance_function}_nc{str(n_centroids)}_tg{str(group_size)}_index_{n_nodes}-{node}.joblib'
-        filepath = os.path.join(path, filename)
-        if not os.path.exists(filepath):
-            all_exist = False
-            break  # no need to check further if one is missing
 
-    all_exist = False
+    filepaths = [
+        os.path.join(
+            path,
+            f"{dataset}_{distance_function}_nc{n_centroids}_tg{group_size}_index_{n_nodes}-{node}.joblib"
+        )
+        for node in range(n_nodes)
+    ]
+
+    all_exist = all(os.path.exists(fp) for fp in filepaths)
+
+    ##all_exist = False
     # If they don't exist, create them
     if not all_exist:
 
@@ -130,11 +133,8 @@ def PDASC(config_file):
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search(n_capas, n_centroids, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
     # indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc.recursive_approximate_knn_search_classical_pruning(n_capas, n_centroids, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(initial_radius), dataset)
 
-    # By using the updated implementation
-    #indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_.recursive_approximate_knn_search_radius_pruning(n_capas, n_centroids, vector_testing, vector_training, k, distance, grupos_capa, puntos_capa, labels_capa, promoted_points, float(radius), dataset)
-
     # By using the distributed (flues) implementation
-    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_flues_.ANN_search(vector_testing, vector_training, dataset, n_nodes, group_size, n_centroids, distance_function, radius, k, pruning_strategy=False)
+    indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_flues_.ANN_search(vector_testing, vector_training, dataset, n_nodes, group_size, n_centroids, distance_function, radius, k, pruning_strategy=True)
 
     # By using the experimental DataFrame implementation
     #indices_vecinos, coords_vecinos, dists_vecinos, n_distances = pdasc_DataFrames_.distributed_ANN_search(vector_testing, dataset, vector_training, n_nodes, distance, float(radius), k)

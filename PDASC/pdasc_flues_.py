@@ -21,9 +21,9 @@ import kmedoids as fast_kmedoids  # k-medoids fast_k-medoids (PAM) implementatio
 logger = logging.getLogger(__name__)
 
 # Set seed for reproducibility
-SEED = 10
-np.random.seed(SEED)
-random.seed(SEED)
+#SEED = 10
+#np.random.seed(SEED)
+#random.seed(SEED)
 
 
 #####    INDEX STORAGE AND LOADING FUNCTIONS    #####
@@ -36,8 +36,12 @@ def store_PDASC_index_flue(dataset, distance_function, tg, nc, n_flues, id_flue,
     print(f"Index for flue {id_flue} stored at {file_path}"),
 
 
-def load_PDASC_index_flue(dataset, distance_function, tg, nc, n_flues=1, id_flue=1):
+def load_PDASC_index_flue(dataset, distance_function, tg, nc, n_flues=1, id_flue=0):
+
+    if distance_function=='cityblock':
+        distance_function = 'manhattan'  # scipy cdist requires 'cityblock' instead of 'manhattan'
     file_path = f'ANN_Experiments/NearestNeighbors/{dataset}/indexes/{str(dataset)}_{str(distance_function)}_nc{str(nc)}_tg{str(tg)}_index_{n_flues}-{id_flue}.joblib'
+    print(f"Loading index for flue {id_flue} from {file_path}")
     return joblib.load(file_path)
 
 
@@ -342,7 +346,7 @@ def recursive_ann_search_coordinated(punto, dataset, vector_training, n_flues, t
 
     return indices_vecinos, coords_vecinos, dists_vecinos, n_distances_computed
 
-def ANN_search(vector_testing, vector_training, dataset, n_flues, tg, n_centroids, dist_function, radius, k, pruning_strategy=False):
+def ANN_search(vector_testing, vector_training, dataset, n_flues, tg, n_centroids, dist_function, radius, k, pruning_strategy):
 
     # Update the metric name for compatibility with scipy
     if dist_function == 'manhattan':

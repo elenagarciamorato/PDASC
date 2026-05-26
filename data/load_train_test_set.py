@@ -454,7 +454,8 @@ def load_train_test(dataset_name, test_eq_train=False):
 
         # For this experiment,compose the test_set (100 elements not contained on the train set) and the train_set
         # (We guarantee this because original hdf5 training and test sets are separated from each other)
-        np.random.seed(1234)
+        # Original seed: np.random.seed(1234)
+        np.random.seed(8008)
         index_testing = np.random.choice(len(test_set), test_set_size, replace=False)
         test_set = test_set[index_testing]
 
@@ -620,4 +621,4 @@ def load_train_test(dataset_name, test_eq_train=False):
         return None, None
 
 
-#load_train_test('kosarak')
+#load_train_test('NYtimes')

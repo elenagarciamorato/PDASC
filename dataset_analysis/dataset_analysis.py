@@ -15,6 +15,7 @@ def load_random_sample(dataset, sample_size):
 
 
     if dataset in ['MovieLens', 'kosarak']:
+        print("Loading the dataset in sparse format to get the random sample")
         train_set_csr, test_set_csr = load_hdf5(file_name)
         train_lists = [row.indices.tolist() for row in train_set_csr]
         mlb = MultiLabelBinarizer()

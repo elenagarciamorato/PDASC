@@ -108,6 +108,10 @@ def Exact_nn_search(vector_training, vector_testing, k, metric, tree_index, same
     if metric == 'cosine':
         vector_training = normalize(vector_training, axis=1, norm='l2')
         vector_testing = normalize(vector_testing, axis=1, norm='l2')
+    elif metric == 'jaccard':
+        # Aseguramos que tratamos los datos como presencia/ausencia
+        vector_training = vector_training.astype(bool)
+        vector_testing = vector_testing.astype(bool)
 
     # Build the arrays to store the indices, coordinates and distances of the k nearest neighbors
     indices_vecinos = np.empty([len(vector_testing), k], dtype=int)
@@ -140,6 +144,8 @@ def Exact_nn_search(vector_training, vector_testing, k, metric, tree_index, same
     else:
 
         # For every point in the testing set, find its k nearest neighbors
+
+        """
         for i in range(len(vector_testing)):
             #print("Punto número: ", i)
             punto = vector_testing[i].reshape(1, -1)
@@ -156,7 +162,10 @@ def Exact_nn_search(vector_training, vector_testing, k, metric, tree_index, same
 
             # Unknown number of distance computations
             n_distances_vecinos[i] = None
-
+            """
+        # Find the knn of the test_set elements between those contained on the train_set index
+        dists_vecinos, indices_vecinos = tree_index.kneighbors(vector_testing, k)
+        coords_vecinos = np.array(vector_training[indices_vecinos])
 
         # Return knn and the number of distance computations required to obtain them
     #print(f"Los vecinos exactos son: {indices} con distancias {dists}")

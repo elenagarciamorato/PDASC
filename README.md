@@ -1,11 +1,13 @@
 <!--<h1 align="center"> PDASC</h1>
 -->
 
-![PDASC](ANN_Experiments/figures/PDASC_logo.png)
-
+<!--![PDASC](ANN_Experiments/figures/PDASC_logo.png)
+-->
+<p align="center"><img src="ANN_Experiments/figures/PDASC_logo.png" alt="PDASC" width="70%">
 <p align="center">
-    <a href="https://doi.org/10.5281/zenodo.13220359"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.13220359.svg" alt="DOI"></a>  
+    <a href="https://doi.org/10.5281/zenodo.18247570"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.18247570.svg" alt="DOI"></a> 
     <a href="https://arxiv.org/abs/2405.13795"><img src="https://badgen.net/static/arXiv/2405.13795/red" /></a>
+
 </p>
 
 <!-- * This project introduces PDASC (Parametrizable Distributed Approximate Similarity Search with Clustering), a parametrizable algorithm for ANN search that constructs a multilevel index using clustering techniques in an innovative way. By integrating clustering algorithms that inherently accommodate various distance functions, PDASC provides the adaptability needed to support arbitrary similarity measures.
