@@ -156,7 +156,7 @@ def print_knn(train_set, test_set, neighbors, dataset_name, d, method, knn, file
     return plt.show()
 
 # Method to read an experiment described into a .ini file
-def read_config_file(config_file):
+def read_config_file_deprecated(config_file):
 
     # Get the path of the configuration file provided by the user
     dataset = re.split('_|\.', config_file)[2]
@@ -252,6 +252,7 @@ def read_config_file(config_file):
         exit(1)
 
     return parameters
+
 
 # Get the memory usage of the current process in MB
 def memory_usage_mb():

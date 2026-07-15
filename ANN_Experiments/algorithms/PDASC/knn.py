@@ -12,11 +12,22 @@ from sklearn.exceptions import DataConversionWarning
 warnings.filterwarnings("ignore", category=DataConversionWarning)
 
 
-def PDASC(config_file):
+def PDASC(exp_parameters):
 
-    # Read config file containing experiment's parameters
-    dataset, k, distance_function, method, group_size, n_centroids, n_nodes, radius, algorithm, implementation = read_config_file(config_file)
+    # Process experiment's parameters
+    k = exp_parameters["k"]
+    dataset = exp_parameters["dataset"]
+    method = exp_parameters["method"]
+    distance_function = exp_parameters["distance"]
 
+    n_nodes = exp_parameters["n_nodes"]
+    n_centroids = exp_parameters["np"]
+    group_size = exp_parameters["gl"]
+    p_ECDF = exp_parameters["p_ECDF"]
+    radius = exp_parameters["r"]
+
+    algorithm = exp_parameters["algorithm"]
+    implementation = exp_parameters["implementation"]
 
     # Check if the method choosen are valid:
     if algorithm not in pdasc_.PDASC_accepted_algorithms():
@@ -37,7 +48,8 @@ def PDASC(config_file):
 
 
     # 1st - We read the dataset to be used
-    if distance_function == "jaccard":
+    #if distance_function == "jaccard":
+    if dataset in ("MovieLens", "kosarak"):
         train_set_csr, test_set_csr = lts.load_hdf5(file_name)
         train_lists = [row.indices.tolist() for row in train_set_csr]
         test_lists = [row.indices.tolist() for row in test_set_csr]
@@ -62,7 +74,9 @@ def PDASC(config_file):
         vector_testing = np.radians(vector_testing)
 
     # If distance is cosine, normalize the vectors
+
     elif distance_function == 'cosine':
+
         vector_training = normalize(vector_training, axis=1, norm='l2')
         vector_testing = normalize(vector_testing, axis=1, norm='l2')
 

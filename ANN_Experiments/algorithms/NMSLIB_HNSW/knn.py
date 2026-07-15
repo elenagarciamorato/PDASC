@@ -3,9 +3,20 @@ from ANN_Experiments.neighbors_utils import *
 from ANN_Experiments.algorithms.NMSLIB_HNSW.module import NmslibHNSW
 from timeit import default_timer as timer
 
-def NMSLIB_HNSW(config_file):
-    # Read config file containing experiment's parameters
-    dataset, k, metric, method, M, efConstruction, efSearch, post, coords_in_degrees = read_config_file(config_file)
+def NMSLIB_HNSW(exp_parameters):
+
+    # Process experiment's parameters
+    dataset = exp_parameters["dataset"]
+    method = exp_parameters["method"]
+    k = exp_parameters["k"]
+    metric = exp_parameters["distance"]
+
+    # NMSLIB HNSW parameters
+    M = exp_parameters["M"]
+    efConstruction = exp_parameters["efConstruction"]
+    efSearch = exp_parameters["efSearch"]
+    post = exp_parameters["post"]
+    coords_in_degrees = exp_parameters["coords_in_degrees"]
 
     # Print information about the experiment in the log file
     logging.info('------------------------------------------------------------------------')

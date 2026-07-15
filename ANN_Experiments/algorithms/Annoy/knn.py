@@ -5,10 +5,17 @@ from timeit import default_timer as timer
 #from benchmarks.plotting.performance_utils import *
 
 
-def Annoy(config_file):
-    # Read config file containing experiment's parameters
-    
-    dataset, k, metric, method, n_trees, k_search = read_config_file(config_file)
+def Annoy(exp_parameters):
+
+    # Process experiment's parameters
+    dataset = exp_parameters["dataset"]
+    method = exp_parameters["method"]
+    k = exp_parameters["k"]
+    metric = exp_parameters["distance"]
+
+    # Annoy parameters
+    n_trees = exp_parameters["n_trees"]
+    k_search = exp_parameters["k_search"]
 
     # Check if metric is valid
     valid_metrics = {"angular", "euclidean", "cosine","manhattan", "hamming", "dot"}

@@ -5,10 +5,16 @@ from data.load_train_test_set import load_train_test_h5py, load_hdf5
 from sklearn.preprocessing import MultiLabelBinarizer
 
 
-def Exact(config_file):
+def Exact(exp_parameters):
 
-    # Read config file containing experiment's parameters
-    dataset, k, distance, method, exact_algorithm = read_config_file(config_file)
+    # Process experiment's parameters
+    dataset = exp_parameters["dataset"]
+    method = exp_parameters["method"]
+    k = exp_parameters["k"]
+    distance = exp_parameters["distance"]
+
+    # Exact search parameters
+    exact_algorithm = exp_parameters["algorithm"]
 
     logging.info('------------------------------------------------------------------------')
     logging.info(" Searching the " + str(k) + " nearest neighbors within " + method + " - " + exact_algorithm

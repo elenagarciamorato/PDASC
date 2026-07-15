@@ -6,10 +6,19 @@ from timeit import default_timer as timer
 # PYNN algorithm admits the following distances:
 # 'euclidean', 'l2', 'sqeuclidean', 'manhattan', 'taxicab', 'l1', 'chebyshev', 'linfinity', 'linfty', 'linf', 'minkowski', 'seuclidean', 'standardised_euclidean', 'wminkowski', 'weighted_minkowski', 'mahalanobis', 'canberra', 'cosine', 'dot', 'correlation', 'hellinger', 'haversine', 'braycurtis', 'spearmanr', 'kantorovich', 'wasserstein', 'tsss', 'true_angular', 'hamming', 'jaccard', 'dice', 'matching', 'kulsinski', 'rogerstanimoto', 'russellrao', 'sokalsneath', 'sokalmichener', 'yule'
 
-def PYNN(config_file):
+def PYNN(exp_parameters):
 
-    # Read config file containing experiment's parameters
-    dataset, k, distance, method, n_neighbors, diversify_prob, pruning_degree_multiplier, epsilon = read_config_file(config_file)
+    # Process experiment's parameters
+    k = exp_parameters["k"]
+    dataset = exp_parameters["dataset"]
+    method = exp_parameters["method"]
+    distance= exp_parameters["distance"]
+
+    # PyNNDescent parameters
+    n_neighbors = exp_parameters["n_neighbors"]
+    diversify_prob = exp_parameters["diversify_prob"]
+    pruning_degree_multiplier = float(exp_parameters["pruning_degree_multiplier"])
+    epsilon = float(exp_parameters["epsilon"])
 
     # Check if the distance and choosen is valid:
     if distance not in PYNN_accepted_distances() :

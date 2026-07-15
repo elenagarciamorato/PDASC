@@ -6,6 +6,17 @@ from pandas.api.types import CategoricalDtype
 import pandas as pd
 import os
 
+# For each method, define the name of the query parameter (according to the file name) and its position in the file name
+QUERY_PARAMETERS = {
+    "NMSLIBHNSW": (7, "efS"),
+    "FAISSHNSW": (7, "efS"),
+    "IVF": (6, "nprobe"),
+    "PYNN": (8, "eps"),
+    "LSH": (5, "nbits"),
+    "ANNOY": (6, "ksearch"),
+    "PDASC": (7, "r")
+}
+
 # Function to get the recall of a k-nn experiment
 def get_recall(dataset, k, distance, indices, coords, distances):
 
@@ -34,136 +45,143 @@ def explore_experiments(dataset, distance_function, optional_filters=None):
 
     results = []
 
-
     # For every .hdf5 file in the directory (file containing the neighbors and performances)
     for root, _, files in os.walk(directory_path):
 
         # Apply filters to files
         if optional_filters:
-            #print(optional_filters)
             files = [f for f in files if distance_function in f and any(opt in f for opt in optional_filters)]
         else:
             files = [f for f in files if distance_function in f]
 
-        #print(files)
-
         for file in files:
 
-            if file.endswith('.hdf5'):
+            if file.endswith(".hdf5"):
 
                 # Load the neighbors and performance of the k-nn experiments associated to that file
-                indices, coords, distances, n_dist, index_size, index_time, search_time = load_neighbors_performance(directory_path + "/" + file)
+                indices, coords, distances, n_dist, index_size, index_time, search_time = \
+                    load_neighbors_performance(directory_path + "/" + file)
 
                 # Split the file name to get the information about the experiment
-                # by '_'  and remove the '.hdf5' extension
-                parts = file.split('_')
-                parts[-1] = parts[-1].replace('.hdf5', '')
+                parts = file.split("_")
+                parts[-1] = parts[-1].replace(".hdf5", "")
 
-                # If the method is PDASC
-                if parts[4] == 'PDASC':
-                    # We store the information about the experiment associated with the file
-                    results.append({
-                        'Method': parts[4],
-                        'Distance': distance_function,
-                        # 'k': parts[2],
-                        'radius': float(parts[7][1:]),
-                        'n_nodes': parts[8][1:],
-                        'Config': f'{parts[5]}_{parts[6]}', # As PDASc doest has more configuration parameters, we set it to NaN
-                        # 'Implementation': parts[9],
-                        'Dist_C(Av)': np.round(np.mean(n_dist), 2),
-                        'Dist_C-Node(Av)': np.round(np.mean(n_dist/int(parts[8][1:])), 2),
-                        # Get the recall of the experiment
-                        'Recall(Av)': get_recall(dataset, parts[2], distance_function, indices, coords, distances),
-                        'Search_T(s)': np.round(search_time, 2),
-                        #'Query_T(Av)(s)': np.round(search_time/len(indices), 4),
-                        'In_T(s)': np.round(index_time, 3),
-                        'In_S(MB)': index_size
+                # -------------------------------------------------------------
+                # Query parameter (radius, efSearch, nprobe, ...)
+                # -------------------------------------------------------------
+                query_par = None
 
-                    })
+                if parts[4] in QUERY_PARAMETERS:
+                    idx, prefix = QUERY_PARAMETERS[parts[4]]
+                    query_par = float(parts[idx][len(prefix):])
 
-                # If the method is other
-                else:
-                    # We store the information about the experiment associated with the file
-                    results.append({
-                        'Method': parts[4],
-                        'Distance': distance_function,
-                        # 'k': parts[2],
-                        'radius': None,
-                        'n_nodes': 1,
-                        'Config': '_'.join(parts[5:]), # Join all remaining parts to show the full configuration parameters
-                        # 'Algorithm': parts[5] if parts[5] != 'hdf5' else None,
-                        # 'Algorithm': parts[5] if not parts[4].endswith('.hdf5') else None,
-                        # 'Implementation': None,
-                        'Dist_C(Av)': np.round(np.mean(n_dist), 2),
-                        'Dist_C-Node(Av)': np.round(np.mean(n_dist), 2),
-                        # Get the recall of the experiment
-                        'Recall(Av)': get_recall(dataset, parts[2], distance_function, indices, coords, distances),
-                        'Search_T(s)': np.round(search_time, 4),
-                        #'Query_T(Av)(s)': np.round(search_time / len(indices), 4),
-                        'In_T(s)': np.round(index_time, 3),
-                        'In_S(MB)': index_size,
-                    })
+                # -------------------------------------------------------------
+                # Number of Nodes (default 1 for all methods except PDASC)
+                # -------------------------------------------------------------
+                n_nodes = 1
 
-        # Primero convierte la lista de dicts a DataFrame
-        df = pd.DataFrame(results)
+                if parts[4] == "PDASC":
+                    n_nodes = int(parts[8][1:])
 
-        # Define el orden personalizado de distancias
-        custom_order = ['euclidean', 'manhattan', 'chebyshev', 'cosine']
+                # -------------------------------------------------------------
+                # Store experiment
+                # -------------------------------------------------------------
+                results.append({
+                    "Method": parts[4],
+                    "Distance": distance_function,
+                    "n_nodes": n_nodes,
+                    "Index_par": "_".join(parts[5:idx]),
+                    "Query_par": query_par,
+                    "Recall(Av)": get_recall(
+                        dataset,
+                        parts[2],
+                        distance_function,
+                        indices,
+                        coords,
+                        distances,
+                    ),
+                    "Dist_C(Av)": np.round(np.mean(n_dist), 2),
+                    "Dist_C-Node(Av)": np.round(np.mean(n_dist / n_nodes), 2),
+                    "In_S(MB)": index_size,
+                    "In_T(s)": np.round(index_time, 3),
+                    "Search_T(s)": np.round(search_time, 4),
+                })
 
-        # Distancias adicionales (no incluidas explícitamente en custom_order)
-        other_distances = sorted(set(df['Distance']) - set(custom_order))
+    # Primero convierte la lista de dicts a DataFrame
+    df = pd.DataFrame(results)
 
-        # Crea el tipo categórico ordenado
-        distance_type = CategoricalDtype(categories=custom_order + other_distances, ordered=True)
+    # Define el orden personalizado de distancias
+    custom_order = ['euclidean', 'manhattan', 'chebyshev', 'cosine', 'haversine', 'jaccard']
 
-        # Aplica el tipo al DataFrame y continúa con el flujo
-        formatted_results = (
-            df
-            .assign(n_nodes=lambda d: d['n_nodes'].astype(int),
-                    radius=lambda d: d['radius'].astype(float) if d['radius'] is not None else None,
-                    Distance=lambda d: d['Distance'].astype(distance_type))
-            .sort_values(by=['Method', 'Distance', 'Config', 'n_nodes', 'radius'], ascending=[True, True, True, True, True])
+    # Distancias adicionales
+    other_distances = sorted(set(df['Distance']) - set(custom_order))
+
+    # Crea el tipo categórico ordenado
+    distance_type = CategoricalDtype(
+        categories=custom_order + other_distances,
+        ordered=True
+    )
+
+    # Aplica el tipo al DataFrame y continúa con el flujo
+    formatted_results = (
+        df
+        .assign(
+            n_nodes=lambda d: d['n_nodes'].astype(int),
+            Query_par=lambda d: d['Query_par'].astype(float),
+            Distance=lambda d: d['Distance'].astype(distance_type)
         )
+        .sort_values(
+            by=['Method', 'Distance', 'Index_par', 'n_nodes', 'Query_par'],
+            ascending=True
+        )
+    )
 
-        # Selección de columnas
-        excel_results = formatted_results[['Distance', 'radius', 'Config', 'n_nodes', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'In_T(s)', 'In_S(MB)']]
+    # Selección de columnas para imprimir en el CSV
+    excel_results = formatted_results[
+        ['Distance', 'n_nodes', 'Index_par', 'Query_par', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'In_T(s)', 'In_S(MB)']
+    ]
 
-        # Orden final
-        excel_results = excel_results.sort_values(by=['Distance', 'Config', 'n_nodes', 'radius'])
+    # Añadir una columna de percentiles
+    # percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
+    # excel_results['Percentil'] = percentiles
 
-        # Añadir una columna de percentiles
-        #percentiles = (1, 15, 30, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 99, 100)
-        #excel_results['Percentil'] = percentiles
+    # Orden final
+    excel_results = excel_results.sort_values(
+        by=['Distance', 'Index_par', 'n_nodes', 'Query_par']
+    )
 
-        # Reemplazo de decimales con comas
-        for col in ['radius', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'In_T(s)', 'In_S(MB)']:
-            excel_results[col] = excel_results[col].astype(str).str.replace('.', ',', regex=False)
+    # Reemplazo de decimales con comas
+    for col in [
+        'Query_par', 'Dist_C(Av)', 'Dist_C-Node(Av)', 'Recall(Av)', 'Search_T(s)', 'In_T(s)', 'In_S(MB)'
+    ]:
+        excel_results[col] = excel_results[col].astype(str).str.replace('.', ',', regex=False)
 
-        # Añade una columna más al dataset con el percentil correpondiente a cada radio
-        # Al radio mas alto le corresponde el ultimo percentil de la lista y al
-        # radio mas bajo el primer percentil de la lista
+    # Almacenar en csv
+    excel_results.to_csv(
+        f'./ANN_Experiments/NearestNeighbors/{dataset}/benchmark_results_10nn_{dataset}.csv',
+        index=False,
+        sep=';'
+    )
 
-        # Almacenar en un csv
-        excel_results.to_csv(f'./ANN_Experiments/NearestNeighbors/{dataset}/benchmark_results_10nn_{dataset}.csv', index=False, sep=';')
+    # Log the results
+    logging.info('------------------------------------------------------------------------\n' + formatted_results.to_string())
+    logging.shutdown()
 
-        # Log the results
-        logging.info('------------------------------------------------------------------------\n' + formatted_results.to_string())
-        logging.shutdown()
+    # Inserta una línea en blanco entre métodos
+    formatted_results = pd.concat([
+        pd.concat([
+            formatted_results.iloc[[i]],
+            pd.DataFrame([[''] * len(formatted_results.columns)],
+                         columns=formatted_results.columns)
+        ])
+        if i < len(formatted_results) - 1
+        and formatted_results.iloc[i]['Method'] != formatted_results.iloc[i + 1]['Method']
+        else formatted_results.iloc[[i]]
+        for i in range(len(formatted_results))
+    ]).reset_index(drop=True)
 
-        # Entre metodo y metodo, inserta una linea en blnco en el dataset
-        # Entre cada metodo, inserta una linea en blanco en el dataset
-        formatted_results = pd.concat([
-            pd.concat([formatted_results.iloc[[i]],
-                       pd.DataFrame([[''] * len(formatted_results.columns)],
-                                    columns=formatted_results.columns)])
-            if i < len(formatted_results) - 1 and formatted_results.iloc[i]['Method'] != formatted_results.iloc[i + 1][
-                'Method']
-            else formatted_results.iloc[[i]]
-            for i in range(len(formatted_results))
-        ]).reset_index(drop=True)
+    return formatted_results
 
-        # Return the results
-        return formatted_results
 
 if __name__ == "__main__":
 

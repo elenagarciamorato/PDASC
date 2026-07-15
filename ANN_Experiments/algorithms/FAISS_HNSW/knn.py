@@ -5,9 +5,18 @@ from ANN_Experiments.neighbors_utils import * #read_config_file
 from ANN_Experiments.algorithms.FAISS_HNSW.module import FaissHNSW
 from timeit import default_timer as timer
 
-def FAISS_HNSW(config_file):
-    # Read config file containing experiment's parameters
-    dataset, k, metric, method, M, efConstruction, efSearch = read_config_file(config_file)
+def FAISS_HNSW(exp_parameters):
+
+    # Process experiment's parameters
+    dataset = exp_parameters["dataset"]
+    method = exp_parameters["method"]
+    k = exp_parameters["k"]
+    metric = exp_parameters["distance"]
+
+    # FAISS HNSW parameters
+    M = exp_parameters["M"]
+    efConstruction = exp_parameters["efConstruction"]
+    efSearch = exp_parameters["efSearch"]
 
     # Print information about the experiment in the log file
     logging.info('------------------------------------------------------------------------')

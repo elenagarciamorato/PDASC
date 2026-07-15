@@ -5,10 +5,18 @@ from ANN_Experiments.algorithms.FAISS_IVF.module import FaissIVF
 import faiss
 from timeit import default_timer as timer
 
-def FAISS_IVF(config_file):
+def FAISS_IVF(exp_parameters):
 
-    # Read config file containing experiment's parameters
-    dataset, k, metric, method, nlist, nprobe = read_config_file(config_file)
+    # Process experiment's parameters
+    dataset = exp_parameters["dataset"]
+    method = exp_parameters["method"]
+    k = exp_parameters["k"]
+    metric = exp_parameters["distance"]
+
+    # FAISS IVF parameters
+    nlist = exp_parameters["nlist"]
+    nprobe = exp_parameters["nprobe"]
+
     print(f"The nlist is {nlist} and nprobe is {nprobe}")
 
     # Print information about the experiment in the log file
