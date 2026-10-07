@@ -145,4 +145,7 @@ If you use PDASC in your research, please cite:
 >
 > **A Memory-Efficient Distributed Algorithm for Approximate Nearest Neighbour Search with Arbitrary Distances**
 >
-> https://arxiv.org/abs/2405.13795
+> IEEE Open Journal of the Computer Society, 2026.
+> 
+> DOI: https://doi.org/10.1109/OJCS.2026.3739651
+>
