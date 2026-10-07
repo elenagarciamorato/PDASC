@@ -12,8 +12,9 @@
     <a href="https://doi.org/10.5281/zenodo.18247570">
       <img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.18247570-blue">
     </a>
-  <a href="https://arxiv.org/abs/2405.13795">
-    <img src="https://badgen.net/static/arXiv/2405.13795/red">
+    <a href="https://doi.org/10.1109/OJCS.2026.3739651">
+      <img src="https://img.shields.io/badge/Publication-OJCS-blue">
+    </a>
   </a>
 </p>
 
